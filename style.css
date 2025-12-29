@@ -120,41 +120,181 @@ section {
 }
 
 /* Step Counter */
+/* Step Counter & Mission Slider */
 .step-section {
     text-align: center;
 }
+
+/* Slider Layout */
+.mission-slider-container {
+    width: 100%;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.mission-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* スナップ機能 */
+    -webkit-overflow-scrolling: touch; /* 滑らかなスクロール */
+    scrollbar-width: none; /* スクロールバー非表示 (Firefox) */
+    gap: 10px;
+    padding: 0 5px; /* 横端の余白 */
+}
+.mission-slider::-webkit-scrollbar {
+    display: none; /* スクロールバー非表示 (Chrome/Safari) */
+}
+
+.mission-slide {
+    flex: 0 0 100%; /* 幅100% */
+    scroll-snap-align: center; /* 中央にスナップ */
+}
+
+.mission-card-inner {
+    background: var(--white);
+    border-radius: var(--border-radius-card);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    min-height: 420px; /* カードの高さを揃える */
+    justify-content: space-between;
+}
+
+/* Typography inside card */
+.mission-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+.mission-sub {
+    font-size: 14px;
+    color: var(--sub-text-color);
+    margin-bottom: 20px;
+}
+
+/* Visuals */
 .date-display {
     font-size: 20px;
-    margin-bottom: 20px;
-    text-align: left;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
 }
+
 .step-circle {
-    width: 200px;
-    height: 200px;
+    /* 既存のスタイルを少し調整 */
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     border: 10px solid #ddd;
     border-top-color: var(--primary-color);
-    margin: 0 auto;
+    margin: 0 auto 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: var(--white);
+    flex-shrink: 0;
+}
+.mission-visual-icon {
+    font-size: 80px;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FAFAFA;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+/* Stamps */
+.stamp-progress-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.stamp-label {
+    font-size: 12px;
+    color: var(--sub-text-color);
+    margin-bottom: 8px;
+    text-align: left;
+    padding-left: 10px;
+}
+.stamp-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+.stamp-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #EEE;
+    border: 2px solid #E0E0E0;
     position: relative;
 }
-.step-circle img {
-    width: 60px;
-    margin-bottom: 5px;
+/* スタンプが押された状態 */
+.stamp-dot.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
-.step-count-main {
-    font-size: 32px;
-    font-weight: var(--font-bold);
-    line-height: 1;
+.stamp-dot.active::after {
+    content: "済";
+    color: white;
+    font-size: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
 }
-.step-goal {
-    font-size: 14px;
-    color: var(--sub-text-color);
-    margin-top: 4px;
+
+/* CTA Buttons */
+.mission-cta-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 24px; /* 丸みのあるボタン */
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(226, 120, 0, 0.3);
+    transition: opacity 0.2s;
+}
+.mission-cta-btn:active {
+    opacity: 0.8;
+}
+.mission-cta-btn.btn-green {
+    background-color: #2E7D32; /* 健康記録用グリーン */
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+}
+.mission-cta-btn.btn-blue {
+    background-color: #1565C0; /* コラム用ブルー */
+    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
+}
+
+/* Pagination Dots */
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #CCC;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+.dot.active {
+    background-color: var(--primary-color);
+    width: 20px; /* アクティブなときは少し横長に */
+    border-radius: 4px;
 }
 
 /* Quick Nav Icons */
