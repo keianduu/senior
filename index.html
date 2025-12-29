@@ -20,20 +20,36 @@
 
     <div class="container">
         <section class="status-section">
-            <div class="card">
-                <div class="points-row">
-                    <span>今月の<br>獲得予定ポイント</span>
-                    <span class="point-value">0</span>
+            <div class="card point-dashboard-compact">
+                <div class="point-block-main">
+                    <div class="point-icon-circle" id="pointStatusIcon">
+                        💰
+                    </div>
+                    <div class="point-content">
+                        <span class="point-label">今月の獲得予定</span>
+                        <div class="point-value-row">
+                            <span class="point-num text-red" id="currentPointDisplay">0</span>
+                            <span class="point-unit">P</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="points-row">
-                    <span>楽天シニアでの<br>通算獲得ポイント</span>
-                    <span class="point-value" style="color:var(--text-color);">14</span>
+
+                <div class="point-divider-diagonal"></div>
+
+                <div class="point-block-sub">
+                    <span class="point-label-sub">通算獲得</span>
+                    <div class="point-value-sub">
+                        <span class="point-num">14</span>
+                        <span class="point-unit">P</span>
+                    </div>
                 </div>
+                
+                <div class="point-arrow-compact">›</div>
             </div>
         </section>
 
         <section class="step-section">
-            <div class="card" style="background: transparent; box-shadow: none; padding: 0;">
+            <div class="card" style="background: transparent; box-shadow: none; padding: 0; overflow: visible;">
                 
                 <div class="mission-slider-container">
                     <div class="mission-slider" id="missionSlider">
@@ -79,7 +95,7 @@
                                     <p class="stamp-label">スタンプ獲得状況 (1/7)</p>
                                     <div class="stamp-row">
                                         <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot today"></span>
                                         <span class="stamp-dot"></span>
                                         <span class="stamp-dot"></span>
                                         <span class="stamp-dot"></span>
@@ -109,7 +125,7 @@
                                         <span class="stamp-dot active"></span>
                                         <span class="stamp-dot active"></span>
                                         <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot today"></span>
                                         <span class="stamp-dot"></span>
                                     </div>
                                 </div>
