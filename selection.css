@@ -565,3 +565,103 @@ body {
     padding: 0 16px;
     margin-bottom: 30px;
 }
+
+/* --- アンケート訴求セクション (Phase 1) --- */
+
+.survey-section {
+    padding: 0 16px 20px;
+    background: var(--bg-beige);
+}
+
+.survey-banner {
+    background: white;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 左端のアクセントライン */
+.survey-banner::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--gold-main);
+}
+
+.survey-icon {
+    font-size: 24px;
+    color: var(--gold-main);
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-beige);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.survey-text {
+    flex-grow: 1;
+}
+
+.survey-text h4 {
+    font-size: 14px;
+    margin: 0 0 4px 0;
+    line-height: 1.4;
+    color: var(--brown-text);
+}
+
+.survey-text .highlight {
+    color: var(--rakuten-red);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.survey-text p {
+    font-size: 10px;
+    color: #666;
+    margin: 0;
+}
+
+.btn-survey {
+    background: var(--gold-main);
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+.point-badge {
+    background: white;
+    color: var(--rakuten-red);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 2px;
+    display: block;
+}
+
+/* IA改善に伴う調整: ナビゲーションの余白 */
+.category-nav {
+    padding-top: 10px; /* 上部の余白を少し詰める */
+    background: var(--bg-beige); /* 背景色をページ全体に合わせる */
+}
+
