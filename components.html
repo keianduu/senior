@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楽天シニア特選 - UIコンポーネントカタログ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="selection.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { padding: 20px; background: #f0f0f0; }
+        .component-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 40px 0 10px;
+            padding-left: 10px;
+            border-left: 4px solid #C5A059;
+            color: #333;
+        }
+        .demo-container { margin-bottom: 20px; }
+        .grid-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    </style>
+</head>
+<body>
+
+    <h1>UI Component Catalog</h1>
+    <p>特選ページで使用可能なカードデザイン一覧</p>
+
+    <div class="component-label">1. Bigカード (今月のイチオシ用)</div>
+    <div class="featured-product" style="margin: 0;">
+        <div class="product-image-large">
+            <img src="https://placehold.jp/600x450.png?text=Featured+Item" alt="商品">
+            <div class="badge-seniors-best">
+                <span class="badge-text">Senior's<br>Best</span>
+                <div class="stars">★★★</div>
+            </div>
+        </div>
+        <div class="featured-info">
+            <h3>商品名タイトル（最大2行想定）<br>サブタイトル</h3>
+            <p class="featured-desc">商品の魅力やストーリーを伝えるためのディスクリプションエリア。3行程度が目安。</p>
+            <div class="price-row">3,950円<span class="tax">(税込)</span></div>
+            <div class="shop-name"><i class="fas fa-store"></i> 店舗名エリア</div>
+            <a href="#" class="btn-detail">詳しく見る</a>
+        </div>
+    </div>
+
+    <div class="component-label">2. カルーセル大 (横スクロール / 詳細あり)</div>
+    <p style="font-size:10px;">※横スクロールエリアに配置</p>
+    <div class="carousel-container">
+        <div class="carousel-track">
+            <div class="carousel-card card-lg">
+                <div class="c-img-area">
+                    <img src="https://placehold.jp/400x300.png?text=Large+Card" alt="商品">
+                </div>
+                <div class="c-content">
+                    <h4 class="c-title">カルーセル大カードタイトル</h4>
+                    <p class="c-desc">ここには短い説明文が入ります。商品の特徴を端的に伝えます。</p>
+                    <div class="c-price">4,130<span class="c-unit">円(税込)</span></div>
+                    <div class="c-shop"><i class="fas fa-store"></i> 店舗名</div>
+                </div>
+            </div>
+            <div class="carousel-card card-lg">
+                <div class="c-img-area">
+                    <img src="https://placehold.jp/400x300.png?text=Large+Card+2" alt="商品">
+                </div>
+                <div class="c-content">
+                    <h4 class="c-title">横並び時の見え方確認用</h4>
+                    <p class="c-desc">説明文が入ることで、一覧でも商品の魅力を訴求できます。</p>
+                    <div class="c-price">2,980<span class="c-unit">円(税込)</span></div>
+                    <div class="c-shop"><i class="fas fa-store"></i> 店舗名</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="component-label">3. 正方形・グリッドカード (一覧用)</div>
+    <div class="grid-preview">
+        <div class="product-card">
+            <div class="p-img">
+                <img src="https://placehold.jp/300x300.png?text=Square+Item" alt="商品">
+            </div>
+            <h4 class="p-title">商品タイトル｜正方形画像で一覧性を高めるレイアウト</h4>
+            <div class="p-price">1,730円<span class="p-tax">(税込)</span></div>
+        </div>
+
+        <div class="product-card">
+            <div class="p-img">
+                <img src="https://placehold.jp/300x300.png?text=With+Badge" alt="商品">
+                <span class="badge-pop">特典あり</span>
+            </div>
+            <h4 class="p-title">商品タイトル｜右上にバッジを表示するパターン</h4>
+            <div class="p-price">3,850円<span class="p-tax">(税込)</span></div>
+        </div>
+    </div>
+
+    <div class="component-label">4. カルーセル小 (アイコン・簡易表示)</div>
+    <div class="carousel-container">
+        <div class="carousel-track">
+            <div class="carousel-card">
+                <div class="c-img-area"><img src="https://placehold.jp/300x300.png?text=Small" alt="小"></div>
+                <div class="c-content">
+                    <h4 class="c-title">商品名のみ</h4>
+                    <div class="c-price">1,000<span class="c-unit">円</span></div>
+                </div>
+            </div>
+            <div class="carousel-card">
+                <div class="c-img-area"><img src="https://placehold.jp/300x300.png?text=Small" alt="小"></div>
+                <div class="c-content">
+                    <h4 class="c-title">商品名のみ</h4>
+                    <div class="c-price">1,000<span class="c-unit">円</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
