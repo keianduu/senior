@@ -530,3 +530,67 @@ a { text-decoration: none; color: inherit; }
     align-items: center;
     gap: 6px;
 }
+/* selection.css: ヒーローエリアのコンパクト化設定 */
+
+/* 1. ヒーローエリア全体の余白調整 */
+.hero-banner-v6-cinematic.compact-hero {
+    /* 背景画像の高さ調整（コンテンツに合わせて自動伸縮させるためpaddingで制御） */
+    padding: 20px 16px 20px; 
+    /* 下線を少し控えめに */
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+}
+
+/* 2. ガラスカードのパディング圧縮 */
+.compact-hero .glass-card-v6 {
+    padding: 24px 20px; /* 元は 50px 30px でした */
+}
+
+/* 3. デコレーションラインの余白短縮 */
+.compact-hero .hero-header-deco {
+    margin-bottom: 12px; /* 元は 24px */
+}
+.compact-hero .hero-header-deco .text {
+    font-size: 10px; /* 少し小さく */
+}
+
+/* 4. 新キャッチコピーのスタイル */
+.hero-catch-text {
+    font-family: var(--font-serif);
+    color: var(--gold-main);
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+    line-height: 1.4;
+}
+
+/* 5. タイトルのサイズと余白調整 */
+.compact-hero .hero-title-v6 {
+    font-size: 22px; /* スマホで見やすいサイズ */
+    margin-bottom: 12px;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+}
+/* 改行調整用クラス */
+@media screen and (max-width: 360px) {
+    .sp-br { display: block; }
+}
+
+/* 6. リード文の調整 */
+.compact-hero .hero-desc-v6 {
+    font-size: 12px;
+    margin-bottom: 20px; /* ナビゲーションまでの距離を詰める */
+    line-height: 1.6;
+    text-align: justify; /* 両端揃えでスッキリ見せる */
+}
+
+/* 7. ナビゲーションエリアの調整 */
+.compact-hero .hero-nav-v6 {
+    padding-top: 16px; /* 線からの距離を詰める */
+    gap: 8px; /* アイコン間の隙間を少し詰める */
+}
+.compact-hero .nav-icon-box {
+    width: 36px;      /* アイコンを少し小さく */
+    height: 36px;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
