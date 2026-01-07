@@ -1,6 +1,8 @@
 @charset "UTF-8";
 
-/* --- 1. 変数定義 & 基本設定 --- */
+/* ==========================================================================
+   1. 変数定義 & 基本設定 (Variables & Base)
+   ========================================================================== */
 :root {
     --gold-main: #C5A059;       /* 落ち着いたゴールド */
     --gold-light: #F2EBD9;      /* 薄いゴールド（背景用） */
@@ -26,7 +28,9 @@ body {
 a { text-decoration: none; color: inherit; }
 * { box-sizing: border-box; }
 
-/* --- 2. ヘッダー --- */
+/* ==========================================================================
+   2. ヘッダー (Header)
+   ========================================================================== */
 .site-header {
     background: white;
     padding: 12px 16px;
@@ -56,15 +60,17 @@ a { text-decoration: none; color: inherit; }
     border-radius: 16px;
 }
 
-/* --- 3. ヒーローエリア V7 (Static Luxury Blur) --- */
-.hero-banner-v6-cinematic {
+/* ==========================================================================
+   3. ヒーローエリア (Hero Section)
+   ========================================================================== */
+.hero-banner-v6-cinematic.compact-hero {
     position: relative;
     width: 100%;
-    /* 読み込み前のベースカラー（ベージュ） */
     background-color: #f0e6d2; 
-    padding: 16px 16px 16px;
-    overflow: hidden; /* ぼかしのはみ出しをカット */
-    border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+    /* 背景をアンケート下まで伸ばすためパディング調整 */
+    padding: 20px 16px 30px; 
+    overflow: hidden;
+    border-bottom: none; /* 次のセクションと繋げるため線はなし */
 }
 
 /* 背景画像レイヤー（擬似要素でぼかしを適用） */
@@ -76,17 +82,10 @@ a { text-decoration: none; color: inherit; }
     width: 100%;
     height: 100%;
     z-index: 0;
-    
-    /* 画像選定: シャンパンゴールドのシルク・光のイメージ */
     background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop');
-    
     background-position: center center;
     background-size: cover;
-    
-    /* ぼかし処理 */
     filter: blur(8px) brightness(1.1);
-    
-    /* ぼかした際の端のフェードを防ぐため少し拡大 */
     transform: scale(1.1);
 }
 
@@ -99,81 +98,84 @@ a { text-decoration: none; color: inherit; }
     width: 100%;
     height: 100%;
     z-index: 0;
-    background: rgba(255, 255, 255, 0.3); /* 白を30%乗せる */
+    background: rgba(255, 255, 255, 0.3);
 }
 
-/* コンテンツ配置 */
+/* コンテンツ配置ラッパー */
 .hero-content-v6 {
     position: relative;
-    z-index: 1; /* 背景より手前に */
+    z-index: 1;
     max-width: 580px;
     margin: 0 auto;
 }
 
-/* 磨りガラスカード */
+/* ガラスカード（タイトル部分） */
 .glass-card-v6 {
-    background: rgba(255, 255, 255, 0.7); /* 白の不透明度 */
-    backdrop-filter: blur(10px); /* カード自体のぼかし */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 8px;
     padding: 24px 24px;
     text-align: center;
-    
-    /* 影を柔らかく広げる */
     box-shadow: 0 15px 35px rgba(166, 140, 100, 0.15);
     color: var(--brown-text);
+    margin-bottom: 20px; /* アンケートバナーとの距離 */
 }
 
-/* テキスト周りのスタイル */
+/* ヒーロー内テキスト装飾 */
 .hero-header-deco {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 15px;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
 }
 .hero-header-deco .text { 
     color: var(--gold-main);
     letter-spacing: 3px; 
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
 }
 .hero-header-deco .line { 
     width: 30px; height: 1px; background: var(--gold-main); opacity: 0.6; 
 }
 
+.hero-catch-text {
+    font-family: var(--font-serif);
+    color: var(--gold-main);
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+    line-height: 1.4;
+}
+
 .hero-title-v6 {
     font-family: var(--font-serif);
     color: var(--brown-text);
-    font-size: 24px;
+    font-size: 32px;
     text-shadow: none;
-    margin-bottom: 24px;
-    line-height: 1.6;
-}
-.hero-title-v6 .serif-main {
-    font-size: 34px;
-    margin-top: 10px;
-    letter-spacing: 0.05em;
-    display: block;
+    margin-bottom: 16px;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
 }
 
 .hero-desc-v6 {
     color: #665544;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: normal;
-    line-height: 1.9;
-    margin-bottom: 40px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: justify;
 }
 
-/* ナビゲーション */
+/* ヒーロー内ナビゲーション */
 .hero-nav-v6 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 8px;
     border-top: 1px solid rgba(197, 160, 89, 0.2);
-    padding-top: 24px;
+    padding-top: 16px;
 }
 
 .nav-item-v6 {
@@ -186,11 +188,11 @@ a { text-decoration: none; color: inherit; }
 .nav-item-v6:hover { transform: translateY(-2px); }
 
 .nav-icon-box {
-    font-size: 20px;
+    font-size: 16px;
     color: var(--gold-main);
-    margin-bottom: 8px;
-    width: 44px;
-    height: 44px;
+    margin-bottom: 4px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: #FFF;
     display: flex;
@@ -214,59 +216,186 @@ a { text-decoration: none; color: inherit; }
     text-transform: uppercase;
 }
 
-/* --- 4. アンケートセクション (修正版) --- */
-.survey-section {
-    padding: 0 16px;
-    margin-top: -50px; /* ヒーローに重ねる */
+/* ==========================================================================
+   4. アンケート & クジ機能 (Interactive Survey Banner)
+   ========================================================================== */
+.survey-section-wrapper {
+    max-width: 580px;
+    margin: 0 auto; /* ヒーロー内に配置するためマージン調整不要 */
+    padding: 0;
     position: relative;
     z-index: 10;
-    margin-bottom: 30px;
 }
 
-.survey-banner {
-    background: white;
+/* Phase 1: 未回答時 (Gold Dashed Style) */
+.survey-banner-card {
+    background: #FFFFFF;
+    border: 1px dashed var(--gold-main); /* 上品なゴールド破線 */
     border-radius: 8px;
-    padding: 16px;
+    padding: 16px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.08); /* 浮遊感 */
+    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.15); /* 浮遊感 */
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.survey-icon {
-    font-size: 24px;
-    color: var(--gold-main);
-    width: 32px;
-    text-align: center;
+.survey-banner-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.survey-text { flex: 1; }
-.survey-text h4 {
+.survey-content { flex: 1; }
+.survey-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--brown-text);
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+}
+.survey-desc {
+    font-size: 12px;
+    color: #887766;
+    margin: 0;
+    font-family: var(--font-sans);
+}
+
+/* ポイント強調 */
+.highlight-pink {
+    color: var(--rakuten-red);
+    font-weight: bold;
     font-size: 13px;
-    margin: 0 0 4px 0;
+    background: none;
+    border: none;
+}
+
+/* アイコンアニメーション */
+.survey-icon-anim {
+    font-size: 28px;
+    margin-left: 10px;
+    color: var(--gold-main);
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+/* Phase 2: クジ (Champagne Gold Style) */
+.survey-banner-card.kuji-style {
+    background: linear-gradient(135deg, #D4AF37, #F2EBD9, #C5A059);
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 8px 25px rgba(197, 160, 89, 0.3);
     color: var(--brown-text);
 }
-.survey-text p {
-    font-size: 10px;
-    color: #888;
-    margin: 0;
-    line-height: 1.3;
+/* キラキラエフェクト */
+.survey-banner-card.kuji-style::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+    transform: rotate(30deg);
+    animation: shine 6s infinite;
+    pointer-events: none;
 }
 
-.btn-survey {
+.kuji-title { 
+    font-family: var(--font-serif);
+    font-size: 18px; 
+    font-weight: bold; 
+    margin: 0 0 4px 0;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.kuji-desc { 
+    font-size: 12px; 
+    margin: 0 0 6px 0; 
+    font-weight: 500;
+}
+.kuji-badge {
     background: var(--brown-text);
-    color: white;
-    font-size: 11px;
-    padding: 8px 12px;
-    border-radius: 4px;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    color: #FFF;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
+.kuji-icon-anim {
+    font-size: 36px;
+    animation: bounceSlow 2s infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
-/* --- 5. カテゴリセクション共通 --- */
+/* Phase 3: 完了 (Simple Beige) */
+.survey-banner-card.done-style {
+    background: #F9F7F4;
+    border: 1px solid #E0D0C0;
+    box-shadow: none;
+    cursor: default;
+    justify-content: center;
+    flex-direction: column;
+    color: #998877;
+}
+.kuji-done-text { font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+.kuji-result-badge {
+    background: #FFF;
+    border: 1px solid var(--gold-main);
+    color: var(--gold-main);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   5. 厳選セレクション / 広告枠 (Special Selection Ad)
+   ========================================================================== */
+.special-selection-ad {
+    margin-top: 0; /* ヒーロー直結のためマージンなし */
+    padding-top: 40px;
+    padding-bottom: 40px;
+    border-top: 1px solid rgba(197, 160, 89, 0.3); /* ヒーローとの境界線 */
+    border-bottom: 1px solid #E0E0E0;
+    background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
+}
+
+.ad-header {
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--brown-text);
+}
+.ad-header i { color: var(--gold-main); font-size: 20px; margin-bottom: 8px; }
+.ad-header h3 {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    margin: 0 0 4px 0;
+    position: relative;
+    display: inline-block;
+}
+.ad-header h3::before, .ad-header h3::after {
+    content: "";
+    display: inline-block;
+    width: 30px;
+    height: 1px;
+    background: var(--gold-main);
+    vertical-align: middle;
+    margin: 0 12px;
+}
+.ad-header p { font-size: 11px; color: #888; margin: 0; }
+
+/* ピックアップ商品カード */
+.featured-product.pickup-style {
+    margin: 0 16px;
+    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.2);
+    border: 1px solid rgba(197, 160, 89, 0.4);
+    background: linear-gradient(to bottom, #fff, #FDFBF7);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   6. カテゴリセクション (Category Sections)
+   ========================================================================== */
 .category-section {
     padding-bottom: 40px;
     border-top: 1px solid #eee;
@@ -303,10 +432,13 @@ a { text-decoration: none; color: inherit; }
     margin: 0;
 }
 
-/* --- 6. 商品カード (Featured & Grid) --- */
+/* ==========================================================================
+   7. 商品カードスタイル (Product Cards)
+   ========================================================================== */
+/* 大カード (Featured) */
 .featured-product {
     margin: 0 16px 20px;
-    background: linear-gradient(to bottom, #fff, #FDFBF7);
+    background: #fff;
     border: 1px solid rgba(197, 160, 89, 0.2);
     border-radius: 8px;
     overflow: hidden;
@@ -358,11 +490,7 @@ a { text-decoration: none; color: inherit; }
     font-weight: bold;
     margin-bottom: 12px;
 }
-.price-row .tax {
-    font-size: 11px;
-    color: #333;
-    font-weight: normal;
-}
+.price-row .tax { font-size: 11px; color: #333; font-weight: normal; }
 .shop-name {
     font-size: 10px;
     color: #888;
@@ -382,7 +510,7 @@ a { text-decoration: none; color: inherit; }
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
-/* Grid Layout */
+/* グリッドカード (Grid) */
 .product-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -416,7 +544,9 @@ a { text-decoration: none; color: inherit; }
     font-weight: bold;
 }
 
-/* --- 7. カルーセル --- */
+/* ==========================================================================
+   8. カルーセル (Carousel)
+   ========================================================================== */
 .carousel-container { padding: 0 0 20px 0; overflow: hidden; }
 .carousel-track {
     display: flex;
@@ -466,42 +596,167 @@ a { text-decoration: none; color: inherit; }
     line-height: 1.5;
 }
 
-/* --- 8. 厳選セレクション (広告枠) --- */
-.special-selection-ad {
-    background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
-    padding: 30px 16px 40px;
-    border-bottom: 1px solid #E0E0E0;
-}
-.ad-header {
-    text-align: center;
-    margin-bottom: 24px;
-    color: var(--brown-text);
-}
-.ad-header i { color: var(--gold-main); font-size: 20px; margin-bottom: 8px; }
-.ad-header h3 {
-    font-family: var(--font-serif);
-    font-size: 20px;
-    margin: 0 0 4px 0;
-    position: relative;
-    display: inline-block;
-}
-.ad-header h3::before, .ad-header h3::after {
-    content: "";
-    display: inline-block;
-    width: 30px;
-    height: 1px;
-    background: var(--gold-main);
-    vertical-align: middle;
-    margin: 0 12px;
-}
-.ad-header p { font-size: 11px; color: #888; margin: 0; }
-.featured-product.pickup-style {
-    margin: 0;
-    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.2);
-    border: 1px solid rgba(197, 160, 89, 0.4);
+/* ==========================================================================
+   9. モーダル (Modals: Survey & Kuji)
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
 }
 
-/* --- 9. その他 UI --- */
+.modal-card {
+    background: white;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-header {
+    background: var(--brown-text);
+    color: #F2EBD9;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h3 { 
+    font-size: 14px; margin: 0; font-weight: bold; 
+    font-family: var(--font-serif);
+    letter-spacing: 0.05em;
+}
+.btn-close-modal {
+    background: none; border: none; color: white; font-size: 20px; cursor: pointer;
+}
+
+.modal-body { padding: 20px; }
+.q-title { 
+    font-size: 16px; font-weight: bold; margin-bottom: 16px; 
+    color: var(--brown-text);
+    font-family: var(--font-serif);
+    border-bottom: 1px solid var(--gold-main);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.option-list { display: flex; flex-direction: column; gap: 10px; }
+.btn-option {
+    background: white;
+    border: 1px solid #E0E0E0;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-option:hover {
+    background: var(--bg-beige);
+    border-color: var(--gold-main);
+    color: var(--brown-text);
+}
+
+/* クジ抽選モーダル */
+.modal-kuji-container {
+    width: 100%; text-align: center;
+}
+.kuji-status-text { color: white; font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+.kuji-spinner {
+    width: 120px; height: 120px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #FFD600, #F72585);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    animation: spinSlow 3s linear infinite;
+    box-shadow: 0 0 20px rgba(247, 37, 133, 0.5);
+}
+.kuji-emoji { font-size: 50px; animation: bounceSlow 1s infinite; }
+.kuji-wait-text { color: white; animation: pulse 1s infinite; font-size: 12px; }
+
+/* クジ結果カード */
+.result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    animation: popIn 0.5s;
+    border-top: 4px solid var(--gold-main);
+}
+.result-bar {
+    position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+    background: var(--gold-main); opacity: 0.5;
+}
+.congrats-text { 
+    color: var(--gold-main); font-size: 12px; font-weight: bold; 
+    letter-spacing: 3px; margin-bottom: 4px; 
+}
+.result-rank { font-size: 28px; font-weight: 900; color: #333; margin: 0 0 10px; }
+.result-emoji { font-size: 60px; margin-bottom: 16px; }
+.coupon-box {
+    background: #FAFAFA;
+    border: 2px dashed #F72585;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+.coupon-label { font-size: 11px; font-weight: bold; color: #666; }
+.coupon-value { font-size: 28px; font-weight: 900; color: var(--price-red); margin: 4px 0; }
+.btn-use-coupon {
+    width: 100%;
+    background: linear-gradient(to bottom, #D4AF37, #C5A059);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(197, 160, 89, 0.4);
+}
+
+/* ==========================================================================
+   10. アニメーション定義 (Animations)
+   ========================================================================== */
+@keyframes bounceSlow {
+    0%, 100% { transform: translateY(-5%); }
+    50% { transform: translateY(5%); }
+}
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+@keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+@keyframes shine {
+    0% { transform: translateX(-200%) rotate(30deg); }
+    20% { transform: translateX(200%) rotate(30deg); }
+    100% { transform: translateX(200%) rotate(30deg); }
+}
+
+/* ==========================================================================
+   11. その他 / プロモーション (Footer/Misc)
+   ========================================================================== */
 .btn-more {
     display: block;
     margin: 20px auto 0;
@@ -529,438 +784,4 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     gap: 6px;
-}
-/* selection.css: ヒーローエリアのコンパクト化設定 */
-
-/* --- 1. ヒーローエリア内のレイアウト調整 --- */
-.hero-banner-v6-cinematic.compact-hero {
-    /* コンテンツが増えたので少しパディングを増やす */
-    padding: 20px 16px 30px; 
-    border-bottom: none; /* ここでの線は削除（次のセクションと繋げるため） */
-}
-
-/* ガラスカードの下に余白を作る */
-.compact-hero .glass-card-v6 {
-    margin-bottom: 20px; /* アンケートとの距離 */
-}
-
-/* アンケートラッパー（ヒーロー内配置） */
-.survey-section-wrapper {
-    max-width: 580px;
-    margin: 0 auto; /* 中央寄せのみ */
-    padding: 0; /* 親のパディングがあるので0でOK */
-    position: relative;
-    z-index: 10;
-}
-
-/* --- 2. 次のセクション（厳選セレクション） --- */
-.special-selection-ad {
-    /* ヒーローエリアの直後に隙間なく配置 */
-    margin-top: 0;
-    padding-top: 40px; /* 内部の余白のみ確保 */
-    padding-bottom: 40px;
-    
-    /* 上のヒーローとの境界線 */
-    border-top: 1px solid rgba(197, 160, 89, 0.3);
-    
-    /* 背景色は維持 */
-    background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
-}
-
-/* 3. デコレーションラインの余白短縮 */
-
-.compact-hero .hero-header-deco .text {
-    font-size: 10px; /* 少し小さく */
-}
-
-/* 4. 新キャッチコピーのスタイル */
-.hero-catch-text {
-    font-family: var(--font-serif);
-    color: var(--gold-main);
-    font-size: 14px;
-    font-weight: bold;
-    margin: 0 0 4px 0;
-    line-height: 1.4;
-}
-
-/* 5. タイトルのサイズと余白調整 */
-.compact-hero .hero-title-v6 {
-    font-size: 32px; /* スマホで見やすいサイズ */
-    margin-bottom: 24px;
-    line-height: 1.4;
-    letter-spacing: 0.02em;
-}
-/* 改行調整用クラス */
-@media screen and (max-width: 360px) {
-    .sp-br { display: block; }
-}
-
-/* 6. リード文の調整 */
-.compact-hero .hero-desc-v6 {
-    font-size: 12px;
-    margin-bottom: 20px; /* ナビゲーションまでの距離を詰める */
-    line-height: 1.6;
-    text-align: justify; /* 両端揃えでスッキリ見せる */
-}
-
-/* 7. ナビゲーションエリアの調整 */
-.compact-hero .hero-nav-v6 {
-    padding-top: 16px; /* 線からの距離を詰める */
-    gap: 8px; /* アイコン間の隙間を少し詰める */
-}
-.compact-hero .nav-icon-box {
-    width: 36px;      /* アイコンを少し小さく */
-    height: 36px;
-    font-size: 16px;
-    margin-bottom: 4px;
-}
-/* selection.css: アンケート & クジ機能用スタイル */
-
-/* --- アンケートバナー (Phase 1) --- */
-.survey-banner-phase1 {
-    background: white;
-    border: 2px dashed #4361EE; /* 鮮やかな青 */
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-.survey-banner-phase1:active { transform: scale(0.98); }
-
-.survey-desc {
-    font-size: 11px;
-    color: #666;
-    margin: 0;
-}
-.highlight-pink {
-    color: #F72585; /* ビビッドピンク */
-    font-weight: bold;
-}
-.survey-icon-anim {
-    font-size: 28px;
-    animation: bounceSlow 2s infinite;
-}
-
-/* --- クジバナー (Phase 2) --- */
-.survey-banner-phase2 {
-    background: linear-gradient(to right, #F72585, #FFD600);
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(247, 37, 133, 0.3);
-    cursor: pointer;
-    color: white;
-    position: relative;
-    overflow: hidden;
-}
-.survey-banner-phase2::before {
-    /* キラキラエフェクト */
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: white;
-    opacity: 0.1;
-    animation: pulse 2s infinite;
-}
-.kuji-content { position: relative; z-index: 1; }
-.kuji-title { font-size: 16px; font-weight: bold; margin: 0 0 4px 0; }
-.kuji-desc { font-size: 11px; margin: 0 0 8px 0; }
-.kuji-badge {
-    background: rgba(255,255,255,0.25);
-    backdrop-filter: blur(4px);
-    font-size: 10px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
-}
-.kuji-icon-anim {
-    font-size: 32px;
-    position: relative;
-    z-index: 1;
-    animation: bounceSlow 2s infinite;
-}
-
-/* --- クジ完了 (Phase 3) --- */
-.survey-banner-phase3 {
-    background: #F5F5F5;
-    border: 1px solid #DDD;
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-}
-.kuji-done-text { font-size: 11px; font-weight: bold; color: #888; margin-bottom: 4px; }
-.kuji-result-badge {
-    background: white;
-    border: 1px solid #F72585;
-    color: #F72585;
-    font-size: 13px;
-    font-weight: bold;
-    padding: 6px 12px;
-    border-radius: 8px;
-    display: inline-block;
-}
-
-/* --- モーダル共通 --- */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-}
-.modal-card {
-    background: white;
-    width: 100%;
-    max-width: 360px;
-    border-radius: 16px;
-    overflow: hidden;
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.modal-header {
-    background: #4361EE;
-    color: white;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.modal-header h3 { font-size: 14px; margin: 0; font-weight: bold; }
-.btn-close-modal {
-    background: none; border: none; color: white; font-size: 20px; cursor: pointer;
-}
-.modal-body { padding: 20px; }
-.q-title { font-size: 16px; font-weight: bold; margin-bottom: 16px; color: #333; }
-.option-list { display: flex; flex-direction: column; gap: 10px; }
-.btn-option {
-    background: white;
-    border: 1px solid #E0E0E0;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: left;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-}
-.btn-option:hover {
-    background: #eff6ff;
-    border-color: #4361EE;
-}
-
-/* --- クジ抽選モーダル --- */
-.modal-kuji-container {
-    width: 100%; text-align: center;
-}
-.kuji-status-text { color: white; font-size: 20px; font-weight: bold; margin-bottom: 20px; }
-.kuji-spinner {
-    width: 120px; height: 120px;
-    margin: 0 auto 20px;
-    background: linear-gradient(135deg, #FFD600, #F72585);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    animation: spinSlow 3s linear infinite;
-    box-shadow: 0 0 20px rgba(247, 37, 133, 0.5);
-}
-.kuji-emoji { font-size: 50px; animation: bounceSlow 1s infinite; }
-.kuji-wait-text { color: white; animation: pulse 1s infinite; font-size: 12px; }
-
-.result-card {
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto;
-    position: relative;
-    overflow: hidden;
-    animation: popIn 0.5s;
-}
-.result-bar {
-    position: absolute; top: 0; left: 0; width: 100%; height: 6px;
-    background: linear-gradient(to right, #FFD600, #F72585);
-}
-.congrats-text { color: #F72585; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 4px; }
-.result-rank { font-size: 28px; font-weight: 900; color: #333; margin: 0 0 10px; }
-.result-emoji { font-size: 60px; margin-bottom: 16px; }
-.coupon-box {
-    background: #FAFAFA;
-    border: 2px dashed #F72585;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 20px;
-}
-.coupon-label { font-size: 11px; font-weight: bold; color: #666; }
-.coupon-value { font-size: 28px; font-weight: 900; color: #F72585; margin: 4px 0; }
-.coupon-note { font-size: 10px; color: #999; }
-.btn-use-coupon {
-    width: 100%;
-    background: #F72585;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 14px;
-    box-shadow: 0 4px 10px rgba(247, 37, 133, 0.3);
-}
-
-/* Animations */
-@keyframes bounceSlow {
-    0%, 100% { transform: translateY(-5%); }
-    50% { transform: translateY(5%); }
-}
-@keyframes pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-}
-@keyframes spinSlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-@keyframes popIn {
-    0% { transform: scale(0.8); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* selection.css: アンケート位置・デザイン修正版 */
-
-/* ラッパー: ヒーローエリアの幅に合わせ、中央寄せし、少し上に重ねる */
-/* selection.css: アンケート & クジ機能用スタイル（洗練デザイン版） */
-
-/* --- ラッパー調整 --- */
-/* selection.css: アンケート位置・デザイン（ゴールド・余白なし版） */
-
-/* --- 1. 配置調整（余白を詰める） --- */
-.survey-section-wrapper {
-    max-width: 580px;
-    /* 上に35px引き上げてヒーローに重ねる */
-    /* 下マージンを 0 にして、次のセクションとの隙間をなくす */
-    margin: -35px auto 0; 
-    padding: 0 16px;
-    position: relative;
-    z-index: 10;
-}
-
-/* 次のセクション（厳選セレクション）の調整 */
-.special-selection-ad {
-    /* アンケートバナーが少し被ることを考慮しつつ、余計な空白を削除 */
-    /* バナーの高さ分＋少しの余白のみ確保 */
-    padding-top: 25px; 
-    padding-bottom: 40px;
-    /* 背景色はそのまま維持 */
-    background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
-}
-
-
-/* --- 2. アンケートデザイン（高級感のあるゴールド基調） --- */
-
-/* Phase 1: 未回答時 */
-.survey-banner-card {
-    background: #FFFFFF;
-    /* 青い点線を廃止し、上品なゴールドの破線に変更 */
-    border: 1px dashed #C5A059; 
-    border-radius: 8px;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-    /* 柔らかい影で浮かせる */
-    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.15);
-    
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.survey-banner-card:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-/* テキストスタイル */
-.survey-content { flex: 1; }
-
-.survey-title {
-    font-size: 12px;
-    font-weight: bold;
-    color: #4A3B32; /* 濃いブラウン */
-    margin: 0 0 6px 0;
-    line-height: 1.3;
-    letter-spacing: 0.05em;
-}
-
-.survey-desc {
-    font-size: 12px;
-    color: #887766; /* 優しいブラウン */
-    margin: 0;
-    font-family: var(--font-sans);
-}
-
-/* ポイント強調（赤文字のみでシンプルかつ強力に） */
-.highlight-pink {
-    color: #BF0000; /* 楽天レッド */
-    font-weight: bold;
-    font-size: 13px;
-    background: none; /* 背景削除 */
-    border: none;
-}
-
-/* アイコンアニメーション */
-.survey-icon-anim {
-    font-size: 28px;
-    margin-left: 10px;
-    /* バウンドではなく、ゆったり浮遊させて高級感を出す */
-    animation: floatIcon 3s ease-in-out infinite; 
-}
-
-
-/* --- 3. クジ & 完了画面（トーンを統一） --- */
-
-/* Phase 2: クジ（シャンパンゴールド） */
-.survey-banner-card.kuji-style {
-    background: linear-gradient(135deg, #D4AF37, #F2EBD9, #C5A059);
-    border: 1px solid rgba(255,255,255,0.4);
-    box-shadow: 0 8px 25px rgba(197, 160, 89, 0.3);
-    color: #4A3B32;
-}
-.kuji-badge {
-    background: #4A3B32;
-    color: #FFF;
-    font-size: 10px;
-    padding: 3px 10px;
-    border-radius: 20px;
-}
-
-/* Phase 3: 完了（馴染ませる） */
-.survey-banner-card.done-style {
-    background: #F9F7F4;
-    border: 1px solid #E0D0C0;
-    box-shadow: none;
-    cursor: default;
-    justify-content: center;
-    flex-direction: column;
-}
-.kuji-result-badge {
-    background: #FFF;
-    border: 1px solid #C5A059;
-    color: #C5A059;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-/* アニメーション定義 */
-@keyframes floatIcon {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
 }
