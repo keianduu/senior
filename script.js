@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (track && dots.length > 0) {
         let currentIndex = 0;
         const slideCount = dots.length;
-        const slideInterval = 3000; // 3秒
+        const slideInterval = 6000; // 3秒
 
         // スライド幅 + ギャップ (CSSと合わせる: 88vw + margin? 計算で取得推奨)
         // ここでは簡易的に要素の幅を取得して計算

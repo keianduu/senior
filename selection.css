@@ -590,7 +590,67 @@ a { text-decoration: none; color: inherit; }
     color: var(--price-red);
     font-weight: bold;
 }
+/* selection.css: 追加スタイル */
 
+/* --- カテゴリラベル --- */
+.category-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    border-bottom-right-radius: 8px;
+    z-index: 4;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    font-family: var(--font-sans);
+    letter-spacing: 0.05em;
+}
+
+/* カテゴリ別カラー */
+.category-badge.cat-food { background-color: #D84315; } /* 濃いオレンジ */
+.category-badge.cat-activity { background-color: #2E7D32; } /* グリーン */
+.category-badge.cat-brain { background-color: #1565C0; } /* ブルー */
+
+
+/* --- 編集部おすすめコメント --- */
+.editor-voice {
+    background-color: #F9F9F7; /* 背景は薄いグレーベージュ */
+    border: 1px solid #E0E0E0;
+    border-left: 4px solid var(--gold-main); /* 左端にゴールドのアクセント */
+    border-radius: 4px;
+    padding: 10px;
+    margin: 12px 0;
+}
+
+.ev-header {
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--brown-text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ev-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+    font-family: "Yu Mincho", serif; /* コメントは明朝体で情緒的に */
+    text-align: justify;
+}
+
+/* 既存タイトルの下マージン調整（コメントとの距離） */
+.featured-info h3 {
+    margin-bottom: 0; /* コメントがすぐ下に来るので詰める */
+}
+/* 既存の説明文（featured-desc）はコメントが入るので削除するか、CSSで非表示にしてもOK */
+.featured-product.pickup-style .featured-desc {
+    display: none; /* カルーセル内では説明文を隠し、コメントを優先表示 */
+}
 /* ==========================================================================
    8. カルーセル (Carousel)
    ========================================================================== */
