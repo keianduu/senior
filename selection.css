@@ -118,7 +118,7 @@ a { text-decoration: none; color: inherit; }
     
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 8px;
-    padding: 50px 30px;
+    padding: 24px 24px;
     text-align: center;
     
     /* 影を柔らかく広げる */
@@ -147,7 +147,7 @@ a { text-decoration: none; color: inherit; }
 .hero-title-v6 {
     font-family: var(--font-serif);
     color: var(--brown-text);
-    font-size: 20px;
+    font-size: 24px;
     text-shadow: none;
     margin-bottom: 24px;
     line-height: 1.6;
@@ -568,9 +568,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* 3. デコレーションラインの余白短縮 */
-.compact-hero .hero-header-deco {
-    margin-bottom: 12px; /* 元は 24px */
-}
+
 .compact-hero .hero-header-deco .text {
     font-size: 10px; /* 少し小さく */
 }
@@ -587,8 +585,8 @@ a { text-decoration: none; color: inherit; }
 
 /* 5. タイトルのサイズと余白調整 */
 .compact-hero .hero-title-v6 {
-    font-size: 22px; /* スマホで見やすいサイズ */
-    margin-bottom: 12px;
+    font-size: 32px; /* スマホで見やすいサイズ */
+    margin-bottom: 24px;
     line-height: 1.4;
     letter-spacing: 0.02em;
 }
@@ -892,8 +890,7 @@ a { text-decoration: none; color: inherit; }
 .survey-content { flex: 1; }
 
 .survey-title {
-    font-family: var(--font-serif);
-    font-size: 15px;
+    font-size: 12px;
     font-weight: bold;
     color: #4A3B32; /* 濃いブラウン */
     margin: 0 0 6px 0;
