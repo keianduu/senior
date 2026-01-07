@@ -90,3 +90,70 @@ function updatePointStatus(pointValue) {
     iconEl.innerText = icon;
     iconEl.style.backgroundColor = bgColor;
 }
+
+/* script.js */
+
+// グローバル関数として定義（HTMLのonclickから呼ぶため）
+window.openSurveyModal = function() {
+    const modal = document.getElementById('modal-survey');
+    const q1 = document.getElementById('survey-q1');
+    const q2 = document.getElementById('survey-q2');
+    const stepNum = document.getElementById('survey-step-num');
+
+    if(modal) {
+        modal.style.display = 'flex';
+        // 状態リセット
+        if(q1) q1.style.display = 'block';
+        if(q2) q2.style.display = 'none';
+        if(stepNum) stepNum.innerText = '1';
+    } else {
+        console.error("Survey Modal not found");
+    }
+};
+
+window.nextSurveyStep = function(step) {
+    if(step === 2) {
+        document.getElementById('survey-q1').style.display = 'none';
+        document.getElementById('survey-q2').style.display = 'block';
+        document.getElementById('survey-step-num').innerText = '2';
+    }
+};
+
+window.finishSurvey = function() {
+    // モーダルを閉じる
+    document.getElementById('modal-survey').style.display = 'none';
+    
+    // UI切り替え: アンケート -> クジ
+    document.getElementById('survey-entry').style.display = 'none';
+    const kujiBanner = document.getElementById('kuji-entry');
+    kujiBanner.style.display = 'flex';
+    
+    // ユーザーへのフィードバック
+    alert("5ポイント獲得しました！\n続いて「特選クジ」に挑戦できます！");
+};
+
+window.openKujiModal = function() {
+    const modal = document.getElementById('modal-kuji');
+    modal.style.display = 'flex';
+    
+    // 抽選アニメーションリセット
+    document.getElementById('kuji-spinning').style.display = 'block';
+    document.getElementById('kuji-result').style.display = 'none';
+    
+    // 2.5秒後に結果表示
+    setTimeout(() => {
+        document.getElementById('kuji-spinning').style.display = 'none';
+        document.getElementById('kuji-result').style.display = 'block';
+    }, 2500);
+};
+
+window.finishKujiUI = function() {
+    // クジ -> 完了表示
+    document.getElementById('kuji-entry').style.display = 'none';
+    document.getElementById('kuji-done').style.display = 'flex';
+};
+
+window.closeModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if(modal) modal.style.display = 'none';
+};
