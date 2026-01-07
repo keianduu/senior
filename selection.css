@@ -532,17 +532,39 @@ a { text-decoration: none; color: inherit; }
 }
 /* selection.css: ヒーローエリアのコンパクト化設定 */
 
-/* 1. ヒーローエリア全体の余白調整 */
+/* --- 1. ヒーローエリア内のレイアウト調整 --- */
 .hero-banner-v6-cinematic.compact-hero {
-    /* 背景画像の高さ調整（コンテンツに合わせて自動伸縮させるためpaddingで制御） */
-    padding: 20px 16px 20px; 
-    /* 下線を少し控えめに */
-    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+    /* コンテンツが増えたので少しパディングを増やす */
+    padding: 20px 16px 30px; 
+    border-bottom: none; /* ここでの線は削除（次のセクションと繋げるため） */
 }
 
-/* 2. ガラスカードのパディング圧縮 */
+/* ガラスカードの下に余白を作る */
 .compact-hero .glass-card-v6 {
-    padding: 24px 20px; /* 元は 50px 30px でした */
+    margin-bottom: 20px; /* アンケートとの距離 */
+}
+
+/* アンケートラッパー（ヒーロー内配置） */
+.survey-section-wrapper {
+    max-width: 580px;
+    margin: 0 auto; /* 中央寄せのみ */
+    padding: 0; /* 親のパディングがあるので0でOK */
+    position: relative;
+    z-index: 10;
+}
+
+/* --- 2. 次のセクション（厳選セレクション） --- */
+.special-selection-ad {
+    /* ヒーローエリアの直後に隙間なく配置 */
+    margin-top: 0;
+    padding-top: 40px; /* 内部の余白のみ確保 */
+    padding-bottom: 40px;
+    
+    /* 上のヒーローとの境界線 */
+    border-top: 1px solid rgba(197, 160, 89, 0.3);
+    
+    /* 背景色は維持 */
+    background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
 }
 
 /* 3. デコレーションラインの余白短縮 */
@@ -817,195 +839,131 @@ a { text-decoration: none; color: inherit; }
 /* selection.css: アンケート & クジ機能用スタイル（洗練デザイン版） */
 
 /* --- ラッパー調整 --- */
+/* selection.css: アンケート位置・デザイン（ゴールド・余白なし版） */
+
+/* --- 1. 配置調整（余白を詰める） --- */
 .survey-section-wrapper {
     max-width: 580px;
-    margin: -35px auto 30px; /* ヒーローエリアへの重なりを少し増やす */
+    /* 上に35px引き上げてヒーローに重ねる */
+    /* 下マージンを 0 にして、次のセクションとの隙間をなくす */
+    margin: -35px auto 0; 
     padding: 0 16px;
     position: relative;
     z-index: 10;
 }
 
-/* --- Phase 1: アンケートカード（上質なレターセット風） --- */
+/* 次のセクション（厳選セレクション）の調整 */
+.special-selection-ad {
+    /* アンケートバナーが少し被ることを考慮しつつ、余計な空白を削除 */
+    /* バナーの高さ分＋少しの余白のみ確保 */
+    padding-top: 25px; 
+    padding-bottom: 40px;
+    /* 背景色はそのまま維持 */
+    background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
+}
+
+
+/* --- 2. アンケートデザイン（高級感のあるゴールド基調） --- */
+
+/* Phase 1: 未回答時 */
 .survey-banner-card {
     background: #FFFFFF;
-    /* 上品なゴールドの破線に変更 */
-    border: 1px dashed var(--gold-main); 
-    border-radius: 8px; /* 角丸を少し抑えて大人っぽく */
-    padding: 18px 24px;
+    /* 青い点線を廃止し、上品なゴールドの破線に変更 */
+    border: 1px dashed #C5A059; 
+    border-radius: 8px;
+    padding: 16px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     
-    /* 柔らかく広がるゴールドの影 */
-    box-shadow: 0 10px 25px rgba(197, 160, 89, 0.15);
+    /* 柔らかい影で浮かせる */
+    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.15);
     
     cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* ホバー/タップ時の動き */
 .survey-banner-card:active {
-    transform: translateY(2px);
-    box-shadow: 0 4px 10px rgba(197, 160, 89, 0.1);
+    transform: scale(0.98);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* タイトル周り */
-.survey-content {
-    flex: 1;
-}
+/* テキストスタイル */
+.survey-content { flex: 1; }
+
 .survey-title {
-    font-size: 14px;
+    font-family: var(--font-serif);
+    font-size: 15px;
     font-weight: bold;
-    color: var(--brown-text); /* 落ち着いたブラウン */
+    color: #4A3B32; /* 濃いブラウン */
     margin: 0 0 6px 0;
-    line-height: 1.4;
+    line-height: 1.3;
     letter-spacing: 0.05em;
 }
 
 .survey-desc {
     font-size: 12px;
-    color: #887766; /* 少し淡いブラウングレー */
+    color: #887766; /* 優しいブラウン */
     margin: 0;
     font-family: var(--font-sans);
 }
 
-/* ポイント強調（楽天レッドで上品に） */
+/* ポイント強調（赤文字のみでシンプルかつ強力に） */
 .highlight-pink {
-    color: var(--rakuten-red);
+    color: #BF0000; /* 楽天レッド */
     font-weight: bold;
     font-size: 13px;
-    background: none; /* 背景色を削除してスッキリさせる */
-    border-bottom: 1px solid rgba(191, 0, 0, 0.3); /* 控えめな下線 */
-    padding-bottom: 1px;
-    margin: 0 2px;
+    background: none; /* 背景削除 */
+    border: none;
 }
 
 /* アイコンアニメーション */
 .survey-icon-anim {
     font-size: 28px;
-    margin-left: 16px;
-    color: var(--gold-main);
-    /* ふんわり浮くアニメーション */
-    animation: floatIcon 3s ease-in-out infinite;
+    margin-left: 10px;
+    /* バウンドではなく、ゆったり浮遊させて高級感を出す */
+    animation: floatIcon 3s ease-in-out infinite; 
 }
 
-/* --- Phase 2: クジ（シャンパンゴールドチケット） --- */
+
+/* --- 3. クジ & 完了画面（トーンを統一） --- */
+
+/* Phase 2: クジ（シャンパンゴールド） */
 .survey-banner-card.kuji-style {
-    /* 落ち着いたゴールドのグラデーション */
-    background: linear-gradient(135deg, #D4AF37 0%, #F2EBD9 50%, #C5A059 100%);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    color: var(--brown-text);
-}
-/* キラキラエフェクト調整 */
-.survey-banner-card.kuji-style::after {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-    transform: rotate(30deg);
-    animation: shine 6s infinite;
-    pointer-events: none;
-}
-
-.kuji-title { 
-    font-family: var(--font-serif);
-    font-size: 18px; 
-    font-weight: bold; 
-    margin: 0 0 4px 0;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
-}
-.kuji-desc { 
-    font-size: 12px; 
-    margin: 0 0 6px 0; 
-    font-weight: 500;
+    background: linear-gradient(135deg, #D4AF37, #F2EBD9, #C5A059);
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 8px 25px rgba(197, 160, 89, 0.3);
+    color: #4A3B32;
 }
 .kuji-badge {
-    background: var(--brown-text);
-    color: #FFF; /* ブラウン背景に白文字 */
+    background: #4A3B32;
+    color: #FFF;
     font-size: 10px;
-    font-weight: bold;
     padding: 3px 10px;
     border-radius: 20px;
-    display: inline-block;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.kuji-icon-anim {
-    font-size: 36px;
-    animation: bounceSlow 2s infinite;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
-/* --- Phase 3: 完了（控えめなベージュ） --- */
+/* Phase 3: 完了（馴染ませる） */
 .survey-banner-card.done-style {
-    background: var(--bg-beige);
+    background: #F9F7F4;
     border: 1px solid #E0D0C0;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
-    color: #998877;
+    box-shadow: none;
+    cursor: default;
+    justify-content: center;
+    flex-direction: column;
 }
 .kuji-result-badge {
     background: #FFF;
-    border: 1px solid var(--gold-main);
-    color: var(--gold-main);
-    padding: 4px 14px;
+    border: 1px solid #C5A059;
+    color: #C5A059;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
 }
 
-/* --- モーダル調整（トーン合わせ） --- */
-.modal-card {
-    border-radius: 8px; /* 角丸を少しシャープに */
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-
-.modal-header {
-    background: var(--brown-text); /* ダークブラウンで引き締める */
-    color: #F2EBD9; /* 薄いゴールド文字 */
-    padding: 14px 20px;
-}
-.modal-header h3 {
-    font-family: var(--font-serif);
-    letter-spacing: 0.05em;
-}
-
-.q-title {
-    color: var(--brown-text);
-    font-family: var(--font-serif);
-    border-bottom: 1px solid var(--gold-main);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.btn-option {
-    border: 1px solid #E0E0E0;
-    transition: all 0.2s;
-}
-.btn-option:hover {
-    background: var(--bg-beige);
-    border-color: var(--gold-main);
-    color: var(--brown-text);
-}
-
-/* クジ結果カード */
-.result-card {
-    border-top: 4px solid var(--gold-main); /* 上部アクセントをゴールドに */
-}
-.result-bar { background: var(--gold-main); opacity: 0.5; } /* 背景バー調整 */
-.congrats-text { color: var(--gold-main); letter-spacing: 3px; }
-.coupon-value { color: var(--price-red); } /* 値段は赤で視認性維持 */
-.btn-use-coupon {
-    background: linear-gradient(to bottom, #D4AF37, #C5A059); /* ゴールドグラデーションボタン */
-    box-shadow: 0 4px 10px rgba(197, 160, 89, 0.4);
-}
-
-/* --- アニメーション定義 --- */
+/* アニメーション定義 */
 @keyframes floatIcon {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
-@keyframes shine {
-    0% { transform: translateX(-200%) rotate(30deg); }
-    20% { transform: translateX(200%) rotate(30deg); }
-    100% { transform: translateX(200%) rotate(30deg); }
+    50% { transform: translateY(-6px); }
 }
