@@ -348,48 +348,84 @@ a { text-decoration: none; color: inherit; }
 /* ==========================================================================
    5. 厳選セレクション / 広告枠 (Special Selection Ad)
    ========================================================================== */
-.special-selection-ad {
+   .special-selection-ad {
     margin-top: 0;
-    /* 【修正】上パディングを減らして直結させる */
-    padding-top: 24px;
-    padding-bottom: 40px;
-    /* 【修正】不要なボーダーを削除 */
+    /* 【修正】1st Viewに入れるため、パディングを極限まで詰める */
+    padding-top: 16px; 
+    padding-bottom: 24px;
     border-top: none;
     border-bottom: 1px solid #E0E0E0;
     background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
+    overflow: hidden; /* 横スクロールバー防止 */
 }
 
 .ad-header {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 16px; /* ヘッダー下の余白も詰める */
     color: var(--brown-text);
 }
-.ad-header i { color: var(--gold-main); font-size: 20px; margin-bottom: 8px; }
+.ad-header i { color: var(--gold-main); font-size: 18px; margin-bottom: 4px; }
 .ad-header h3 {
     font-family: var(--font-serif);
-    font-size: 20px;
-    margin: 0 0 4px 0;
+    font-size: 18px; /* 少し小さくして収まり良く */
+    margin: 0 0 2px 0;
     position: relative;
     display: inline-block;
 }
 .ad-header h3::before, .ad-header h3::after {
-    content: "";
-    display: inline-block;
-    width: 30px;
-    height: 1px;
-    background: var(--gold-main);
-    vertical-align: middle;
-    margin: 0 12px;
+    content: ""; display: inline-block; width: 20px; height: 1px;
+    background: var(--gold-main); vertical-align: middle; margin: 0 8px;
 }
-.ad-header p { font-size: 11px; color: #888; margin: 0; }
+.ad-header p { font-size: 10px; color: #888; margin: 0; }
 
+
+/* --- カルーセル構造 --- */
+.ad-carousel-container {
+    width: 100%;
+    overflow: hidden; /* はみ出しを隠す */
+}
+
+.ad-carousel-track {
+    display: flex;
+    /* 左側に最初のアイテムを合わせるためのパディング */
+    padding-left: 16px; 
+    /* トラック全体の移動をなめらかに */
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+/* ピックアップ商品カード (カルーセル内アイテム) */
 .featured-product.pickup-style {
-    margin: 0 16px;
-    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.2);
+    /* 【重要】画面幅の88%にして、右隣をチラ見せする */
+    flex: 0 0 88%;
+    width: 88%;
+    margin: 0 12px 0 0; /* 右側に隙間を開ける */
+    
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
     border: 1px solid rgba(197, 160, 89, 0.4);
     background: linear-gradient(to bottom, #fff, #FDFBF7);
     border-radius: 8px;
     overflow: hidden;
+}
+
+/* --- ドットインジケーター --- */
+.ad-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+.ad-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #DDD;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+.ad-dot.active {
+    background-color: var(--gold-main);
+    width: 24px; /* アクティブ時は横長に */
+    border-radius: 4px;
 }
 
 /* ==========================================================================

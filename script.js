@@ -157,3 +157,55 @@ window.closeModal = function(modalId) {
     const modal = document.getElementById(modalId);
     if(modal) modal.style.display = 'none';
 };
+
+/* script.js 末尾に追加 */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 厳選セレクション カルーセル制御 ---
+    const track = document.getElementById('adCarouselTrack');
+    const dots = document.querySelectorAll('.ad-dot');
+    
+    if (track && dots.length > 0) {
+        let currentIndex = 0;
+        const slideCount = dots.length;
+        const slideInterval = 3000; // 3秒
+
+        // スライド幅 + ギャップ (CSSと合わせる: 88vw + margin? 計算で取得推奨)
+        // ここでは簡易的に要素の幅を取得して計算
+        const updateSlidePosition = () => {
+            const firstSlide = track.children[0];
+            // スライド幅 + 右マージン(12px)
+            // getComputedStyleで正確なマージンを取得しても良いが、固定値12pxと仮定
+            const moveAmount = firstSlide.offsetWidth + 12; 
+            
+            track.style.transform = `translateX(-${currentIndex * moveAmount}px)`;
+
+            // ドット更新
+            dots.forEach((dot, index) => {
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        };
+
+        // 次へ進む
+        const nextSlide = () => {
+            currentIndex++;
+            if (currentIndex >= slideCount) {
+                currentIndex = 0;
+            }
+            updateSlidePosition();
+        };
+
+        // 自動再生開始
+        let autoPlay = setInterval(nextSlide, slideInterval);
+
+        // タッチ操作（簡易版）やクリックでの停止を入れるならここに記述
+        // 今回は自動スライドのみ実装
+        
+        // リサイズ対応（幅が変わった時のズレ補正）
+        window.addEventListener('resize', updateSlidePosition);
+    }
+});
