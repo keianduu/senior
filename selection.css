@@ -352,10 +352,8 @@ a { text-decoration: none; color: inherit; }
    5. 厳選セレクション / 広告枠 (Special Selection Ad)
    ========================================================================== */
    .special-selection-ad {
-    /* 【修正】マイナスマージンで上に引き上げ、余白を完全に埋める */
+    /* ヒーローエリアの影の下に潜り込ませて余白を消す */
     margin-top: -16px; 
-    
-    /* 内部の余白も削除 */
     padding-top: 0;
     
     padding-bottom: 24px;
@@ -364,18 +362,16 @@ a { text-decoration: none; color: inherit; }
     background: linear-gradient(to bottom, #FDFBF7, #FFF8E1);
     overflow: hidden;
     position: relative;
-    z-index: 5; /* アンケート(z-index:10)の下に潜り込ませる */
+    z-index: 5;
 }
 
 .ad-header {
     text-align: center;
     margin-bottom: 16px;
     color: var(--brown-text);
-    
-    /* 【修正】王冠アイコンの位置調整（バナーの影と被らないギリギリの位置） */
+    /* 王冠アイコンの位置調整 */
     margin-top: 20px; 
 }
-
 .ad-header i { color: var(--gold-main); font-size: 18px; margin-bottom: 4px; }
 .ad-header h3 {
     font-family: var(--font-serif);
@@ -390,39 +386,18 @@ a { text-decoration: none; color: inherit; }
 }
 .ad-header p { font-size: 10px; color: #888; margin: 0; }
 
-/* ...（カルーセル等のスタイルは変更なし）... */
-
 
 /* --- カルーセル構造 --- */
 .ad-carousel-container {
     width: 100%;
-    overflow: hidden; /* はみ出しを隠す */
+    overflow: hidden;
 }
-
 .ad-carousel-track {
     display: flex;
-    /* 左側に最初のアイテムを合わせるためのパディング */
     padding-left: 16px; 
-    /* トラック全体の移動をなめらかに */
     transition: transform 0.5s ease-in-out;
     width: 100%;
 }
-
-/* ピックアップ商品カード (カルーセル内アイテム) */
-.featured-product.pickup-style {
-    /* 【重要】画面幅の88%にして、右隣をチラ見せする */
-    flex: 0 0 88%;
-    width: 88%;
-    margin: 0 12px 0 0; /* 右側に隙間を開ける */
-    
-    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
-    border: 1px solid rgba(197, 160, 89, 0.4);
-    background: linear-gradient(to bottom, #fff, #FDFBF7);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* --- ドットインジケーター --- */
 .ad-carousel-dots {
     display: flex;
     justify-content: center;
@@ -430,16 +405,129 @@ a { text-decoration: none; color: inherit; }
     margin-top: 16px;
 }
 .ad-dot {
-    width: 8px;
-    height: 8px;
-    background-color: #DDD;
-    border-radius: 50%;
-    transition: all 0.3s;
+    width: 8px; height: 8px; background-color: #DDD; border-radius: 50%; transition: all 0.3s;
 }
 .ad-dot.active {
-    background-color: var(--gold-main);
-    width: 24px; /* アクティブ時は横長に */
+    background-color: var(--gold-main); width: 24px; border-radius: 4px;
+}
+
+
+/* --- 【重要】厳選セレクション専用カードスタイル (pickup-style) --- */
+
+/* カード枠 */
+.featured-product.pickup-style {
+    flex: 0 0 88%;
+    width: 88%;
+    margin: 0 12px 0 0;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
+    border: 1px solid rgba(197, 160, 89, 0.4);
+    background: linear-gradient(to bottom, #fff, #FDFBF7);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* 画像エリア（16:9に変更して高さを抑える） */
+.featured-product.pickup-style .product-image-large {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9; /* ここで高さを圧縮 */
+}
+.featured-product.pickup-style .product-image-large img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+
+/* バッジ（左上に移動して重なり防止） */
+.featured-product.pickup-style .badge-seniors-best {
+    position: absolute;
+    top: 0; left: 0; bottom: auto; /* 位置リセット */
+    
+    width: 56px; height: 56px; /* 少し小さく */
+    margin: 8px;
+    background: radial-gradient(circle, #FFD700, #DAA520);
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #4A3B32;
+    z-index: 5;
+}
+.featured-product.pickup-style .badge-text { 
+    font-family: var(--font-serif); font-weight: bold; font-size: 8px; line-height: 1; text-align: center; 
+}
+.featured-product.pickup-style .stars { font-size: 7px; margin-top: 1px; }
+
+/* 情報エリア（余白を詰める） */
+.featured-product.pickup-style .featured-info {
+    padding: 16px; /* 24pxから半減 */
+}
+
+/* selection.css (Section 5内) */
+
+/* --- カテゴリバッジ（インライン化・色統一） --- */
+.featured-product.pickup-style .category-badge {
+    display: inline-block;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+    font-size: 10px;
+    line-height: 1;
+    border: 1px solid #C5A059;
     border-radius: 4px;
+    
+    /* 【変更】個別の色をやめ、Heroエリアと同じゴールドに統一 */
+    background-color: #FFF; /* var(--gold-main) */
+    color:#C5A059;
+    
+    font-weight: bold;
+    font-family: var(--font-sans);
+    position: static;
+    box-shadow: none;
+}
+
+/* 【削除】以下の個別カラー定義は削除（またはコメントアウト）してください */
+/* .featured-product.pickup-style .category-badge.cat-food { background-color: #D84315; }
+.featured-product.pickup-style .category-badge.cat-activity { background-color: #2E7D32; }
+.featured-product.pickup-style .category-badge.cat-brain { background-color: #1565C0; }
+*/
+
+/* タイトル */
+.featured-product.pickup-style .featured-info h3 {
+    font-size: 15px;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+    color: var(--brown-text);
+}
+
+/* 編集部コメント */
+.featured-product.pickup-style .editor-voice {
+    background-color: #F9F9F7;
+    border: 1px solid #E0E0E0;
+    border-left: 3px solid var(--gold-main);
+    border-radius: 4px;
+    padding: 8px;
+    margin: 0 0 10px 0;
+}
+.featured-product.pickup-style .ev-header {
+    font-size: 9px; font-weight: bold; color: var(--brown-text); margin-bottom: 2px;
+}
+.featured-product.pickup-style .ev-text {
+    font-size: 11px; line-height: 1.4; color: #333; margin: 0; font-family: "Yu Mincho", serif; text-align: justify;
+}
+
+/* 価格・店舗・ボタン */
+.featured-product.pickup-style .price-row {
+    font-size: 18px; color: var(--price-red); font-weight: bold; margin-bottom: 4px;
+}
+.featured-product.pickup-style .shop-name {
+    font-size: 10px; color: #888; margin-bottom: 10px; border-top: none; padding-top: 0;
+}
+.featured-product.pickup-style .btn-detail {
+    padding: 10px; font-size: 13px;
+    background: linear-gradient(to bottom, #D4AF37, #C5A059);
+    color: white; text-align: center; border-radius: 4px; font-weight: bold; display: block;
 }
 
 /* ==========================================================================
@@ -592,26 +680,42 @@ a { text-decoration: none; color: inherit; }
 }
 /* selection.css: 追加スタイル */
 
-/* --- カテゴリラベル --- */
+/* selection.css */
+
+/* --- カテゴリラベル（テキストエリア配置版） --- */
 .category-badge {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 6px 12px;
-    font-size: 11px;
-    font-weight: bold;
+    /* 絶対配置を解除し、コンテンツとして配置 */
+    position: static; 
+    display: inline-block;
+    
+    /* 余白とサイズ感 */
+    margin-bottom: 8px;
+    padding: 4px 10px;
+    font-size: 10px;
+    line-height: 1;
+    
+    /* デザイン：カプセル型に近い形状でモダンに */
+    border-radius: 4px;
     color: white;
-    border-bottom-right-radius: 8px;
-    z-index: 4;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    font-weight: bold;
     font-family: var(--font-sans);
     letter-spacing: 0.05em;
+    
+    /* 影を少し控えめに */
+    box-shadow: none; 
 }
 
-/* カテゴリ別カラー */
-.category-badge.cat-food { background-color: #D84315; } /* 濃いオレンジ */
-.category-badge.cat-activity { background-color: #2E7D32; } /* グリーン */
-.category-badge.cat-brain { background-color: #1565C0; } /* ブルー */
+/* カテゴリ別カラー（変更なし） */
+.category-badge.cat-food { background-color: #D84315; }
+.category-badge.cat-activity { background-color: #2E7D32; }
+.category-badge.cat-brain { background-color: #1565C0; }
+
+/* 既存タイトルの調整 */
+.featured-info h3 {
+    /* バッジが入ったので上マージンは不要、下はコメントとの距離を維持 */
+    margin-top: 0;
+    margin-bottom: 8px; 
+}
 
 
 /* --- 編集部おすすめコメント --- */
@@ -651,6 +755,7 @@ a { text-decoration: none; color: inherit; }
 .featured-product.pickup-style .featured-desc {
     display: none; /* カルーセル内では説明文を隠し、コメントを優先表示 */
 }
+
 /* ==========================================================================
    8. カルーセル (Carousel)
    ========================================================================== */
