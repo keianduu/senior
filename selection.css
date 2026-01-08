@@ -529,7 +529,9 @@ a { text-decoration: none; color: inherit; }
     background: linear-gradient(to bottom, #D4AF37, #C5A059);
     color: white; text-align: center; border-radius: 4px; font-weight: bold; display: block;
 }
-
+.ad-grid-spacing {
+    margin-top: 24px; /* カルーセルとの距離 */
+}
 /* ==========================================================================
    6. カテゴリセクション (Category Sections)
    ========================================================================== */
