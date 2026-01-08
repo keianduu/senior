@@ -35,15 +35,15 @@
                     <div class="hero-nav-v6">
                         <a href="#nutrition" class="nav-item-v6">
                             <div class="nav-icon-box"><i class="fas fa-utensils"></i></div>
-                            <div class="nav-text-box"><span class="ja">美食と栄養</span><span class="en">Food & Nutrition</span></div>
+                            <div class="nav-text-box"><span class="ja">食品・栄養</span><span class="en">Food & Nutrition</span></div>
                         </a>
                         <a href="#activity" class="nav-item-v6">
                             <div class="nav-icon-box"><i class="fas fa-spa"></i></div>
-                            <div class="nav-text-box"><span class="ja">運動とケア</span><span class="en">Activity & Care</span></div>
+                            <div class="nav-text-box"><span class="ja">運動・ケア</span><span class="en">Activity & Care</span></div>
                         </a>
                         <a href="#brain" class="nav-item-v6">
                             <div class="nav-icon-box"><i class="fas fa-book-open"></i></div>
-                            <div class="nav-text-box"><span class="ja">脳活と趣味</span><span class="en">Brain & Hobby</span></div>
+                            <div class="nav-text-box"><span class="ja">脳活・趣味</span><span class="en">Brain & Hobby</span></div>
                         </a>
                     </div>
                 </div>
@@ -230,145 +230,146 @@
                 <h3 class="list-title">商品一覧</h3>
             </div>
         
-            <div class="filter-sort-container">
+            <div class="category-sticky-bar">
                 <div class="category-filter-chips">
                     <button class="cat-chip" data-cat="food"><i class="fas fa-utensils"></i> 美食・栄養</button>
                     <button class="cat-chip" data-cat="activity"><i class="fas fa-spa"></i> 運動・ケア</button>
                     <button class="cat-chip" data-cat="brain"><i class="fas fa-book-open"></i> 脳活・趣味</button>
-                    <button class="cat-chip" data-cat="other"><i class="fas fa-gift"></i> その他</button>
-                    <button class="cat-chip active" data-cat="all">すべて</button>
                 </div>
-                <div class="sort-area">
-                    <span class="sort-label">並び替え:</span>
-                    <select class="sort-select">
-                        <option value="recommend">おすすめ順</option>
-                        <option value="new">新着順</option>
-                        <option value="price_asc">価格が安い順</option>
-                        <option value="price_desc">価格が高い順</option>
-                    </select>
-                </div>
-
+            </div>
+        
+            <div class="sort-area-standalone">
+                <span class="sort-label">並び替え:</span>
+                <select class="sort-select">
+                    <option value="recommend">おすすめ順</option>
+                    <option value="new">新着順</option>
+                    <option value="price_asc">価格が安い順</option>
+                    <option value="price_desc">価格が高い順</option>
+                </select>
             </div>
         
             <div class="product-grid">
-    
-                <div class="product-card">
+                
+                <div class="product-card" data-category="food">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Honey" alt="ハチミツ"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-food">美食・栄養</span>
+                        <span class="category-badge"><i class="fas fa-utensils"></i> 美食・栄養</span>
                         <h4 class="p-title">国産ハチミツ 3種セット｜非加熱・純度100%</h4>
                         <div class="p-price">3,200円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 蜂蜜本舗 山田</div>
                     </div>
                 </div>
-                <div class="product-card">
+        
+                <div class="product-card" data-category="activity">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Cushion" alt="クッション"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-activity">運動・ケア</span>
+                        <span class="category-badge"><i class="fas fa-spa"></i> 運動とケア</span>
                         <h4 class="p-title">骨盤サポートクッション｜座るだけで姿勢ケア</h4>
                         <div class="p-price">4,980円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 快適生活ラボ</div>
                     </div>
                 </div>
-                <div class="product-card">
+        
+                <div class="product-card" data-category="brain">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Coloring" alt="塗り絵"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-brain">脳活・趣味</span>
+                        <span class="category-badge"><i class="fas fa-book-open"></i> 脳活・趣味</span>
                         <h4 class="p-title">大人の塗り絵セット｜色鉛筆36色付き</h4>
                         <div class="p-price">2,500円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> アートステーショナリー</div>
                     </div>
                 </div>
-                <div class="product-card">
+        
+                <div class="product-card" data-category="activity">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Walking+Pole" alt="ポール"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-activity">運動・ケア</span>
+                        <span class="category-badge"><i class="fas fa-spa"></i> 運動とケア</span>
                         <h4 class="p-title">ウォーキングポール｜軽量カーボン製 2本セット</h4>
                         <div class="p-price">8,500円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> スポーツデポ</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="food">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Umeboshi" alt="梅干し"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-food">美食・栄養</span>
+                        <span class="category-badge"><i class="fas fa-utensils"></i> 美食・栄養</span>
                         <h4 class="p-title">紀州南高梅 減塩はちみつ漬け｜贈答用木箱入り</h4>
                         <div class="p-price">3,500円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 紀州梅本舗</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="brain">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Puzzle" alt="パズル"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-brain">脳活・趣味</span>
+                        <span class="category-badge"><i class="fas fa-book-open"></i> 脳活・趣味</span>
                         <h4 class="p-title">木製 立体パズル（日本のお城シリーズ）</h4>
                         <div class="p-price">4,200円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 脳トレ広場</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="activity">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Stick" alt="ステッキ"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-activity">運動・ケア</span>
+                        <span class="category-badge"><i class="fas fa-spa"></i> 運動とケア</span>
                         <h4 class="p-title">おしゃれ軽量ステッキ｜折りたたみ式・花柄</h4>
                         <div class="p-price">6,800円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 杖と歩行の専門店</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="food">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Fish" alt="西京漬け"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-food">美食・栄養</span>
+                        <span class="category-badge"><i class="fas fa-utensils"></i> 美食・栄養</span>
                         <h4 class="p-title">銀だら入り 西京漬け詰め合わせ 5種10切れ</h4>
                         <div class="p-price">5,400円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 築地 魚河岸</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="activity">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Nail+Clipper" alt="爪切り"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-activity">運動・ケア</span>
+                        <span class="category-badge"><i class="fas fa-spa"></i> 運動とケア</span>
                         <h4 class="p-title">拡大鏡付き 高級爪切り｜匠の技・日本製</h4>
                         <div class="p-price">1,980円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 生活雑貨の店 匠</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="brain">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Bonsai" alt="盆栽"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-brain">脳活・趣味</span>
+                        <span class="category-badge"><i class="fas fa-book-open"></i> 脳活・趣味</span>
                         <h4 class="p-title">ミニ盆栽 栽培キット（黒松）｜初心者向けガイド付</h4>
                         <div class="p-price">3,300円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 緑のある暮らし</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="activity">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Bath+Salt" alt="入浴剤"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-activity">運動・ケア</span>
+                        <span class="category-badge"><i class="fas fa-spa"></i> 運動とケア</span>
                         <h4 class="p-title">薬用入浴剤 湯の素（30包）｜全国の名湯めぐり</h4>
                         <div class="p-price">2,800円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 温泉の素本舗</div>
                     </div>
                 </div>
-            
-                <div class="product-card">
+        
+                <div class="product-card" data-category="activity">
                     <div class="p-img"><img src="https://placehold.jp/300x300.png?text=Mattress" alt="マットレス"></div>
                     <div class="p-info-simple">
-                        <span class="category-badge-simple cat-activity">運動・ケア</span>
+                        <span class="category-badge"><i class="fas fa-spa"></i> 運動とケア</span>
                         <h4 class="p-title">高反発マットレス トッパー｜腰痛対策・洗えるカバー</h4>
                         <div class="p-price">12,800円<span class="p-tax">(税込)</span></div>
                         <div class="p-shop-simple"><i class="fas fa-store"></i> 快眠ラボ</div>
                     </div>
                 </div>
-            
+        
             </div>
             
             <button class="btn-more">さらに読み込む <i class="fas fa-chevron-down"></i></button>

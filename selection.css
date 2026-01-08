@@ -533,7 +533,7 @@ a { text-decoration: none; color: inherit; }
     font-size: var(--fs-9); font-weight: bold; color: var(--brown-text); margin-bottom: 2px;
 }
 .featured-product.pickup-style .ev-text {
-    font-size: var(--fs-11); line-height: 1.4; color: #333; margin: 0; serif; text-align: justify;
+    font-size: var(--fs-11); line-height: 1.4; color: #333; margin: 0; text-align: justify;
 }
 
 /* 価格・店舗・ボタン */
@@ -799,9 +799,104 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* --- フィルタ & ソート コンテナ --- */
+/* selection.css: フィルタ & ソート コンテナ (スクロール追従版) */
+
 .filter-sort-container {
+    /* 追従設定 */
+    position: sticky; /* position: -webkit-sticky; もブラウザによっては必要ですが、モダンブラウザはこれでOK */
+    top: 60px; /* ヘッダーの高さ分空ける */
+    z-index: 90; /* ヘッダー(100)の下、コンテンツの上 */
+    
+    /* 見た目の調整 */
+    background-color: rgba(255, 255, 255, 0.98); /* ほぼ不透明の白 */
+    padding: 12px 16px; /* 上下の余白を確保 */
+    margin: 0 0 24px 0; /* 下のマージン */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 浮いているような影 */
+    
+    /* 角丸などをリセットして帯状に見せる場合 */
+    border-bottom: 1px solid #f0f0f0;
+    
+    /* 横幅調整（親要素のパディングを無視して画面端まで広げる場合のネガティブマージン対応が必要なら調整） */
+    /* 今回は親の .product-list-section が padding-top を持っているので、その内側に配置されます */
+}
+
+/* selection.css: フィルタ & ソート (分離・追従版) */
+
+/* ▼ 追従するカテゴリバー */
+.category-sticky-bar {
+    position: sticky;
+    top: 60px; /* ヘッダーの高さ分下げる */
+    z-index: 90; /* コンテンツより上、ヘッダーより下 */
+    
+    background-color: rgba(255, 255, 255, 0.98); /* 背景を白くして透けないように */
+    padding: 12px 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 浮いている感を出す影 */
+    margin-bottom: 12px;
+}
+
+/* カテゴリチップ（1行・全表示デザインを維持） */
+.category-filter-chips {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    justify-content: space-between; /* 均等配置 */
+    width: 100%;
+}
+
+.cat-chip {
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 24px;
+    padding: 8px 4px;
+    flex: 1; /* 幅を均等に */
+    justify-content: center;
+    font-size: var(--fs-11);
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.cat-chip:hover { border-color: #C5A059; color: #C5A059; }
+.cat-chip:hover i { color: #C5A059; }
+.cat-chip i { font-size: var(--fs-12); color: #CCC; transition: color 0.2s; }
+
+.cat-chip.active {
+    background: #FFFFFF;
+    border: 1px solid #4A3B32;
+    color: #4A3B32;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(74, 59, 50, 0.1);
+}
+.cat-chip.active i { color: #C5A059; }
+
+
+/* ▼ 追従しないソートエリア（通常配置） */
+.sort-area-standalone {
+    display: flex;
+    justify-content: flex-end; /* 右寄せ */
+    align-items: center;
     padding: 0 16px;
-    margin-bottom: 24px;
+    margin-bottom: 20px; /* 商品リストとの余白 */
+}
+
+.sort-label {
+    font-size: var(--fs-11);
+    color: #888;
+    margin-right: 6px;
+}
+
+.sort-select {
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    padding: 4px 24px 4px 8px;
+    font-size: var(--fs-11);
+    color: #333;
+    background-color: white;
+    cursor: pointer;
 }
 
 /* 並び替えエリア (右寄せ) */
@@ -828,50 +923,46 @@ a { text-decoration: none; color: inherit; }
 
 /* selection.css: カテゴリフィルター部分 (横スクロール版) */
 
-/* スクロール領域のコンテナ */
+/* selection.css: カテゴリフィルター部分 (1行・全表示版) */
+
+/* スクロール領域のコンテナ（今回はスクロールさせないので通常配置に戻す） */
 .category-filter-scroll {
-    /* 画面幅いっぱいに広げて、左右のパディングで調整 */
-    margin-left: -16px;
-    margin-right: -16px;
-    padding-bottom: 4px; /* スクロールバーとの干渉避け */
+    margin: 0 0 16px 0; /* マージンリセット */
+    padding: 0;
+    width: 100%;
 }
 
 /* フィルターリスト本体 */
 .category-filter-chips {
     display: flex;
-    flex-wrap: nowrap; /* 折り返し禁止（1行にする） */
-    gap: 6px; /* チップ間の隙間 */
-    overflow-x: auto; /* 横スクロール有効 */
-    
-    /* スクロール時の余白設定 */
-    padding: 0 0px 16px; /* 下に余白をとって影が切れないように */
-    
-    /* 慣性スクロール（iOS用） */
-    -webkit-overflow-scrolling: touch;
-    
-    /* スクロールバー非表示 */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    flex-wrap: nowrap; /* 1行にする */
+    gap: 8px; /* 隙間を少し詰める */
+    justify-content: space-between; /* 均等に配置 */
+    width: 100%;
 }
-.category-filter-chips::-webkit-scrollbar { display: none; }
 
-
-/* --- チップのデザイン（洗練アウトライン版を維持） --- */
+/* チップのデザイン調整 */
 .cat-chip {
     background: #FFFFFF;
     border: 1px solid #E0E0E0;
     border-radius: 24px;
-    padding: 8px 16px;
-    font-size: var(--fs-12);
+    
+    /* 【調整】パディングを減らして3つ収める */
+    padding: 8px 4px; 
+    
+    /* 【調整】幅を均等に広げる */
+    flex: 1; 
+    justify-content: center; /* 中身を中央揃え */
+    
+    font-size: var(--fs-11); /* 少し小さくして改行を防ぐ */
     color: #888;
     cursor: pointer;
     transition: all 0.2s;
     
     display: flex;
     align-items: center;
-    gap: 6px;
-    white-space: nowrap; /* テキスト折り返し禁止 */
-    flex-shrink: 0; /* 縮小禁止 */
+    gap: 4px;
+    white-space: nowrap;
 }
 
 /* ホバー時 */
@@ -881,12 +972,12 @@ a { text-decoration: none; color: inherit; }
 }
 .cat-chip:hover i { color: #C5A059; }
 
-.cat-chip i { font-size: var(--fs-13); color: #CCC; transition: color 0.2s; }
+.cat-chip i { font-size: var(--fs-12); color: #CCC; transition: color 0.2s; }
 
 /* アクティブ状態 */
 .cat-chip.active {
     background: #FFFFFF;
-    border: 1px solid #4A3B32; /* ダークブラウン枠 */
+    border: 1px solid #4A3B32;
     color: #4A3B32;
     font-weight: bold;
     box-shadow: 0 2px 8px rgba(74, 59, 50, 0.1);
@@ -906,18 +997,30 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* カテゴリバッジ (テキストのみ) */
-.category-badge-simple {
+/* selection.css: 商品一覧セクション修正版 (続き) */
+
+/* --- シンプル版カード情報 (.p-info-simple) --- */
+.p-info-simple {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1; 
+    justify-content: space-between; 
+}
+
+/* 【修正】アイコン付きバッジ (.category-badge) をシンプル情報エリアでも使えるようにする */
+.p-info-simple .category-badge {
     display: inline-block;
     font-size: var(--fs-9);
-    color: var(--gold-main);
-    border: 1px solid var(--gold-main);
-    padding: 1px 6px;
-    border-radius: 2px;
-    margin-bottom: 6px;
-    align-self: flex-start;
+    padding: 4px 8px; /* パディングを少し広げる */
+    margin-bottom: 8px; /* 下マージン調整 */
+    border-radius: 6px; /* 角丸を合わせる */
+    border: 1px solid #C5A059;
+    background-color: white;
+    color: #C5A059;
     font-weight: bold;
-    background: #FFF;
-    line-height: 1.2;
+    font-family: var(--font-sans);
+    align-self: flex-start;
 }
 
 /* タイトル */
@@ -927,18 +1030,19 @@ a { text-decoration: none; color: inherit; }
     margin: 0 0 6px 0;
     color: #333;
     height: auto;
-    max-height: 2.8em; /* 2行制限 */
+    max-height: 2.8em; 
     overflow: hidden;
 }
 
-/* 価格 */
+/* (以下、価格やショップ名は変更なしですが、一応記載) */
 .p-info-simple .p-price {
     font-size: var(--fs-14);
     font-weight: bold;
     color: var(--price-red);
-    margin-top: auto; /* 下に寄せる */
+    margin-top: auto; 
     margin-bottom: 4px;
 }
+/* ... */
 .p-info-simple .p-tax {
     font-size: var(--fs-10);
     font-weight: normal;

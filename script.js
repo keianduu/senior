@@ -209,3 +209,50 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('resize', updateSlidePosition);
     }
 });
+/* script.js 末尾に追加 */
+
+/* script.js 末尾に追加 */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 商品一覧 カテゴリフィルタリング機能 (トグル式) ---
+    const filterButtons = document.querySelectorAll('.cat-chip');
+    const productCards = document.querySelectorAll('#product-list .product-card');
+
+    if (filterButtons.length > 0 && productCards.length > 0) {
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isAlreadyActive = btn.classList.contains('active');
+                let selectedCategory = 'all'; // デフォルトは全表示
+
+                // 1. ボタンの状態更新
+                // 一旦すべてのボタンからactiveを外す
+                filterButtons.forEach(b => b.classList.remove('active'));
+
+                if (isAlreadyActive) {
+                    // すでにアクティブだったボタンを押した -> 解除 (何もしない = activeクラスなし = 全表示)
+                    selectedCategory = 'all';
+                } else {
+                    // 非アクティブなボタンを押した -> アクティブにする & カテゴリ設定
+                    btn.classList.add('active');
+                    selectedCategory = btn.getAttribute('data-cat');
+                }
+
+                // 2. フィルタリング実行
+                productCards.forEach(card => {
+                    const cardCategory = card.getAttribute('data-category');
+                    
+                    // 'all' (選択なし) または カテゴリが一致する場合のみ表示
+                    if (selectedCategory === 'all' || selectedCategory === cardCategory) {
+                        card.style.display = ''; // CSSのデフォルト(flex)に戻す
+                        // フェードインアニメーション
+                        card.style.opacity = '0';
+                        card.style.transition = 'opacity 0.3s';
+                        setTimeout(() => card.style.opacity = '1', 50);
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    }
+});
