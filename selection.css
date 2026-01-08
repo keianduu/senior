@@ -13,6 +13,26 @@
     --price-red: #B71C1C;
     --font-serif: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
     --font-sans: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+
+    /* Font Sizes */
+    --fs-7: 8px;
+    --fs-8: 8px;
+    --fs-9: 12px;
+    --fs-10: 14px;
+    --fs-11: 14px;
+    --fs-12: 14px;
+    --fs-13: 14px;
+    --fs-14: 14px;
+    --fs-15: 18px;
+    --fs-16: 18px;
+    --fs-18: 18px;
+    --fs-20: 20px;
+    --fs-24: 24px;
+    --fs-28: 28px;
+    --fs-32: 32px;
+    --fs-36: 36px;
+    --fs-50: 50px;
+    --fs-60: 60px;
 }
 
 body {
@@ -44,7 +64,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .header-back {
-    font-size: 14px;
+    font-size: var(--fs-14);
     color: var(--gold-main);
     font-weight: bold;
     display: flex;
@@ -53,7 +73,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .header-search-btn {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: #666;
     background: #f5f5f5;
     padding: 6px 12px;
@@ -135,7 +155,7 @@ a { text-decoration: none; color: inherit; }
 .hero-header-deco .text { 
     color: var(--gold-main);
     letter-spacing: 3px; 
-    font-size: 10px;
+    font-size: var(--fs-10);
     font-weight: bold;
 }
 .hero-header-deco .line { 
@@ -145,7 +165,7 @@ a { text-decoration: none; color: inherit; }
 .hero-catch-text {
     font-family: var(--font-serif);
     color: var(--gold-main);
-    font-size: 14px;
+    font-size: var(--fs-14);
     font-weight: bold;
     margin: 0 0 4px 0;
     line-height: 1.4;
@@ -154,7 +174,7 @@ a { text-decoration: none; color: inherit; }
 .hero-title-v6 {
     font-family: var(--font-serif);
     color: var(--brown-text);
-    font-size: 32px;
+    font-size: var(--fs-32);
     text-shadow: none;
     margin-bottom: 16px;
     line-height: 1.4;
@@ -163,7 +183,7 @@ a { text-decoration: none; color: inherit; }
 
 .hero-desc-v6 {
     color: #665544;
-    font-size: 12px;
+    font-size: var(--fs-12);
     font-weight: normal;
     line-height: 1.6;
     margin-bottom: 20px;
@@ -189,7 +209,7 @@ a { text-decoration: none; color: inherit; }
 .nav-item-v6:hover { transform: translateY(-2px); }
 
 .nav-icon-box {
-    font-size: 16px;
+    font-size: var(--fs-16);
     color: var(--gold-main);
     margin-bottom: 4px;
     width: 36px;
@@ -203,14 +223,14 @@ a { text-decoration: none; color: inherit; }
 }
 
 .nav-text-box .ja {
-    font-size: 12px;
+    font-size: var(--fs-12);
     font-weight: bold;
     color: var(--brown-text);
     display: block;
     margin-bottom: 2px;
 }
 .nav-text-box .en {
-    font-size: 9px;
+    font-size: var(--fs-8);
     color: #998877;
     font-family: var(--font-sans);
     letter-spacing: 0.5px;
@@ -249,7 +269,7 @@ a { text-decoration: none; color: inherit; }
 .survey-content { flex: 1; }
 .survey-title {
     /* 【修正】ご指定のサイズを適用 */
-    font-size: 12px;
+    font-size: var(--fs-12);
     font-weight: bold;
     color: var(--brown-text);
     margin: 0 0 6px 0;
@@ -258,7 +278,7 @@ a { text-decoration: none; color: inherit; }
     font-family: var(--font-sans); /* 視認性優先でゴシックへ戻し（セリフ希望なら変更可） */
 }
 .survey-desc {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: #887766;
     margin: 0;
     font-family: var(--font-sans);
@@ -267,13 +287,13 @@ a { text-decoration: none; color: inherit; }
 .highlight-pink {
     color: var(--rakuten-red);
     font-weight: bold;
-    font-size: 13px;
+    font-size: var(--fs-13);
     background: none;
     border: none;
 }
 
 .survey-icon-anim {
-    font-size: 28px;
+    font-size: var(--fs-28);
     margin-left: 10px;
     color: var(--gold-main);
     animation: floatIcon 3s ease-in-out infinite;
@@ -301,26 +321,26 @@ a { text-decoration: none; color: inherit; }
 
 .kuji-title { 
     font-family: var(--font-serif);
-    font-size: 18px; 
+    font-size: var(--fs-18); 
     font-weight: bold; 
     margin: 0 0 4px 0;
     text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 .kuji-desc { 
-    font-size: 12px; 
+    font-size: var(--fs-12); 
     margin: 0 0 6px 0; 
     font-weight: 500;
 }
 .kuji-badge {
     background: var(--brown-text);
     color: #FFF;
-    font-size: 10px;
+    font-size: var(--fs-10);
     padding: 3px 10px;
     border-radius: 20px;
     display: inline-block;
 }
 .kuji-icon-anim {
-    font-size: 36px;
+    font-size: var(--fs-36);
     animation: bounceSlow 2s infinite;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
@@ -335,14 +355,14 @@ a { text-decoration: none; color: inherit; }
     flex-direction: column;
     color: #998877;
 }
-.kuji-done-text { font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+.kuji-done-text { font-size: var(--fs-12); font-weight: bold; margin-bottom: 5px; }
 .kuji-result-badge {
     background: #FFF;
     border: 1px solid var(--gold-main);
     color: var(--gold-main);
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: var(--fs-12);
     font-weight: bold;
 }
 
@@ -367,15 +387,14 @@ a { text-decoration: none; color: inherit; }
 
 .ad-header {
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
     color: var(--brown-text);
-    /* 王冠アイコンの位置調整 */
-    margin-top: 20px; 
+    margin-top: 24px; 
 }
-.ad-header i { color: var(--gold-main); font-size: 18px; margin-bottom: 4px; }
+.ad-header i { color: var(--gold-main); font-size: var(--fs-18); margin-bottom: 4px; }
 .ad-header h3 {
     font-family: var(--font-serif);
-    font-size: 18px;
+    font-size: var(--fs-18);
     margin: 0 0 2px 0;
     position: relative;
     display: inline-block;
@@ -384,7 +403,7 @@ a { text-decoration: none; color: inherit; }
     content: ""; display: inline-block; width: 20px; height: 1px;
     background: var(--gold-main); vertical-align: middle; margin: 0 8px;
 }
-.ad-header p { font-size: 10px; color: #888; margin: 0; }
+.ad-header p { font-size: var(--fs-10); color: #888; margin: 0; }
 
 
 /* --- カルーセル構造 --- */
@@ -456,9 +475,9 @@ a { text-decoration: none; color: inherit; }
     z-index: 5;
 }
 .featured-product.pickup-style .badge-text { 
-    font-family: var(--font-serif); font-weight: bold; font-size: 8px; line-height: 1; text-align: center; 
+    font-family: var(--font-serif); font-weight: bold; font-size: var(--fs-8); line-height: 1; text-align: center; 
 }
-.featured-product.pickup-style .stars { font-size: 7px; margin-top: 1px; }
+.featured-product.pickup-style .stars { font-size: var(--fs-7); margin-top: 1px; }
 
 /* 情報エリア（余白を詰める） */
 .featured-product.pickup-style .featured-info {
@@ -470,12 +489,12 @@ a { text-decoration: none; color: inherit; }
 /* --- カテゴリバッジ（インライン化・色統一） --- */
 .featured-product.pickup-style .category-badge {
     display: inline-block;
-    margin-bottom: 6px;
-    padding: 4px 8px;
-    font-size: 10px;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    font-size: var(--fs-10);
     line-height: 1;
     border: 1px solid #C5A059;
-    border-radius: 4px;
+    border-radius: 6px;
     
     /* 【変更】個別の色をやめ、Heroエリアと同じゴールドに統一 */
     background-color: #FFF; /* var(--gold-main) */
@@ -495,8 +514,8 @@ a { text-decoration: none; color: inherit; }
 
 /* タイトル */
 .featured-product.pickup-style .featured-info h3 {
-    font-size: 15px;
-    margin: 0 0 8px 0;
+    font-size: var(--fs-15);
+    margin: 0px 0 12px 0;
     line-height: 1.4;
     color: var(--brown-text);
 }
@@ -511,21 +530,21 @@ a { text-decoration: none; color: inherit; }
     margin: 0 0 10px 0;
 }
 .featured-product.pickup-style .ev-header {
-    font-size: 9px; font-weight: bold; color: var(--brown-text); margin-bottom: 2px;
+    font-size: var(--fs-9); font-weight: bold; color: var(--brown-text); margin-bottom: 2px;
 }
 .featured-product.pickup-style .ev-text {
-    font-size: 11px; line-height: 1.4; color: #333; margin: 0; font-family: "Yu Mincho", serif; text-align: justify;
+    font-size: var(--fs-11); line-height: 1.4; color: #333; margin: 0; serif; text-align: justify;
 }
 
 /* 価格・店舗・ボタン */
 .featured-product.pickup-style .price-row {
-    font-size: 18px; color: var(--price-red); font-weight: bold; margin-bottom: 4px;
+    font-size: var(--fs-18); color: var(--price-red); font-weight: bold; margin-bottom: 4px;
 }
 .featured-product.pickup-style .shop-name {
-    font-size: 10px; color: #888; margin-bottom: 10px; border-top: none; padding-top: 0;
+    font-size: var(--fs-10); color: #888; margin-bottom: 10px; border-top: none; padding-top: 0;
 }
 .featured-product.pickup-style .btn-detail {
-    padding: 10px; font-size: 13px;
+    padding: 10px; font-size: var(--fs-13);
     background: linear-gradient(to bottom, #D4AF37, #C5A059);
     color: white; text-align: center; border-radius: 4px; font-weight: bold; display: block;
 }
@@ -546,18 +565,18 @@ a { text-decoration: none; color: inherit; }
     text-align: center;
 }
 .cat-icon-bg {
-    font-size: 28px;
+    font-size: var(--fs-28);
     display: block;
     margin-bottom: 8px;
 }
 .category-header-modern h2 {
     font-family: var(--font-serif);
-    font-size: 20px;
+    font-size: var(--fs-20);
     color: var(--brown-text);
     margin: 0 0 4px 0;
 }
 .cat-sub-en {
-    font-size: 10px;
+    font-size: var(--fs-10);
     color: var(--gold-main);
     letter-spacing: 1px;
     font-family: var(--font-serif);
@@ -565,7 +584,7 @@ a { text-decoration: none; color: inherit; }
     margin: 0 0 12px 0;
 }
 .cat-desc {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: #666;
     line-height: 1.6;
     margin: 0;
@@ -608,30 +627,30 @@ a { text-decoration: none; color: inherit; }
     color: #4A3B32;
     z-index: 5;
 }
-.badge-text { font-family: var(--font-serif); font-weight: bold; font-size: 10px; line-height: 1; text-align: center; }
-.stars { font-size: 9px; margin-top: 2px; }
+.badge-text { font-family: var(--font-serif); font-weight: bold; font-size: var(--fs-10); line-height: 1; text-align: center; }
+.stars { font-size: var(--fs-9); margin-top: 2px; }
 
 .featured-info { padding: 24px 16px 16px; }
 .featured-info h3 {
-    font-size: 16px;
+    font-size: var(--fs-16);
     margin: 0 0 8px 0;
     line-height: 1.4;
     color: var(--brown-text);
 }
 .featured-desc {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: #666;
     margin: 0 0 12px 0;
 }
 .price-row {
-    font-size: 20px;
+    font-size: var(--fs-20);
     color: var(--price-red);
     font-weight: bold;
     margin-bottom: 12px;
 }
-.price-row .tax { font-size: 11px; color: #333; font-weight: normal; }
+.price-row .tax { font-size: var(--fs-11); color: #333; font-weight: normal; }
 .shop-name {
-    font-size: 10px;
+    font-size: var(--fs-10);
     color: #888;
     margin-bottom: 16px;
     border-top: 1px solid #eee;
@@ -645,7 +664,7 @@ a { text-decoration: none; color: inherit; }
     padding: 12px;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: var(--fs-14);
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
@@ -680,20 +699,21 @@ a { text-decoration: none; color: inherit; }
 
 .product-card .p-info .category-badge {
     display: inline-block;
-    font-size: 9px;
-    padding: 2px 6px;
-    margin-bottom: 6px;
-    border-radius: 3px;
-    background-color: #C5A059;
-    color: white;
+    font-size: var(--fs-9);
+    padding: 4px 8px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #C5A059;
+    background-color: white;
+    color: #C5A059;
     font-weight: bold;
     font-family: var(--font-sans);
     align-self: flex-start;
 }
 
 .product-card .p-info .p-title {
-    font-size: 13px;
-    margin: 0 0 8px 0;
+    font-size: var(--fs-13);
+    margin: 0 0 12px 0;
     line-height: 1.4;
     color: #333;
     padding: 0;
@@ -711,11 +731,11 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 8px;
 }
 .product-card .p-info .ev-text {
-    font-size: 10px; line-height: 1.3; color: #555; margin: 0; text-align: left;
+    font-size: var(--fs-10); line-height: 1.3; color: #555; margin: 0; text-align: left;
 }
 
 .product-card .p-info .p-price {
-    font-size: 14px;
+    font-size: var(--fs-14);
     color: var(--price-red);
     font-weight: bold;
     margin-top: auto; /* 下に寄せる */
@@ -724,7 +744,7 @@ a { text-decoration: none; color: inherit; }
 
 /* お店名（追加） */
 .product-card .p-info .p-shop {
-    font-size: 9px;
+    font-size: var(--fs-9);
     color: #999;
     margin-top: 6px;
     padding-top: 6px;
@@ -738,7 +758,7 @@ a { text-decoration: none; color: inherit; }
 /* --- B. 通常カテゴリ用（シンプル表示） --- */
 /* .p-info ラッパーがない場合のフォールバック */
 .product-card > .p-title {
-    font-size: 12px;
+    font-size: var(--fs-12);
     padding: 8px;
     margin: 0;
     color: #333;
@@ -748,7 +768,7 @@ a { text-decoration: none; color: inherit; }
 }
 .product-card > .p-price {
     padding: 0 8px 12px;
-    font-size: 14px;
+    font-size: var(--fs-14);
     color: var(--price-red);
     font-weight: bold;
 }
@@ -767,7 +787,7 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 20px;
 }
 .list-title {
-    font-size: 18px;
+    font-size: var(--fs-18);
     font-weight: bold;
     color: var(--brown-text);
     position: relative;
@@ -792,7 +812,7 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 12px; /* フィルタとの間隔 */
 }
 .sort-label {
-    font-size: 11px;
+    font-size: var(--fs-11);
     color: #888;
     margin-right: 6px;
 }
@@ -800,7 +820,7 @@ a { text-decoration: none; color: inherit; }
     border: 1px solid #DDD;
     border-radius: 4px;
     padding: 4px 24px 4px 8px; /* 右パディングは矢印用 */
-    font-size: 11px;
+    font-size: var(--fs-11);
     color: #333;
     background-color: white;
     cursor: pointer;
@@ -842,7 +862,7 @@ a { text-decoration: none; color: inherit; }
     border: 1px solid #E0E0E0;
     border-radius: 24px;
     padding: 8px 16px;
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: #888;
     cursor: pointer;
     transition: all 0.2s;
@@ -861,7 +881,7 @@ a { text-decoration: none; color: inherit; }
 }
 .cat-chip:hover i { color: #C5A059; }
 
-.cat-chip i { font-size: 13px; color: #CCC; transition: color 0.2s; }
+.cat-chip i { font-size: var(--fs-13); color: #CCC; transition: color 0.2s; }
 
 /* アクティブ状態 */
 .cat-chip.active {
@@ -888,7 +908,7 @@ a { text-decoration: none; color: inherit; }
 /* カテゴリバッジ (テキストのみ) */
 .category-badge-simple {
     display: inline-block;
-    font-size: 9px;
+    font-size: var(--fs-9);
     color: var(--gold-main);
     border: 1px solid var(--gold-main);
     padding: 1px 6px;
@@ -902,7 +922,7 @@ a { text-decoration: none; color: inherit; }
 
 /* タイトル */
 .p-info-simple .p-title {
-    font-size: 13px;
+    font-size: var(--fs-13);
     line-height: 1.4;
     margin: 0 0 6px 0;
     color: #333;
@@ -913,14 +933,14 @@ a { text-decoration: none; color: inherit; }
 
 /* 価格 */
 .p-info-simple .p-price {
-    font-size: 14px;
+    font-size: var(--fs-14);
     font-weight: bold;
     color: var(--price-red);
     margin-top: auto; /* 下に寄せる */
     margin-bottom: 4px;
 }
 .p-info-simple .p-tax {
-    font-size: 10px;
+    font-size: var(--fs-10);
     font-weight: normal;
     color: #333;
     margin-left: 2px;
@@ -928,7 +948,7 @@ a { text-decoration: none; color: inherit; }
 
 /* 店舗名 (アイコン付き) */
 .p-info-simple .p-shop-simple {
-    font-size: 10px;
+    font-size: var(--fs-10);
     color: #888;
     padding-top: 6px;
     border-top: 1px solid #eee; /* 区切り線 */
@@ -973,20 +993,20 @@ a { text-decoration: none; color: inherit; }
 
 .c-content { padding: 8px; }
 .c-title {
-    font-size: 11px;
+    font-size: var(--fs-11);
     margin: 0 0 4px 0;
     line-height: 1.3;
     height: 30px;
     overflow: hidden;
 }
-.c-price { font-size: 13px; color: var(--price-red); font-weight: bold; }
-.c-unit { font-size: 10px; font-weight: normal; color: #333; }
+.c-price { font-size: var(--fs-13); color: var(--price-red); font-weight: bold; }
+.c-unit { font-size: var(--fs-10); font-weight: normal; color: #333; }
 .carousel-card.card-lg .c-desc {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    font-size: 11px;
+    font-size: var(--fs-11);
     color: #666;
     margin: 4px 0 8px;
     line-height: 1.5;
@@ -1023,7 +1043,7 @@ a { text-decoration: none; color: inherit; }
     align-items: center;
 }
 .modal-header h3 { 
-    font-size: 14px; margin: 0; font-weight: bold; 
+    font-size: var(--fs-14); margin: 0; font-weight: bold; 
     font-family: var(--font-serif);
     letter-spacing: 0.05em;
 }
@@ -1032,7 +1052,7 @@ a { text-decoration: none; color: inherit; }
 }
 .modal-body { padding: 20px; }
 .q-title { 
-    font-size: 16px; font-weight: bold; margin-bottom: 16px; 
+    font-size: var(--fs-16); font-weight: bold; margin-bottom: 16px; 
     color: var(--brown-text);
     font-family: var(--font-serif);
     border-bottom: 1px solid var(--gold-main);
@@ -1046,7 +1066,7 @@ a { text-decoration: none; color: inherit; }
     padding: 12px;
     border-radius: 8px;
     text-align: left;
-    font-size: 14px;
+    font-size: var(--fs-14);
     color: #333;
     cursor: pointer;
     transition: all 0.2s;
@@ -1058,7 +1078,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .modal-kuji-container { width: 100%; text-align: center; }
-.kuji-status-text { color: white; font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+.kuji-status-text { color: white; font-size: var(--fs-20); font-weight: bold; margin-bottom: 20px; }
 .kuji-spinner {
     width: 120px; height: 120px;
     margin: 0 auto 20px;
@@ -1068,8 +1088,8 @@ a { text-decoration: none; color: inherit; }
     animation: spinSlow 3s linear infinite;
     box-shadow: 0 0 20px rgba(247, 37, 133, 0.5);
 }
-.kuji-emoji { font-size: 50px; animation: bounceSlow 1s infinite; }
-.kuji-wait-text { color: white; animation: pulse 1s infinite; font-size: 12px; }
+.kuji-emoji { font-size: var(--fs-50); animation: bounceSlow 1s infinite; }
+.kuji-wait-text { color: white; animation: pulse 1s infinite; font-size: var(--fs-12); }
 
 .result-card {
     background: white;
@@ -1088,11 +1108,11 @@ a { text-decoration: none; color: inherit; }
     background: var(--gold-main); opacity: 0.5;
 }
 .congrats-text { 
-    color: var(--gold-main); font-size: 12px; font-weight: bold; 
+    color: var(--gold-main); font-size: var(--fs-12); font-weight: bold; 
     letter-spacing: 3px; margin-bottom: 4px; 
 }
-.result-rank { font-size: 28px; font-weight: 900; color: #333; margin: 0 0 10px; }
-.result-emoji { font-size: 60px; margin-bottom: 16px; }
+.result-rank { font-size: var(--fs-28); font-weight: 900; color: #333; margin: 0 0 10px; }
+.result-emoji { font-size: var(--fs-60); margin-bottom: 16px; }
 .coupon-box {
     background: #FAFAFA;
     border: 2px dashed #F72585;
@@ -1100,8 +1120,8 @@ a { text-decoration: none; color: inherit; }
     padding: 12px;
     margin-bottom: 20px;
 }
-.coupon-label { font-size: 11px; font-weight: bold; color: #666; }
-.coupon-value { font-size: 28px; font-weight: 900; color: var(--price-red); margin: 4px 0; }
+.coupon-label { font-size: var(--fs-11); font-weight: bold; color: #666; }
+.coupon-value { font-size: var(--fs-28); font-weight: 900; color: var(--price-red); margin: 4px 0; }
 .btn-use-coupon {
     width: 100%;
     background: linear-gradient(to bottom, #D4AF37, #C5A059);
@@ -1110,7 +1130,7 @@ a { text-decoration: none; color: inherit; }
     padding: 12px;
     border-radius: 8px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: var(--fs-14);
     box-shadow: 0 4px 10px rgba(197, 160, 89, 0.4);
 }
 
@@ -1154,7 +1174,7 @@ a { text-decoration: none; color: inherit; }
     color: var(--brown-text);
     padding: 10px 30px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: var(--fs-12);
 }
 .app-promotion {
     background: #fff;
@@ -1169,7 +1189,7 @@ a { text-decoration: none; color: inherit; }
     color: white;
     padding: 8px 16px;
     border-radius: 4px;
-    font-size: 10px;
+    font-size: var(--fs-10);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1191,7 +1211,7 @@ a { text-decoration: none; color: inherit; }
     text-align: center;
     font-weight: bold;
     padding: 12px;
-    font-size: 16px;
+    font-size: var(--fs-16);
     margin-bottom: 24px;
 }
 
@@ -1209,7 +1229,7 @@ a { text-decoration: none; color: inherit; }
     border: none;
     border-radius: 24px; /* 丸みのあるボタン */
     padding: 12px;
-    font-size: 14px;
+    font-size: var(--fs-14);
     font-weight: bold;
     color: #333;
     cursor: pointer;
@@ -1224,7 +1244,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .notes-list li {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: #333;
     line-height: 1.6;
     margin-bottom: 8px;
@@ -1244,7 +1264,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .share-title {
-    font-size: 16px;
+    font-size: var(--fs-16);
     color: #333;
     margin-bottom: 24px;
     letter-spacing: 1px;
@@ -1264,7 +1284,7 @@ a { text-decoration: none; color: inherit; }
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 24px;
+    font-size: var(--fs-24);
     text-decoration: none;
     transition: opacity 0.2s;
 }
@@ -1273,4 +1293,4 @@ a { text-decoration: none; color: inherit; }
 /* 各SNSのブランドカラー */
 .share-btn.line { background-color: #06C755; }
 .share-btn.facebook { background-color: #1877F2; }
-.share-btn.x-twitter { background-color: #000000; font-size: 20px; }
+.share-btn.x-twitter { background-color: #000000; font-size: var(--fs-20); }
