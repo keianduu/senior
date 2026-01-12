@@ -824,14 +824,18 @@ a { text-decoration: none; color: inherit; }
 
 /* ▼ 追従するカテゴリバー */
 .category-sticky-bar {
+    position: -webkit-sticky; /* Safari用 */
     position: sticky;
-    top: 60px; /* ヘッダーの高さ分下げる */
+    top: 55px; /* ヘッダーの高さに合わせて微調整（少し余裕を持たせる） */
     z-index: 90; /* コンテンツより上、ヘッダーより下 */
     
-    background-color: rgba(255, 255, 255, 0.98); /* 背景を白くして透けないように */
+    /* 見た目の調整 */
+    background-color: rgba(255, 255, 255, 0.95); /* 少し透過させて背景となじませる */
+    backdrop-filter: blur(5px); /* すりガラス効果でリッチに（対応ブラウザのみ） */
     padding: 12px 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 浮いている感を出す影 */
-    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08); /* 影を少し柔らかく */
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* 薄い境界線を追加 */
+    margin: 0 0 20px 0; /* 下の要素との余白 */
 }
 
 /* カテゴリチップ（1行・全表示デザインを維持） */
@@ -839,37 +843,46 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     flex-wrap: nowrap;
     gap: 8px;
-    justify-content: space-between; /* 均等配置 */
+    justify-content: space-between;
     width: 100%;
+    max-width: 500px; /* PCなどで広がりすぎないように制限 */
+    margin: 0 auto; /* 中央寄せ */
 }
 
 .cat-chip {
     background: #FFFFFF;
     border: 1px solid #E0E0E0;
     border-radius: 24px;
-    padding: 8px 4px;
-    flex: 1; /* 幅を均等に */
+    padding: 10px 4px; /* 上下のパディングを少し増やしてタップしやすく */
+    flex: 1;
     justify-content: center;
     font-size: var(--fs-11);
     color: #888;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease; /* トランジションを少し滑らかに */
     display: flex;
     align-items: center;
     gap: 4px;
     white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* 通常時もごく薄い影 */
 }
 
-.cat-chip:hover { border-color: #C5A059; color: #C5A059; }
+.cat-chip:hover {
+    border-color: #C5A059;
+    color: #C5A059;
+    background-color: #FFF9F0; /* ホバー時に薄いゴールド背景 */
+}
 .cat-chip:hover i { color: #C5A059; }
-.cat-chip i { font-size: var(--fs-12); color: #CCC; transition: color 0.2s; }
+.cat-chip i { font-size: var(--fs-13); color: #CCC; transition: color 0.3s; }
 
+/* アクティブ状態 */
 .cat-chip.active {
     background: #FFFFFF;
-    border: 1px solid #4A3B32;
+    border: 2px solid #4A3B32; /* 枠線を少し太くして強調 */
     color: #4A3B32;
     font-weight: bold;
-    box-shadow: 0 2px 8px rgba(74, 59, 50, 0.1);
+    box-shadow: 0 4px 12px rgba(74, 59, 50, 0.15); /* 影を強調 */
+    transform: translateY(-1px); /* わずかに浮かす */
 }
 .cat-chip.active i { color: #C5A059; }
 
@@ -880,23 +893,25 @@ a { text-decoration: none; color: inherit; }
     justify-content: flex-end; /* 右寄せ */
     align-items: center;
     padding: 0 16px;
-    margin-bottom: 20px; /* 商品リストとの余白 */
+    margin-bottom: 24px; /* 商品リストとの余白を少し広げる */
 }
 
 .sort-label {
     font-size: var(--fs-11);
-    color: #888;
-    margin-right: 6px;
+    color: #666; /* 少し濃くして視認性向上 */
+    margin-right: 8px;
 }
 
 .sort-select {
     border: 1px solid #DDD;
-    border-radius: 4px;
-    padding: 4px 24px 4px 8px;
-    font-size: var(--fs-11);
+    border-radius: 20px; /* 角丸をチップに合わせて強くする */
+    padding: 6px 28px 6px 12px;
+    font-size: var(--fs-12); /* フォントサイズを少し大きく */
     color: #333;
     background-color: white;
     cursor: pointer;
+    /* ブラウザ標準の矢印をカスタムする場合（任意） */
+    /* appearance: none; background-image: url(...); */
 }
 
 /* 並び替えエリア (右寄せ) */
@@ -1398,3 +1413,34 @@ a { text-decoration: none; color: inherit; }
 .share-btn.line { background-color: #06C755; }
 .share-btn.facebook { background-color: #1877F2; }
 .share-btn.x-twitter { background-color: #000000; font-size: var(--fs-20); }
+
+/* selection.css: Heroエリア下の「もっと見る」ボタン周辺の修正 */
+
+/* このセクションの背景や余白をリセット/調整 */
+.special-selection-ad.hero-more-link-area {
+    background: transparent; /* 背景を透明に（親のグラデーションを見せる） */
+    border-bottom: none; /* 境界線を消す */
+    padding-bottom: 16px; /* 下の要素との距離を適切に */
+    margin-top: 0; /* 必要に応じて調整 */
+}
+
+/* ボタン自体のスタイル調整 */
+.btn-more.btn-more-hero {
+    margin-top: 20px; /* カルーセルとの距離 */
+    background-color: rgba(255, 255, 255, 0.9); /* 少し透過した白で軽やかに */
+    border: 1px solid rgba(197, 160, 89, 0.5); /* ゴールドの枠線 */
+    color: var(--brown-text);
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 浮き出し効果 */
+    
+    /* 横幅を広げすぎないように調整 */
+    max-width: 300px;
+    width: 90%;
+}
+
+/* ホバー時の挙動 */
+.btn-more.btn-more-hero:hover {
+    background-color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(197, 160, 89, 0.2);
+}

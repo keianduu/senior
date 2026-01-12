@@ -256,3 +256,62 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/* script.js (末尾のフィルタリング処理を更新) */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 商品一覧 カテゴリフィルタリング機能 (パラメータ連動 & トグル式) ---
+    const filterButtons = document.querySelectorAll('.cat-chip');
+    const productCards = document.querySelectorAll('#product-list .product-card');
+
+    // フィルタリング実行関数
+    const applyFilter = (category) => {
+        // 1. ボタンの見た目更新
+        filterButtons.forEach(btn => {
+            if (btn.getAttribute('data-cat') === category) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // 2. カードの表示切り替え
+        productCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            if (category === 'all' || !category || category === cardCategory) {
+                card.style.display = ''; 
+                card.style.opacity = '0';
+                setTimeout(() => card.style.opacity = '1', 50);
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    };
+
+    if (filterButtons.length > 0 && productCards.length > 0) {
+        
+        // A. クリックイベント設定
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isAlreadyActive = btn.classList.contains('active');
+                // トグル動作: アクティブなら解除('all')、でなければそのカテゴリを選択
+                const targetCategory = isAlreadyActive ? 'all' : btn.getAttribute('data-cat');
+                
+                applyFilter(targetCategory);
+                
+                // URLも更新したい場合はここで行いますが、今回は省略
+            });
+        });
+
+        // B. 初期ロード時のパラメータ読み取り
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramCategory = urlParams.get('category'); // ?category=food 等を取得
+
+        if (paramCategory) {
+            // パラメータがあればそのカテゴリでフィルタ実行
+            applyFilter(paramCategory);
+        } else {
+            // なければ全表示 (デフォルトCSSのまま)
+        }
+    }
+});
