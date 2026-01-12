@@ -1422,6 +1422,7 @@ a { text-decoration: none; color: inherit; }
     border-bottom: none; /* 境界線を消す */
     padding-bottom: 16px; /* 下の要素との距離を適切に */
     margin-top: 0; /* 必要に応じて調整 */
+    margin-bottom: 0;
 }
 
 /* ボタン自体のスタイル調整 */
