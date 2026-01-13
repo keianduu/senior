@@ -887,13 +887,58 @@ a { text-decoration: none; color: inherit; }
 .cat-chip.active i { color: #C5A059; }
 
 
-/* ▼ 追従しないソートエリア（通常配置） */
+/* selection.css の .sort-area-standalone 周辺を以下のように調整・上書き */
+
 .sort-area-standalone {
     display: flex;
-    justify-content: flex-end; /* 右寄せ */
+    justify-content: space-between;
     align-items: center;
     padding: 0 16px;
-    margin-bottom: 24px; /* 商品リストとの余白を少し広げる */
+    margin-bottom: 16px; /* 余白を少し詰める */
+    position: relative;
+    z-index: 5;
+    gap: 10px; /* 要素同士がくっつきすぎないように */
+}
+
+/* 絞り込みボタン：高さをセレクトボックスと揃える */
+.btn-filter-trigger {
+    background: #FFF;
+    border: 1px solid #CCC; /* 枠線を少し濃く */
+    border-radius: 4px; /* 角丸をセレクトボックスに合わせる（トレンドにより丸くてもOKですが統一感重視） */
+    padding: 6px 12px;
+    font-size: var(--fs-12);
+    font-weight: bold;
+    color: var(--brown-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    cursor: pointer;
+    height: 36px; /* 高さ固定 */
+    box-sizing: border-box;
+}
+
+/* 並び替えセレクトボックス：高さをボタンと揃える */
+.sort-select {
+    height: 36px; /* 高さ固定 */
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    padding: 0 24px 0 8px;
+    font-size: var(--fs-12);
+    color: #333;
+    background-color: white;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+/* 商品グリッドの安全策（強制的に2列にする） */
+.product-grid {
+    display: grid !important; /* 強制適用 */
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .sort-label {
@@ -1444,4 +1489,200 @@ a { text-decoration: none; color: inherit; }
     background-color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(197, 160, 89, 0.2);
+}
+/* selection.css 末尾に追加 */
+
+/* --- 金額絞り込みスライダーエリア --- */
+.price-filter-section {
+    max-width: 500px; /* カテゴリチップと合わせる */
+    margin: 0 auto 24px;
+    padding: 0 16px;
+}
+
+.price-filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.filter-label {
+    font-size: var(--fs-11);
+    color: #666;
+    font-weight: bold;
+}
+
+.current-price-display {
+    font-size: var(--fs-13);
+    font-weight: bold;
+    color: var(--brown-text);
+    background: #FFF;
+    padding: 4px 12px;
+    border-radius: 12px;
+    border: 1px solid #E0E0E0;
+    font-family: var(--font-sans);
+}
+/* selection.css 末尾に追加 */
+
+/* --- 絞り込み＆並び替えエリア --- */
+.sort-area-standalone {
+    display: flex;
+    justify-content: space-between; /* 両端配置 */
+    align-items: center;
+    padding: 0 16px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 5;
+}
+
+/* 絞り込みボタン（ピル型・アイコン付き） */
+.btn-filter-trigger {
+    background: #FFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: var(--fs-12);
+    font-weight: bold;
+    color: var(--brown-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-filter-trigger:active {
+    transform: scale(0.96);
+    background: #F9F9F7;
+}
+.btn-filter-trigger i { color: var(--gold-main); }
+
+/* 並び替えエリア（右寄せ維持） */
+.sort-control {
+    display: flex;
+    align-items: center;
+}
+
+/* --- クーポンバッジ（商品カード用） --- */
+.badge-coupon {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: #FF6B6B;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+/* --- 絞り込みモーダル（ボトムシート風） --- */
+.filter-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: flex-end; /* 下寄せ */
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+.filter-modal-overlay.open {
+    opacity: 1; visibility: visible;
+}
+
+.filter-modal-content {
+    background: #FFF;
+    width: 100%;
+    max-width: 600px; /* PCでの広がりすぎ防止 */
+    border-radius: 20px 20px 0 0; /* 上だけ丸く */
+    padding: 24px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.filter-modal-overlay.open .filter-modal-content {
+    transform: translateY(0);
+}
+
+/* モーダルヘッダー */
+.filter-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #EEE;
+    padding-bottom: 12px;
+}
+.filter-modal-header h3 { margin: 0; font-size: var(--fs-16); color: var(--brown-text); }
+.btn-modal-close {
+    background: none; border: none; font-size: 24px; color: #999; cursor: pointer; padding: 0 8px;
+}
+
+/* フォーム要素 */
+.filter-group { margin-bottom: 24px; }
+.filter-label-modal {
+    display: block; font-size: var(--fs-13); font-weight: bold; color: #666; margin-bottom: 8px;
+}
+.select-wrapper {
+    position: relative;
+    background: #F9F9F9;
+    border-radius: 8px;
+    border: 1px solid #DDD;
+}
+.modal-select {
+    width: 100%;
+    padding: 12px;
+    font-size: var(--fs-14);
+    border: none;
+    background: transparent;
+    appearance: none;
+    cursor: pointer;
+}
+/* 矢印アイコンをCSSで作る */
+.select-wrapper::after {
+    content: "▼";
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 10px; color: #888; pointer-events: none;
+}
+
+/* チェックボックス（カスタムデザイン） */
+.checkbox-container {
+    display: flex; align-items: center; cursor: pointer; position: relative; padding-left: 32px;
+    user-select: none;
+}
+.checkbox-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+.checkmark {
+    position: absolute; top: 0; left: 0; height: 22px; width: 22px;
+    background-color: #EEE; border-radius: 6px;
+}
+.checkbox-container:hover input ~ .checkmark { background-color: #DDD; }
+.checkbox-container input:checked ~ .checkmark { background-color: var(--gold-main); }
+.checkmark:after {
+    content: ""; position: absolute; display: none;
+}
+.checkbox-container input:checked ~ .checkmark:after { display: block; }
+.checkbox-container .checkmark:after {
+    left: 7px; top: 3px; width: 6px; height: 12px;
+    border: solid white; border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.checkbox-text { font-size: var(--fs-14); margin-right: 8px; }
+.badge-coupon-mini {
+    background: #FF6B6B; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold;
+}
+
+/* モーダルフッター（ボタン） */
+.filter-modal-footer {
+    display: flex; gap: 12px;
+}
+.btn-filter-reset {
+    flex: 1; padding: 12px; border: 1px solid #DDD; background: #FFF; border-radius: 8px; color: #666; font-weight: bold; cursor: pointer;
+}
+.btn-filter-apply {
+    flex: 2; padding: 12px; background: linear-gradient(to bottom, #D4AF37, #C5A059); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: var(--fs-14); cursor: pointer;
+    box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);
 }

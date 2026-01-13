@@ -315,3 +315,100 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+/* script.js 末尾に追加・修正 */
+
+/* script.js 末尾に追加・修正 */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // UI要素取得
+    const modal = document.getElementById('filter-modal-overlay');
+    const openBtn = document.getElementById('openFilterModal');
+    const closeBtn = document.getElementById('closeFilterModal');
+    const applyBtn = document.getElementById('applyFilter');
+    const resetBtn = document.getElementById('resetFilter');
+    
+    // 入力要素
+    const priceSelect = document.getElementById('filter-price-range');
+    const couponCheck = document.getElementById('filter-coupon-check');
+    const productCards = document.querySelectorAll('#product-list .product-card');
+
+    if (!modal || !openBtn) return;
+
+    // --- モーダル制御 ---
+    const openModal = () => modal.classList.add('open');
+    const closeModal = () => modal.classList.remove('open');
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    // 背景クリックで閉じる
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    // --- フィルタリングロジック ---
+    
+    // 価格取得ヘルパー
+    const getPriceFromCard = (card) => {
+        const priceEl = card.querySelector('.p-price, .featured-info .price-row');
+        if (!priceEl) return 0;
+        const rawText = priceEl.innerText;
+        return parseInt(rawText.replace(/[^0-9]/g, ''), 10) || 0;
+    };
+
+    // フィルタ実行関数
+    const executeFilter = () => {
+        const rangeVal = priceSelect.value;
+        const isCouponOnly = couponCheck.checked;
+        
+        // アクティブなカテゴリを取得 (既存のscript.jsのロジックと連携が必要な場合)
+        // ここではDOMからactiveなchipを探す簡易実装
+        const activeChip = document.querySelector('.cat-chip.active');
+        const currentCategory = activeChip ? activeChip.getAttribute('data-cat') : 'all';
+
+        // 価格範囲の解析
+        let min = 0, max = 9999999;
+        if (rangeVal !== 'all') {
+            const parts = rangeVal.split('-');
+            min = parseInt(parts[0], 10);
+            max = parseInt(parts[1], 10);
+        }
+
+        let count = 0;
+
+        productCards.forEach(card => {
+            const cardPrice = getPriceFromCard(card);
+            const cardCategory = card.getAttribute('data-category');
+            // クーポン有無判定 (data-has-coupon属性があるか)
+            const hasCoupon = card.getAttribute('data-has-coupon') === 'true';
+
+            // 判定ロジック
+            const matchCategory = (currentCategory === 'all' || !currentCategory || cardCategory === currentCategory);
+            const matchPrice = (cardPrice >= min && cardPrice <= max);
+            const matchCoupon = (!isCouponOnly || hasCoupon); // チェックなしなら全員OK、ありなら持ってる人のみ
+
+            if (matchCategory && matchPrice && matchCoupon) {
+                card.style.display = '';
+                card.style.opacity = '1'; // 念のため
+                count++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // 検索結果0件のハンドリング（必要であれば）など
+        // alert(`${count}件見つかりました`); 
+        
+        closeModal();
+    };
+
+    // 適用ボタン
+    applyBtn.addEventListener('click', executeFilter);
+
+    // リセットボタン
+    resetBtn.addEventListener('click', () => {
+        priceSelect.value = 'all';
+        couponCheck.checked = false;
+        // 即座に適用するか、フォームだけ戻すか。ここではフォーム戻して適用まで行う
+        executeFilter(); 
+    });
+});

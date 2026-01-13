@@ -32,17 +32,61 @@
                     <button class="cat-chip" data-cat="brain"><i class="fas fa-book-open"></i> 脳活・趣味</button>
                 </div>
             </div>
-        
+
             <div class="sort-area-standalone">
-                <span class="sort-label">並び替え:</span>
-                <select class="sort-select">
-                    <option value="recommend">おすすめ順</option>
-                    <option value="new">新着順</option>
-                    <option value="price_asc">価格が安い順</option>
-                    <option value="price_desc">価格が高い順</option>
-                </select>
+                <button class="btn-filter-trigger" id="openFilterModal">
+                    <i class="fas fa-sliders-h"></i> 絞り込み
+                </button>
+            
+                <div class="sort-control">
+                    <span class="sort-label">並び替え:</span>
+                    <select class="sort-select">
+                        <option value="recommend">おすすめ順</option>
+                        <option value="new">新着順</option>
+                        <option value="price_asc">価格が安い順</option>
+                        <option value="price_desc">価格が高い順</option>
+                    </select>
+                </div>
             </div>
         
+            <div id="filter-modal-overlay" class="filter-modal-overlay">
+                <div class="filter-modal-content">
+                    <div class="filter-modal-header">
+                        <h3>条件で絞り込む</h3>
+                        <button class="btn-modal-close" id="closeFilterModal">×</button>
+                    </div>
+                    
+                    <div class="filter-modal-body">
+                        <div class="filter-group">
+                            <label class="filter-label-modal"><i class="fas fa-yen-sign"></i> 金額範囲</label>
+                            <div class="select-wrapper">
+                                <select id="filter-price-range" class="modal-select">
+                                    <option value="all">指定なし</option>
+                                    <option value="0-5000">〜5,000円</option>
+                                    <option value="5001-10000">5,001円〜10,000円</option>
+                                    <option value="10001-20000">10,001円〜20,000円</option>
+                                    <option value="20001-999999">20,001円以上</option>
+                                </select>
+                            </div>
+                        </div>
+            
+                        <div class="filter-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="filter-coupon-check">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-text">クーポンがある商品のみ</span>
+                                <span class="badge-coupon-mini">Coupon</span>
+                            </label>
+                        </div>
+                    </div>
+            
+                    <div class="filter-modal-footer">
+                        <button class="btn-filter-reset" id="resetFilter">クリア</button>
+                        <button class="btn-filter-apply" id="applyFilter">この条件で検索</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="product-grid">
                 
                 <div class="product-card" data-category="food">
