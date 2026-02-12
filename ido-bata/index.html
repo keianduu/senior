@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Project Ido-bata Prototype v2.1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* CSSは前回と同じですが、念のため全て記載します */
+        :root {
+            --primary: #FF7F50;
+            --primary-dark: #E66A3C;
+            --primary-light: #FFF0E8;
+            --accent: #20B2AA;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --bg-base: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #e0e5ec;
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        #app-container {
+            width: 100%; max-width: 414px;
+            background-color: var(--bg-base);
+            height: 100%; position: relative;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--white);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; height: 60px;
+        }
+        .header-title { font-weight: 900; font-size: 20px; color: var(--primary); letter-spacing: 0.5px; }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
+        .points-badge {
+            background: var(--primary-light); color: var(--primary-dark);
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;
+        }
+        .notification-btn { position: relative; font-size: 20px; color: var(--text-main); cursor: pointer; }
+        .noti-badge {
+            position: absolute; top: -2px; right: -2px; width: 10px; height: 10px;
+            background-color: #EF4444; border-radius: 50%; border: 2px solid var(--white); display: none;
+        }
+
+        /* Main */
+        main { flex: 1; overflow-y: auto; padding-bottom: 90px; scroll-behavior: smooth; }
+        .timeline-container { padding: 16px; }
+
+        /* Post Card */
+        .post-card {
+            background: var(--white); border-radius: 16px; padding: 16px; margin-bottom: 16px;
+            box-shadow: var(--shadow); transition: transform 0.2s;
+        }
+        .post-header { display: flex; align-items: center; margin-bottom: 12px; }
+        .user-avatar {
+            width: 44px; height: 44px; background-color: #E5E7EB; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: #9CA3AF; margin-right: 12px; flex-shrink: 0;
+        }
+        .user-avatar.me { background-color: var(--primary-light); color: var(--primary); }
+        .user-info h3 { margin: 0; font-size: 15px; font-weight: 700; }
+        .user-info span { font-size: 12px; color: var(--text-sub); }
+        .post-tags { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .tag-pill {
+            background-color: #F3F4F6; color: var(--text-sub); padding: 3px 10px;
+            border-radius: 12px; font-size: 11px; font-weight: 500;
+        }
+        .post-content { font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: #1F2937; }
+        .action-area {
+            border-top: 1px solid #F3F4F6; padding-top: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .cheer-btn {
+            background-color: var(--white); border: 1.5px solid var(--primary); color: var(--primary);
+            padding: 8px 18px; border-radius: 24px; font-size: 14px; font-weight: 700;
+            display: flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
+        }
+        .cheer-btn:active { transform: scale(0.95); }
+        .cheer-btn.cheered { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .cheer-count { font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 4px; }
+
+        /* Circle Card */
+        .circle-recommend-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fef9f7 100%);
+            border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(255, 127, 80, 0.15);
+            border: 1px solid var(--primary-light); overflow: hidden; position: relative;
+        }
+        .circle-header-img {
+            height: 100px; background: #FFDAB9; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary-dark); font-size: 40px;
+        }
+        .circle-content { padding: 16px; }
+        .circle-badge {
+            display: inline-block; background: var(--accent); color: white;
+            font-size: 11px; padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; font-weight: 700;
+        }
+        .circle-title { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; color: var(--text-main); }
+        .circle-meta {
+            font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+        }
+        .circle-desc { font-size: 14px; color: var(--text-main); margin-bottom: 16px; line-height: 1.5; }
+        .join-btn {
+            width: 100%; background: var(--primary); color: white; border: none;
+            padding: 12px; border-radius: 50px; font-weight: 700; font-size: 15px;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(255, 127, 80, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-decoration: none; /* Link style reset */
+        }
+        .join-btn:active { transform: scale(0.98); }
+
+        /* Notifications */
+        #noti-dropdown {
+            position: absolute; top: 60px; right: 16px; width: 300px; background: white;
+            border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 200;
+            display: none; border: 1px solid var(--border);
+        }
+        .noti-item {
+            padding: 12px 16px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 12px;
+            align-items: start; font-size: 13px; text-decoration: none; color: inherit;
+        }
+        .noti-item:hover { background-color: #fafafa; }
+        .noti-icon { color: var(--accent); font-size: 16px; margin-top: 2px; }
+
+        /* Nav */
+        nav {
+            position: absolute; bottom: 0; width: 100%; background-color: var(--white);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 10px 0 calc(10px + var(--safe-area-bottom)); z-index: 20;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; font-size: 10px;
+            color: #9CA3AF; gap: 4px; text-decoration: none; width: 20%;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 22px; margin-bottom: 2px; }
+
+        /* Modal */
+        #walk-finish-modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 1000; display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        .modal-card {
+            background: var(--white); border-radius: 20px 20px 0 0; padding: 24px;
+            animation: slideUp 0.3s ease-out; max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .option-btn {
+            background: var(--white); border: 1px solid #D1D5DB; padding: 12px;
+            border-radius: 12px; font-size: 15px; font-weight: 700; text-align: center;
+            cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; min-height: 50px;
+        }
+        .option-btn.selected { border: 2px solid var(--primary); background-color: var(--primary-light); color: var(--primary); }
+        .submit-btn {
+            background: var(--primary); color: white; width: 100%; padding: 14px;
+            border-radius: 50px; font-size: 16px; font-weight: 700; border: none; margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.4);
+        }
+        
+        /* Reward Overlay */
+        #reward-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 2000; display: none; align-items: center; justify-content: center;
+        }
+        .reward-badge {
+            background: rgba(255, 255, 255, 0.98); padding: 24px 48px; border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); text-align: center;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 3px solid var(--primary);
+        }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <header>
+            <div class="header-title">Ido-bata</div>
+            <div class="header-actions">
+                <div class="points-badge">
+                    <i class="fas fa-coins"></i> <span id="user-points">2,450</span>
+                </div>
+                <div class="notification-btn" onclick="toggleNoti()">
+                    <i class="far fa-bell"></i>
+                    <div class="noti-badge" id="noti-badge"></div>
+                </div>
+            </div>
+        </header>
+
+        <div id="noti-dropdown">
+            <a href="circle-detail.html" class="noti-item">
+                <div class="noti-icon"><i class="fas fa-users"></i></div>
+                <div>
+                    <strong>サークルのお誘い</strong><br>
+                    「愛犬とウォーキング部」へ招待されました
+                </div>
+            </a>
+            <div class="noti-item">
+                <div class="noti-icon"><i class="fas fa-heart" style="color:#EF4444"></i></div>
+                <div>
+                    <strong>田中さん</strong>があなたの投稿を応援しました
+                </div>
+            </div>
+        </div>
+
+        <main id="main-content">
+            <div class="timeline-container" id="timeline">
+                
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="user-avatar" style="background: #E0F2F1; color: #00897B;"><i class="fas fa-user"></i></div>
+                        <div class="user-info"><h3>田中さん</h3><span>15分前</span></div>
+                    </div>
+                    <div class="post-tags"><span class="tag-pill">#ウォーキング</span><span class="tag-pill">#目標達成</span></div>
+                    <div class="post-content">今日は疲れたけど、7000歩達成しました！</div>
+                    <div class="action-area">
+                        <button class="cheer-btn" onclick="cheerPost(this)"><i class="far fa-thumbs-up"></i> えらい！</button>
+                        <div class="cheer-count"><i class="fas fa-heart" style="color: #EF4444;"></i> 12人が応援</div>
+                    </div>
+                </div>
+
+                <div class="circle-recommend-card">
+                    <div class="circle-header-img">
+                        <i class="fas fa-dog" style="opacity:0.5; font-size:60px;"></i>
+                        <span style="position:absolute; bottom:8px; right:12px; font-size:12px; background:rgba(0,0,0,0.5); color:white; padding:2px 8px; border-radius:10px;">PR</span>
+                    </div>
+                    <div class="circle-content">
+                        <span class="circle-badge">あなたにおすすめ</span>
+                        <h3 class="circle-title">🐶 愛犬とウォーキング部</h3>
+                        <div class="circle-meta">
+                            <span><i class="fas fa-users"></i> メンバー 1,240人</span>
+                            <span><i class="fas fa-comment-dots"></i> 1日50件の投稿</span>
+                        </div>
+                        <p class="circle-desc">わんちゃんと一緒に歩いている方、写真を見せ合いませんか？犬種は問いません！</p>
+                        
+                        <a href="circle-detail.html" class="join-btn">
+                            <i class="fas fa-sign-in-alt"></i> サークルに参加する
+                        </a>
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="user-avatar" style="background: #FFF3E0; color: #F57C00;"><i class="fas fa-user"></i></div>
+                        <div class="user-info"><h3>鈴木さん</h3><span>32分前</span></div>
+                    </div>
+                    <div class="post-tags"><span class="tag-pill">#健康管理</span><span class="tag-pill">#血圧</span></div>
+                    <div class="post-content">今朝の血圧は128/82。お酢を飲み始めてから調子がいいみたい。</div>
+                    <div class="action-area">
+                        <button class="cheer-btn" onclick="cheerPost(this)"><i class="far fa-thumbs-up"></i> すごい！</button>
+                        <div class="cheer-count"><i class="fas fa-heart" style="color: #EF4444;"></i> 8人が応援</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <nav>
+            <a href="#" class="nav-item"><i class="fas fa-shoe-prints"></i>歩数</a>
+            <a href="#" class="nav-item active"><i class="fas fa-comments"></i>広場</a>
+            
+            <a href="circle-detail.html" class="nav-item">
+                <i class="fas fa-users"></i>サークル
+            </a>
+            
+            <a href="#" class="nav-item"><i class="fas fa-gift"></i>交換</a>
+            <a href="#" class="nav-item"><i class="fas fa-cog"></i>設定</a>
+        </nav>
+
+        <div id="walk-finish-modal">
+            <div class="modal-card">
+                <h2 style="text-align:center; font-size:18px; margin:0 0 4px 0;">今日も歩きましたね！</h2>
+                <p style="text-align:center; color:#666; font-size:13px; margin:0 0 20px 0;">ひとこと記録して +1pt（残り1回）</p>
+                <div class="option-btn" onclick="selectOption(this)">🎉 目標達成しました！</div>
+                <div class="option-btn" onclick="selectOption(this)">🍵 今日は少し疲れました…</div>
+                <div class="option-btn" onclick="selectOption(this)">☀️ 天気が良くて最高！</div>
+                <div class="option-btn" onclick="selectOption(this)">☔️ 雨だけど頑張った</div>
+                <div style="margin:20px 0 10px 0; font-size:13px; font-weight:700;">タグ（任意）：</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <span class="tag-pill" style="border:1px solid #ccc; padding:6px 12px; font-size:13px;" onclick="toggleTag(this)">#犬の散歩</span>
+                    <span class="tag-pill" style="border:1px solid #ccc; padding:6px 12px; font-size:13px;" onclick="toggleTag(this)">#ウォーキング</span>
+                    <span class="tag-pill" style="border:1px solid #ccc; padding:6px 12px; font-size:13px;" onclick="toggleTag(this)">#ダイエット</span>
+                </div>
+                <button class="submit-btn" onclick="submitPost()">投稿する</button>
+                <div style="text-align:center; margin-top:12px; font-size:13px; color:#999; text-decoration:underline;" onclick="closeModal()">投稿せずに閉じる</div>
+            </div>
+        </div>
+        <div id="reward-overlay">
+            <div class="reward-badge">
+                <div style="font-size:32px; color:var(--primary); font-weight:900;">+1 pt</div>
+                <div style="font-size:14px; color:#333; margin-top:4px;">ナイス投稿！</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // JS Logic (Same as before)
+        let selectedMessage = "";
+        let currentPoints = 2450;
+        let isNotiOpen = false;
+
+        function selectOption(el) {
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedMessage = el.innerText.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').trim();
+        }
+        function toggleTag(el) {
+            if(el.style.backgroundColor === 'rgb(32, 178, 170)') {
+                 el.style.backgroundColor = ''; el.style.color = '#666'; el.style.borderColor = '#ccc';
+            } else {
+                el.style.backgroundColor = '#20B2AA'; el.style.color = 'white'; el.style.borderColor = '#20B2AA';
+            }
+        }
+        function closeModal() { document.getElementById('walk-finish-modal').style.display = 'none'; }
+        function toggleNoti() {
+            const dropdown = document.getElementById('noti-dropdown');
+            const badge = document.getElementById('noti-badge');
+            if(isNotiOpen) { dropdown.style.display = 'none'; } 
+            else { dropdown.style.display = 'block'; badge.style.display = 'none'; }
+            isNotiOpen = !isNotiOpen;
+        }
+        function showReward(points) {
+            const overlay = document.getElementById('reward-overlay');
+            const txt = overlay.querySelector('div div:first-child');
+            txt.innerText = `+${points} pt`;
+            overlay.style.display = 'flex';
+            currentPoints += points;
+            setTimeout(() => {
+                document.getElementById('user-points').innerText = currentPoints.toLocaleString();
+                overlay.style.display = 'none';
+            }, 1500);
+        }
+        function submitPost() {
+            if(!selectedMessage) { alert("メッセージを選んでください"); return; }
+            closeModal(); showReward(1);
+            const timeline = document.getElementById('timeline');
+            const html = `
+                <div class="post-card" style="border: 2px solid var(--primary-light);">
+                    <div class="post-header"><div class="user-avatar me"><i class="fas fa-user"></i></div><div class="user-info"><h3>わたし</h3><span>たった今</span></div></div>
+                    <div class="post-content">${selectedMessage}</div>
+                    <div class="action-area"><div class="cheer-count" style="color:var(--primary); font-weight:bold;"><i class="fas fa-spinner fa-spin"></i> みんなが見ています...</div></div>
+                </div>`;
+            timeline.insertAdjacentHTML('afterbegin', html);
+            setTimeout(() => {
+                const badge = document.getElementById('noti-badge'); badge.style.display = 'block';
+                const newPost = timeline.firstElementChild;
+                newPost.querySelector('.action-area').innerHTML = `<button class="cheer-btn" onclick="cheerPost(this)"><i class="far fa-thumbs-up"></i> えらい！</button><div class="cheer-count"><i class="fas fa-heart" style="color:#EF4444"></i> 1人が応援</div>`;
+            }, 3000);
+        }
+        function cheerPost(btn) {
+            if(btn.classList.contains('cheered')) return;
+            btn.classList.add('cheered'); btn.innerHTML = '<i class="fas fa-check"></i> 応援済';
+            showReward(1);
+            const countEl = btn.nextElementSibling;
+            let count = parseInt(countEl.innerText.replace(/[^0-9]/g, ''));
+            countEl.innerHTML = `<i class="fas fa-heart" style="color:#EF4444"></i> ${count + 1}人が応援`;
+        }
+        window.onload = function() {
+            setTimeout(() => { document.getElementById('noti-badge').style.display = 'block'; }, 1000);
+        }
+    </script>
+</body>
+</html>

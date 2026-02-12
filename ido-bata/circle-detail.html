@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>愛犬とウォーキング部 - Ido-bata</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF7F50;
+            --primary-light: #FFF0E8;
+            --accent: #20B2AA;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --bg-base: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #e0e5ec;
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        #app-container {
+            width: 100%; max-width: 414px;
+            background-color: var(--bg-base);
+            height: 100%; position: relative;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        .circle-header { background-color: var(--white); position: relative; z-index: 10; }
+        .nav-bar {
+            padding: 12px 16px; display: flex; align-items: center; gap: 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        /* ★LINK: Back Button Style */
+        .back-btn {
+            font-size: 20px; color: var(--text-main); cursor: pointer;
+            padding: 8px; margin-left: -8px; text-decoration: none;
+        }
+        .header-title { font-weight: 700; font-size: 16px; }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            padding-bottom: 0; border-bottom: 1px solid var(--border);
+        }
+        .cover-image {
+            width: 100%; height: 140px; background-color: #FFDAB9;
+            position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .cover-icon { font-size: 60px; color: rgba(255,255,255,0.8); }
+
+        .circle-info { padding: 16px; }
+        .circle-name { font-size: 22px; font-weight: 900; margin: 0 0 8px 0; color: var(--text-main); }
+        .circle-stats { font-size: 12px; color: var(--text-sub); display: flex; gap: 16px; margin-bottom: 12px; }
+        .join-status-btn {
+            background: var(--white); border: 1px solid var(--border);
+            padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+            color: var(--accent); display: inline-flex; align-items: center; gap: 4px;
+        }
+
+        /* Tabs */
+        .tabs { display: flex; background: var(--white); border-bottom: 1px solid var(--border); margin-top: 12px; }
+        .tab-item {
+            flex: 1; text-align: center; padding: 12px 0;
+            font-size: 14px; color: var(--text-sub); font-weight: 500;
+            position: relative; cursor: pointer;
+        }
+        .tab-item.active { color: var(--primary); font-weight: 700; }
+        .tab-item.active::after {
+            content: ''; position: absolute; bottom: 0; left: 20%; width: 60%;
+            height: 3px; background: var(--primary); border-radius: 3px 3px 0 0;
+        }
+
+        /* Main Content Area */
+        main { flex: 1; overflow-y: auto; padding: 0 0 100px 0; scroll-behavior: smooth; }
+        
+        /* Tab Views Control */
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active-view { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Feed View Styles --- */
+        .pinned-post { background: #FFF8E1; padding: 16px; border-bottom: 1px solid #FFE0B2; display: flex; gap: 12px; }
+        .post-list { padding: 16px; }
+        .c-post-card {
+            background: var(--white); border-radius: 12px; padding: 16px;
+            margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .c-post-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .c-user { display: flex; gap: 10px; align-items: center; }
+        .c-avatar {
+            width: 40px; height: 40px; border-radius: 50%; background: #eee;
+            display: flex; align-items: center; justify-content: center; font-size: 18px; color: #999;
+        }
+        .c-body { font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
+        .c-image {
+            width: 100%; height: 200px; background-color: #f0f0f0; border-radius: 8px;
+            margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: #ccc;
+        }
+        .c-footer { border-top: 1px solid #f0f0f0; padding-top: 10px; display: flex; gap: 16px; }
+        .c-action { font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
+        /* --- Member View Styles --- */
+        .member-list { background: var(--white); }
+        .member-header {
+            padding: 12px 16px; background: #F9FAFB; font-size: 13px;
+            font-weight: 700; color: #666; border-bottom: 1px solid #eee;
+        }
+        .member-item {
+            padding: 16px; border-bottom: 1px solid #f0f0f0; display: flex;
+            align-items: center; justify-content: space-between;
+        }
+        .m-info { display: flex; align-items: center; gap: 12px; }
+        .m-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .m-badge { font-size: 11px; color: var(--primary); border: 1px solid var(--primary); padding: 1px 6px; border-radius: 4px; margin-left: 6px;}
+        .m-sub { font-size: 12px; color: #999; }
+        .hello-btn {
+            padding: 6px 12px; background: var(--primary-light); color: var(--primary);
+            border-radius: 20px; font-size: 12px; font-weight: 700; border: none; cursor: pointer;
+        }
+        .hello-btn.done { background: #eee; color: #999; }
+
+        /* --- Gallery View Styles --- */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+            padding-top: 2px;
+        }
+        .gallery-item {
+            position: relative; width: 100%; padding-bottom: 100%; /* Square */
+            background: #ddd; overflow: hidden; cursor: pointer;
+        }
+        .gallery-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; transition: transform 0.3s;
+        }
+        .gallery-item:hover .gallery-img { transform: scale(1.05); }
+
+        /* FAB */
+        .fab-btn {
+            position: absolute; bottom: 80px; right: 24px; width: 56px; height: 56px;
+            background: var(--primary); color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.4); cursor: pointer; z-index: 100;
+        }
+
+        /* Nav */
+        nav {
+            position: absolute; bottom: 0; width: 100%; background-color: var(--white);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 10px 0 calc(10px + var(--safe-area-bottom)); z-index: 20;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; font-size: 10px;
+            color: #9CA3AF; gap: 4px; text-decoration: none; width: 20%;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 22px; margin-bottom: 2px; }
+
+        /* Image Modal */
+        #img-modal {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.9); z-index: 2000; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        #img-modal img { max-width: 100%; max-height: 80%; }
+        .close-modal { position: absolute; top: 40px; right: 20px; color: white; font-size: 30px; cursor: pointer; }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <div class="circle-header">
+            <div class="nav-bar">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="header-title">サークル詳細</div>
+                <div style="margin-left:auto; color:#666;"><i class="fas fa-ellipsis-h"></i></div>
+            </div>
+        </div>
+
+        <main>
+            <div class="hero-section">
+                <div class="cover-image">
+                    <div class="cover-icon"><i class="fas fa-dog"></i></div>
+                </div>
+                <div class="circle-info">
+                    <h1 class="circle-name">
+                        🐶 愛犬とウォーキング部
+                    </h1>
+                    <div class="circle-stats">
+                        <span><i class="fas fa-user-friends"></i> メンバー 1,245人</span>
+                        <span><i class="fas fa-pen"></i> 1日 52件</span>
+                    </div>
+                    <div class="join-status-btn">
+                        <i class="fas fa-check-circle"></i> 参加中
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab-item active" onclick="switchTab('feed', this)">交流トーク</div>
+                    <div class="tab-item" onclick="switchTab('members', this)">メンバー</div>
+                    <div class="tab-item" onclick="switchTab('gallery', this)">写真</div>
+                </div>
+            </div>
+
+            <div id="view-feed" class="view-section active-view">
+                <div class="pinned-post">
+                    <div style="color:#F57C00;"><i class="fas fa-thumbtack"></i></div>
+                    <div>
+                        <h4 style="margin:0 0 4px 0; font-size:14px; color:#F57C00;">管理人からのお願い</h4>
+                        <p style="margin:0; font-size:13px; color:#5D4037;">みんなで気持ちよく使うために、批判的なコメントは控えましょう。</p>
+                    </div>
+                </div>
+
+                <div class="post-list">
+                    <div class="c-post-card">
+                        <div class="c-post-header">
+                            <div class="c-user">
+                                <div class="c-avatar" style="background:#E1F5FE; color:#0288D1;"><i class="fas fa-user"></i></div>
+                                <div class="c-meta"><h3>高橋さん</h3><span>3時間前</span></div>
+                            </div>
+                        </div>
+                        <div class="c-body">雨上がりで地面が濡れてたので、今日はカッパを着せて散歩しました。</div>
+                        <div class="c-image">
+                            <i class="fas fa-dog" style="font-size:48px; opacity:0.3;"></i>
+                        </div>
+                        <div class="c-footer">
+                            <div class="c-action" onclick="toggleLike(this)"><i class="far fa-heart"></i> 応援 24</div>
+                            <div class="c-action"><i class="far fa-comment"></i> コメント 3</div>
+                        </div>
+                    </div>
+                    <div class="c-post-card">
+                        <div class="c-post-header">
+                            <div class="c-user">
+                                <div class="c-avatar" style="background:#FCE4EC; color:#C2185B;"><i class="fas fa-user"></i></div>
+                                <div class="c-meta"><h3>渡辺さん</h3><span>5時間前</span></div>
+                            </div>
+                        </div>
+                        <div class="c-body">公園の桜が咲き始めましたよ🌸皆さんの近くはどうですか？</div>
+                        <div class="c-footer">
+                            <div class="c-action" onclick="toggleLike(this)"><i class="far fa-heart"></i> 応援 18</div>
+                            <div class="c-action"><i class="far fa-comment"></i> コメント 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-members" class="view-section">
+                <div class="member-list">
+                    <div class="member-header">運営・管理人</div>
+                    <div class="member-item">
+                        <div class="m-info">
+                            <div class="c-avatar" style="background:#333; color:#fff;"><i class="fas fa-user-shield"></i></div>
+                            <div>
+                                <div class="m-name">事務局わんこ <span class="m-badge">公式</span></div>
+                                <div class="m-sub">いつも見守っています</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="m-info">
+                            <div class="c-avatar" style="background:#FFEB3B; color:#F57F17;"><i class="fas fa-crown"></i></div>
+                            <div>
+                                <div class="m-name">リーダー佐々木 <span class="m-badge">管理人</span></div>
+                                <div class="m-sub">柴犬2匹飼ってます</div>
+                            </div>
+                        </div>
+                        <button class="hello-btn" onclick="sayHello(this)">挨拶</button>
+                    </div>
+
+                    <div class="member-header">メンバー (1,243名)</div>
+                    <div class="member-item">
+                        <div class="m-info">
+                            <div class="c-avatar" style="background:#E1F5FE; color:#0288D1;"><i class="fas fa-user"></i></div>
+                            <div>
+                                <div class="m-name">高橋さん</div>
+                                <div class="m-sub">3時間前にログイン</div>
+                            </div>
+                        </div>
+                        <button class="hello-btn" onclick="sayHello(this)">挨拶</button>
+                    </div>
+                    <div class="member-item">
+                        <div class="m-info">
+                            <div class="c-avatar" style="background:#FCE4EC; color:#C2185B;"><i class="fas fa-user"></i></div>
+                            <div>
+                                <div class="m-name">渡辺さん</div>
+                                <div class="m-sub">今日 6,000歩</div>
+                            </div>
+                        </div>
+                        <button class="hello-btn" onclick="sayHello(this)">挨拶</button>
+                    </div>
+                    <div class="member-item">
+                        <div class="m-info">
+                            <div class="c-avatar" style="background:#E8F5E9; color:#2E7D32;"><i class="fas fa-user"></i></div>
+                            <div>
+                                <div class="m-name">加藤さん</div>
+                                <div class="m-sub">トイプードル大好き</div>
+                            </div>
+                        </div>
+                        <button class="hello-btn" onclick="sayHello(this)">挨拶</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-gallery" class="view-section">
+                <div class="gallery-grid">
+                    <div class="gallery-item" onclick="openImage(this, '#FFCCBC')">
+                        <div class="gallery-img" style="background:#FFCCBC; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-dog"></i></div>
+                    </div>
+                    <div class="gallery-item" onclick="openImage(this, '#C5CAE9')">
+                        <div class="gallery-img" style="background:#C5CAE9; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-tree"></i></div>
+                    </div>
+                    <div class="gallery-item" onclick="openImage(this, '#B2DFDB')">
+                        <div class="gallery-img" style="background:#B2DFDB; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-sun"></i></div>
+                    </div>
+                    <div class="gallery-item" onclick="openImage(this, '#F0F4C3')">
+                        <div class="gallery-img" style="background:#F0F4C3; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-paw"></i></div>
+                    </div>
+                    <div class="gallery-item" onclick="openImage(this, '#E1BEE7')">
+                        <div class="gallery-img" style="background:#E1BEE7; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-camera"></i></div>
+                    </div>
+                    <div class="gallery-item" onclick="openImage(this, '#FFAB91')">
+                        <div class="gallery-img" style="background:#FFAB91; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-bone"></i></div>
+                    </div>
+                </div>
+                <div style="padding:20px; text-align:center; color:#999; font-size:13px;">
+                    これ以上は読み込めません
+                </div>
+            </div>
+
+        </main>
+
+        <div class="fab-btn" id="fab-btn" onclick="alert('投稿機能は前回と同じです')">
+            <i class="fas fa-pen"></i>
+        </div>
+
+        <nav>
+            <a href="index.html" class="nav-item"><i class="fas fa-shoe-prints"></i>歩数</a>
+            <a href="index.html" class="nav-item"><i class="fas fa-comments"></i>広場</a>
+            
+            <a href="#" class="nav-item active"><i class="fas fa-users"></i>サークル</a>
+            <a href="#" class="nav-item"><i class="fas fa-gift"></i>交換</a>
+            <a href="#" class="nav-item"><i class="fas fa-cog"></i>設定</a>
+        </nav>
+
+        <div id="img-modal" onclick="this.style.display='none'">
+            <div class="close-modal">&times;</div>
+            <div id="modal-img-content" style="width:300px; height:300px; background:white; display:flex; align-items:center; justify-content:center; font-size:100px; color:rgba(0,0,0,0.2);">
+                <i class="fas fa-dog"></i>
+            </div>
+            <div style="color:white; margin-top:20px;">タップして閉じる</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabName, element) {
+            // Update Tab UI
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            // Update View Content
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+            
+            if (tabName === 'feed') {
+                document.getElementById('view-feed').classList.add('active-view');
+                document.getElementById('fab-btn').style.display = 'flex';
+            } else if (tabName === 'members') {
+                document.getElementById('view-members').classList.add('active-view');
+                document.getElementById('fab-btn').style.display = 'none';
+            } else if (tabName === 'gallery') {
+                document.getElementById('view-gallery').classList.add('active-view');
+                document.getElementById('fab-btn').style.display = 'flex'; // Allow photo upload
+            }
+        }
+
+        // Like Interaction
+        function toggleLike(el) {
+            const icon = el.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far'); icon.classList.add('fas');
+                icon.style.color = '#EF4444'; el.style.color = '#EF4444';
+                let text = el.innerText;
+                let num = parseInt(text.replace(/[^0-9]/g, ''));
+                el.innerHTML = `<i class="fas fa-heart" style="color:#EF4444;"></i> 応援 ${num + 1}`;
+            }
+        }
+
+        // Say Hello Interaction
+        function sayHello(btn) {
+            if(btn.classList.contains('done')) return;
+            btn.innerText = "挨拶済";
+            btn.classList.add('done');
+            alert("挨拶を送りました！\n相手に通知が届きます。");
+        }
+
+        // Image Modal
+        function openImage(el, color) {
+            const modal = document.getElementById('img-modal');
+            const content = document.getElementById('modal-img-content');
+            const iconClass = el.querySelector('i').className;
+            
+            content.style.backgroundColor = color;
+            content.innerHTML = `<i class="${iconClass}" style="color:white;"></i>`;
+            
+            modal.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
