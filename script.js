@@ -412,3 +412,91 @@ document.addEventListener('DOMContentLoaded', () => {
         executeFilter(); 
     });
 });
+
+/* =========================================================
+   クジ機能 コントロールロジック
+========================================================= */
+const kujiApp = {
+    // 初期状態（API連携時はここで初期データをセット）
+    isAchieved: false,
+
+    init: function() {
+        this.updateFabState();
+    },
+
+    openModal: function() {
+        const modal = document.getElementById('kujiModal');
+        // displayをflexにしてから少し遅らせてopacityを1にする(CSS transition用)
+        modal.style.display = 'flex';
+        // 背景スクロールを防止
+        document.body.style.overflow = 'hidden'; 
+        
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10);
+        
+        this.updateView();
+    },
+
+    closeModal: function() {
+        const modal = document.getElementById('kujiModal');
+        modal.classList.remove('show');
+        
+        // アニメーション完了後にdisplay:noneにする
+        setTimeout(() => {
+            modal.style.display = 'none';
+            // 背景スクロールを元に戻す
+            document.body.style.overflow = '';
+            // 次開いた時のために表示をリセット
+            this.updateView();
+        }, 300);
+    },
+
+    updateFabState: function() {
+        const fab = document.getElementById('kujiFab');
+        const fabText = document.getElementById('kujiFabText');
+        if (!fab || !fabText) return;
+
+        if(this.isAchieved) {
+            fab.classList.add('is-active');
+            fabText.innerText = '引ける!';
+        } else {
+            fab.classList.remove('is-active');
+            fabText.innerText = '未達';
+        }
+    },
+
+    updateView: function() {
+        document.getElementById('kujiViewProgress').style.display = this.isAchieved ? 'none' : 'block';
+        document.getElementById('kujiViewReady').style.display = this.isAchieved ? 'block' : 'none';
+        document.getElementById('kujiViewAnim').style.display = 'none';
+        document.getElementById('kujiViewResult').style.display = 'none';
+        
+        this.updateFabState();
+    },
+
+    startDraw: function() {
+        // UI切り替え: 準備画面 -> アニメーション画面
+        document.getElementById('kujiViewReady').style.display = 'none';
+        document.getElementById('kujiViewAnim').style.display = 'block';
+        
+        // 擬似的な通信/抽選待ち時間 (2.5秒)
+        setTimeout(() => {
+            document.getElementById('kujiViewAnim').style.display = 'none';
+            document.getElementById('kujiViewResult').style.display = 'block';
+            
+            // TODO: ここでバックエンドからの当選結果（1等〜4等）をDOMに反映させる処理を追加
+        }, 2500);
+    },
+
+    // --- テスト用メソッド ---
+    debugToggleState: function() {
+        this.isAchieved = !this.isAchieved;
+        this.updateView();
+    }
+};
+
+// DOM読み込み完了後に初期化
+document.addEventListener('DOMContentLoaded', () => {
+    kujiApp.init();
+});

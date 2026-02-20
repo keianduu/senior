@@ -609,3 +609,330 @@ section {
     font-size: 10px;
     font-weight: bold;
 }
+
+/* =========================================================
+   クジ機能 フローティングボタン (本適応版)
+========================================================= */
+.kuji-fab {
+    position: fixed;
+    bottom: 80px; /* ボトムナビを回避 */
+    right: 16px;
+    width: 68px; /* シニア向けにタップ領域を少し拡大 */
+    height: 68px;
+    border-radius: 50%;
+    background: #ECEFF1;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    border: 3px solid #CFD8DC;
+    user-select: none;
+}
+.kuji-fab:active {
+    transform: scale(0.95);
+}
+.kuji-fab.is-active {
+    background: linear-gradient(135deg, #FFD54F 0%, #FF8F00 100%);
+    border-color: #FFFFFF;
+    animation: pulse-glow 2s infinite;
+}
+.kuji-fab-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+.kuji-fab-text {
+    font-size: 11px;
+    font-weight: bold;
+    color: #546E7A;
+    margin-top: 2px;
+}
+.kuji-fab.is-active .kuji-fab-text {
+    color: #FFFFFF;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 0 0 rgba(255, 143, 0, 0.6); }
+    70% { box-shadow: 0 0 0 12px rgba(255, 143, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 143, 0, 0); }
+}
+
+/* モーダルオーバーレイ */
+.kuji-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.65);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.kuji-modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+/* モーダルコンテンツ */
+.kuji-modal-content {
+    background: var(--white);
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 32px 20px 24px; /* 上部に閉じるボタン用の余白 */
+    position: relative;
+    text-align: center;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+.kuji-modal-overlay.show .kuji-modal-content {
+    transform: translateY(0);
+}
+
+/* 閉じるボタン (タップ領域拡大) */
+.kuji-modal-close {
+    position: absolute;
+    top: 8px; 
+    right: 8px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* テキストスタイル */
+.kuji-progress-title {
+    font-size: 20px;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-weight: bold;
+    line-height: 1.3;
+}
+.kuji-progress-desc {
+    font-size: 14px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* ミッションリスト */
+.kuji-mission-list {
+    text-align: left;
+    margin-bottom: 24px;
+    background: #FAFAFA;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+.kuji-mission-item {
+    display: flex;
+    justify-content: space-between;
+    /* ボタンを上下中央揃えにするため baseline から変更 */
+    align-items: center; 
+    padding: 12px 0;
+    border-bottom: 1px solid #EEEEEE;
+}
+.kuji-mission-item:last-child {
+    border-bottom: none;
+}
+
+/* 左側の情報ブロック（タイトル＋スタンプ列） */
+.kuji-mission-info-block {
+    display: flex;
+    flex-direction: column;
+}
+
+/* タイトル行 */
+.kuji-mission-title-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.kuji-mission-icon {
+    font-size: 18px;
+    margin-right: 8px;
+    width: 24px;
+    text-align: center;
+}
+.kuji-mission-name { 
+    font-size: 15px; 
+    font-weight: bold; 
+}
+
+/* スタンプ横並びコンテナ */
+.kuji-stamp-row {
+    display: flex;
+    gap: 4px; /* スタンプ間の隙間 */
+    padding-left: 4px; /* 少しインデント */
+}
+
+/* スタンプ個別のスタイル */
+.kuji-stamp {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%; /* 丸型 */
+    background-color: var(--white);
+    border: 2px solid #CFD8DC; /* 未獲得はグレー枠 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: transparent; /* 未獲得時は文字を見せない */
+    flex-shrink: 0; /* 画面が狭くても潰れないように */
+}
+
+/* 獲得済みスタンプ */
+.kuji-stamp.is-earned {
+    background-color: var(--primary-color); /* オレンジ背景 */
+    border-color: var(--primary-color);
+    color: var(--white); /* 白文字 */
+    font-weight: bold;
+}
+
+/* ボタンとステータスのスタイル（既存維持・微調整） */
+.kuji-btn-challenge {
+    background: var(--white);
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 6px 12px; /* スタンプの分高さが出たので少し調整 */
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap; /* ボタン内の改行防止 */
+    margin-left: 8px;
+}
+.kuji-status-cleared {
+    font-size: 14px; 
+    color: #2E7D32; 
+    font-weight: bold; 
+    padding: 6px 12px;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+/* インセンティブ表 */
+.kuji-prize-box {
+    background: #FFF8E1;
+    border: 1px solid #FFECB3;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+.kuji-prize-heading {
+    font-size: 15px; 
+    color: #E65100; 
+    margin-bottom: 12px;
+}
+.kuji-prize-table {
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 13px;
+    background: var(--white);
+}
+.kuji-prize-table th, .kuji-prize-table td {
+    border: 1px solid #FFE082; 
+    padding: 8px; 
+    text-align: center;
+}
+.kuji-prize-table th { 
+    background: #FFECB3; 
+    color: #5D4037;
+}
+.kuji-prize-premium { 
+    color: #D32F2F; 
+    font-weight: bold; 
+}
+
+/* 未達ボタン */
+.kuji-btn-disabled {
+    background: #B0BEC5 !important;
+    box-shadow: none !important;
+    opacity: 0.8;
+}
+
+/* アニメーション */
+.kuji-anim-box {
+    font-size: 80px;
+    margin: 32px 0;
+}
+.shake-kuji-anim {
+    animation: shake-anim 0.4s infinite;
+}
+@keyframes shake-anim {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-15deg) scale(1.1); }
+    50% { transform: rotate(0deg) scale(1); }
+    75% { transform: rotate(15deg) scale(1.1); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+/* 結果・アップセル */
+.kuji-result-title {
+    font-size: 26px; 
+    color: #E65100; 
+    font-weight: bold; 
+    margin-bottom: 8px;
+}
+.kuji-result-pts {
+    font-size: 16px; 
+    font-weight: bold; 
+    color: var(--text-color);
+    margin-bottom: 24px;
+}
+.kuji-upsell-banner {
+    background: linear-gradient(135deg, #F5F7F8 0%, #E0E0E0 100%);
+    border: 2px solid #90A4AE;
+    border-radius: 12px;
+    padding: 20px 16px;
+    margin-bottom: 24px;
+}
+.kuji-upsell-text {
+    font-size: 15px; 
+    font-weight: bold; 
+    color: #37474F; 
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+.kuji-upsell-highlight {
+    color: #D32F2F; 
+    font-size: 24px;
+}
+.kuji-btn-premium {
+    background: #D32F2F; 
+    color: var(--white); 
+    border: none; 
+    padding: 16px;
+    border-radius: 30px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    width: 100%;
+    margin-bottom: 8px; 
+    box-shadow: 0 4px 10px rgba(211,47,47,0.3);
+    cursor: pointer;
+}
+
+/* スキップ導線 */
+.kuji-btn-skip {
+    background: transparent; 
+    color: #757575; 
+    border: none; 
+    font-size: 14px; 
+    text-decoration: underline;
+    padding: 12px;
+    cursor: pointer;
+    width: 100%;
+}

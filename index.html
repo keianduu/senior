@@ -6,6 +6,205 @@
     <title>楽天シニア プロトタイプ</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    
+    <style>
+        /* 新ポイントセクション */
+        .new-status-section {
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+        .new-point-card {
+            background: var(--white);
+            border-radius: var(--border-radius-card);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            padding: 16px 20px;
+        }
+        .new-point-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+        .new-point-label {
+            font-size: 16px;
+            line-height: 1.4;
+            color: var(--text-color);
+        }
+        .new-point-value-wrap {
+            display: flex;
+            align-items: center;
+        }
+        .new-point-value {
+            font-size: 28px;
+            font-weight: 800;
+            font-family: Arial, sans-serif;
+        }
+        .new-point-value.text-red {
+            color: #D32F2F;
+        }
+        .new-point-arrow {
+            font-size: 24px;
+            color: #999;
+            margin-left: 12px;
+        }
+        .new-point-divider {
+            border: none;
+            border-top: 1px solid #E0E0E0;
+            margin: 0;
+        }
+
+        /* 家族バナー */
+        .family-banner {
+            background: var(--white);
+            border-radius: var(--border-radius-card);
+            padding: 16px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-bottom: 32px;
+        }
+
+        /* メイン歩数セクション */
+        .new-step-section {
+            background: linear-gradient(to bottom, #F1FBFF 0%, #E8F5E9 100%);
+            border-radius: var(--border-radius-card);
+            padding: 24px 0 16px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .step-date {
+            font-size: 24px;
+            font-weight: normal;
+            margin-bottom: 24px;
+            padding-left: 20px;
+            color: var(--text-color);
+        }
+        .step-circle-wrap {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 0 auto;
+            z-index: 10;
+        }
+        .character-img {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px; /* お買いものパンダの代替絵文字 */
+            z-index: 20;
+            background: transparent;
+        }
+        
+        /* SVGプログレスバー */
+        .svg-progress-container {
+            width: 100%;
+            height: 100%;
+        }
+        .svg-progress {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .svg-bg {
+            fill: none;
+            stroke: #CCCCCC;
+            stroke-width: 14;
+        }
+        .svg-bar {
+            fill: none;
+            stroke: #E0E0E0; /* 0歩の状態なので背景と同色。歩数に応じて変更する想定 */
+            stroke-width: 14;
+            stroke-dasharray: 628; /* 2 * pi * r (r=100) */
+            stroke-dashoffset: 0; /* JSで進捗に合わせて制御 */
+            stroke-linecap: round;
+        }
+        
+        .step-info-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: var(--white);
+            border-radius: 50%;
+            width: 212px;
+            height: 212px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .step-current {
+            font-size: 48px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            line-height: 1;
+            margin-bottom: 4px;
+            color: var(--text-color);
+        }
+        .step-current .unit {
+            font-size: 18px;
+            font-weight: normal;
+            margin-left: 4px;
+        }
+        .step-goal-text {
+            font-size: 22px;
+            color: #757575;
+            margin-bottom: 12px;
+            font-family: Arial, sans-serif;
+        }
+        .step-remain-text {
+            font-size: 13px;
+            color: #424242;
+            line-height: 1.4;
+        }
+        .step-remain-val {
+            font-size: 18px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 背景の街並みシルエット */
+        .city-bg {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path fill="%23C8E6C9" d="M0,100 L0,70 L30,70 L30,50 L70,50 L70,80 L90,80 L90,40 L130,40 L130,60 L160,60 L160,50 L200,50 L200,80 L230,80 L230,30 L270,30 L270,70 L300,70 L300,45 L340,45 L340,65 L370,65 L370,55 L400,55 L400,100 Z"/></svg>');
+            background-size: cover;
+            background-position: bottom;
+            z-index: 1;
+        }
+
+        .help-link-wrap {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .help-link {
+            font-size: 14px;
+            color: #616161;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        /* 広告バナー用プレースホルダー */
+        .bottom-ad-banner {
+            margin-bottom: 24px;
+        }
+        .bottom-ad-banner img {
+            width: 100%;
+            border-radius: 4px;
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,131 +218,60 @@
     </div>
 
     <div class="container">
-        <section class="status-section">
-            <div class="card point-dashboard-compact">
-                <div class="point-block-main">
-                    <div class="point-icon-circle" id="pointStatusIcon">
-                        💰
-                    </div>
-                    <div class="point-content">
-                        <span class="point-label">今月の獲得予定</span>
-                        <div class="point-value-row">
-                            <span class="point-num text-red" id="currentPointDisplay">0</span>
-                            <span class="point-unit">P</span>
-                        </div>
+        
+        <section class="new-status-section">
+            <div class="new-point-card">
+                <div class="new-point-row">
+                    <div class="new-point-label">今月の<br>獲得予定ポイント</div>
+                    <div class="new-point-value text-red">0</div>
+                </div>
+                <hr class="new-point-divider">
+                <div class="new-point-row">
+                    <div class="new-point-label">楽天シニアでの<br>通算獲得ポイント</div>
+                    <div class="new-point-value-wrap">
+                        <div class="new-point-value">14</div>
+                        <div class="new-point-arrow">›</div>
                     </div>
                 </div>
-
-                <div class="point-divider-diagonal"></div>
-
-                <div class="point-block-sub">
-                    <span class="point-label-sub">通算獲得</span>
-                    <div class="point-value-sub">
-                        <span class="point-num">14</span>
-                        <span class="point-unit">P</span>
-                    </div>
-                </div>
-                
-                <div class="point-arrow-compact">›</div>
             </div>
         </section>
 
-        <section class="step-section">
-            <div class="card" style="background: transparent; box-shadow: none; padding: 0; overflow: visible;">
+        <section class="family-banner">
+            家族で健康寿命アップ！
+        </section>
+
+        <section class="new-step-section">
+            <h2 class="step-date">2/20 (金)</h2>
+            
+            <div class="step-circle-wrap">
+                <div class="character-img">🐼🎵</div>
                 
-                <div class="mission-slider-container">
-                    <div class="mission-slider" id="missionSlider">
-                        
-                        <div class="mission-slide">
-                            <div class="mission-card-inner">
-                                <p class="mission-title">歩こうミッション</p>
-                                <h2 class="date-display">12/29 (月)</h2>
-                                
-                                <div class="step-circle">
-                                    <div style="font-size: 40px;">🐼</div>
-                                    <div class="step-count-main">0 <span style="font-size:16px;">歩</span></div>
-                                    <div class="step-goal">/4,000</div>
-                                </div>
-        
-                                <div class="stamp-progress-container">
-                                    <p class="stamp-label">スタンプ獲得状況 (3/7)</p>
-                                    <div class="stamp-row">
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot"></span>
-                                        <span class="stamp-dot"></span>
-                                        <span class="stamp-dot"></span>
-                                        <span class="stamp-dot"></span>
-                                    </div>
-                                </div>
-        
-                                <a href="#" class="mission-cta-btn">歩数詳細を見る</a>
-                            </div>
-                        </div>
-        
-                        <div class="mission-slide">
-                            <div class="mission-card-inner">
-                                <p class="mission-title">健康記録ミッション</p>
-                                <p class="mission-sub">体調を記録してスタンプGET</p>
-                                
-                                <div class="mission-visual-icon">
-                                    📝
-                                </div>
-        
-                                <div class="stamp-progress-container">
-                                    <p class="stamp-label">スタンプ獲得状況 (1/7)</p>
-                                    <div class="stamp-row">
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot today"></span>
-                                        <span class="stamp-dot"></span>
-                                        <span class="stamp-dot"></span>
-                                        <span class="stamp-dot"></span>
-                                        <span class="stamp-dot"></span>
-                                        <span class="stamp-dot"></span>
-                                    </div>
-                                </div>
-        
-                                <a href="#" class="mission-cta-btn btn-green">記録を入力する</a>
-                            </div>
-                        </div>
-        
-                        <div class="mission-slide">
-                            <div class="mission-card-inner">
-                                <p class="mission-title">コラムミッション</p>
-                                <p class="mission-sub">記事を読んで健康知識アップ</p>
-                                
-                                <div class="mission-visual-icon">
-                                    📖
-                                </div>
-        
-                                <div class="stamp-progress-container">
-                                    <p class="stamp-label">スタンプ獲得状況 (5/7)</p>
-                                    <div class="stamp-row">
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot active"></span>
-                                        <span class="stamp-dot today"></span>
-                                        <span class="stamp-dot"></span>
-                                    </div>
-                                </div>
-        
-                                <a href="#" class="mission-cta-btn btn-blue">コラムを読む</a>
-                            </div>
-                        </div>
-        
-                    </div>
-        
-                    <div class="slider-dots">
-                        <span class="dot active"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
+                <div class="svg-progress-container">
+                    <svg class="svg-progress" viewBox="0 0 220 220">
+                        <circle class="svg-bg" cx="110" cy="110" r="100"></circle>
+                        <circle class="svg-bar" cx="110" cy="110" r="100"></circle>
+                    </svg>
+                </div>
+                
+                <div class="step-info-inner">
+                    <div class="step-current">0<span class="unit">歩</span></div>
+                    <div class="step-goal-text">/4,000</div>
+                    <div class="step-remain-text">
+                        4,000歩達成まであと<br>
+                        <span class="step-remain-val">4,000</span>歩
                     </div>
                 </div>
-        
             </div>
+
+            <div class="city-bg"></div>
+
+            <div class="help-link-wrap">
+                <a href="#" class="help-link">❔ 歩数が正しく表示されない方はこちら</a>
+            </div>
+        </section>
+
+        <section class="bottom-ad-banner">
+            <img src="https://placehold.jp/480x100.png?text=長時間バッテリーのDell+PC+Ad" alt="Advertisement">
         </section>
 
         <div class="section-title" style="border:none; margin-bottom: 10px; font-size: 16px;">
@@ -279,6 +407,146 @@
             <span class="nav-tab-text">マイページ</span>
         </a>
     </nav>
+<div id="kujiFab" class="kuji-fab" onclick="kujiApp.openModal()" role="button" aria-label="特選クジを確認する">
+        <div class="kuji-fab-icon">🎁</div>
+        <div class="kuji-fab-text" id="kujiFabText">未達</div>
+    </div>
 
+    <div id="kujiModal" class="kuji-modal-overlay" aria-hidden="true">
+        <div class="kuji-modal-content" role="dialog" aria-labelledby="kujiModalTitle">
+            <button class="kuji-modal-close" onclick="kujiApp.closeModal()" aria-label="閉じる">✕</button>
+
+            <div id="kujiViewProgress">
+                <h3 id="kujiModalTitle" class="kuji-progress-title">スペシャルクジまであと少し！</h3>
+                <p class="kuji-progress-desc">4つのミッションのスタンプを7つ集めると、スペシャルクジが引けます！</p>
+                
+                <div class="kuji-mission-list">
+                    <div class="kuji-mission-item">
+                        <div class="kuji-mission-info-block">
+                            <div class="kuji-mission-title-row">
+                                <span class="kuji-mission-icon">👟</span>
+                                <span class="kuji-mission-name">歩こう</span>
+                            </div>
+                            <div class="kuji-stamp-row">
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp"></span>
+                                <span class="kuji-stamp"></span>
+                            </div>
+                        </div>
+                        <button class="kuji-btn-challenge">挑戦する</button>
+                    </div>
+                    
+                    <div class="kuji-mission-item">
+                        <div class="kuji-mission-info-block">
+                            <div class="kuji-mission-title-row">
+                                <span class="kuji-mission-icon">⚖️</span>
+                                <span class="kuji-mission-name">健康管理</span>
+                            </div>
+                            <div class="kuji-stamp-row">
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                            </div>
+                        </div>
+                        <span class="kuji-status-cleared">クリア！</span>
+                    </div>
+
+                    <div class="kuji-mission-item">
+                        <div class="kuji-mission-info-block">
+                            <div class="kuji-mission-title-row">
+                                <span class="kuji-mission-icon">📄</span>
+                                <span class="kuji-mission-name">コラム</span>
+                            </div>
+                            <div class="kuji-stamp-row">
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp"></span>
+                                <span class="kuji-stamp"></span>
+                                <span class="kuji-stamp"></span>
+                                <span class="kuji-stamp"></span>
+                                <span class="kuji-stamp"></span>
+                            </div>
+                        </div>
+                        <button class="kuji-btn-challenge">挑戦する</button>
+                    </div>
+
+                    <div class="kuji-mission-item">
+                        <div class="kuji-mission-info-block">
+                            <div class="kuji-mission-title-row">
+                                <span class="kuji-mission-icon">📱</span>
+                                <span class="kuji-mission-name">ログイン</span>
+                            </div>
+                            <div class="kuji-stamp-row">
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                                <span class="kuji-stamp is-earned">済</span>
+                            </div>
+                        </div>
+                        <span class="kuji-status-cleared">クリア！</span>
+                    </div>
+                </div>
+
+                <div class="kuji-prize-box">
+                    <h4 class="kuji-prize-heading">🎁 ハズレなし！必ず当たる！</h4>
+                    <table class="kuji-prize-table">
+                        <thead>
+                            <tr><th>等</th><th>無料会員</th><th>プレミアム会員</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1等</td><td>10pt</td><td class="kuji-prize-premium">1,000pt</td></tr>
+                            <tr><td>2等</td><td>5pt</td><td class="kuji-prize-premium">100pt</td></tr>
+                            <tr><td>3等</td><td>3pt</td><td class="kuji-prize-premium">50pt</td></tr>
+                            <tr><td>4等</td><td>1pt</td><td class="kuji-prize-premium">10pt</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="mission-cta-btn kuji-btn-disabled" disabled>クジを引く（未達）</button>
+            </div>
+
+            <div id="kujiViewReady" style="display:none;">
+                <h3 class="kuji-progress-title" style="font-size: 24px; color: #D32F2F;">条件達成！</h3>
+                <p class="kuji-progress-desc text-bold">すべてのスタンプが集まりました！<br>さっそく特選クジを引きましょう！</p>
+                <div class="kuji-anim-box">🎁</div>
+                <button class="mission-cta-btn" onclick="kujiApp.startDraw()">特選クジを引く！</button>
+            </div>
+
+            <div id="kujiViewAnim" style="display:none;">
+                <h3 class="kuji-progress-title">抽選中...</h3>
+                <div class="kuji-anim-box shake-kuji-anim">🎁</div>
+                <p class="kuji-progress-desc">何が当たるかな？</p>
+            </div>
+
+            <div id="kujiViewResult" style="display:none;">
+                <div class="kuji-result-title">🎉 3等 当選！</div>
+                <div class="kuji-result-pts">現在の獲得予定: 3pt</div>
+                
+                <div class="kuji-upsell-banner">
+                    <div class="kuji-upsell-text">
+                        ちょっと待って！<br>
+                        今プレミアム会員になると<br>
+                        このポイントが <span class="kuji-upsell-highlight">50pt</span> にアップ！
+                    </div>
+                    <button class="kuji-btn-premium" onclick="alert('プレミアム会員登録フローへ遷移')">プレミアム登録して50pt GET</button>
+                </div>
+                
+                <button class="kuji-btn-skip" onclick="kujiApp.closeModal()">無料のまま 3pt を受け取る</button>
+            </div>
+            
+            <button style="margin-top:24px; font-size:12px; padding:8px; border:1px solid #ccc; background:#f9f9f9; width:100%;" onclick="kujiApp.debugToggleState()">🔄 [開発用] 未達/達成 切り替え</button>
+        </div>
+    </div>
 </body>
 </html>

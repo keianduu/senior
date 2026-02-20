@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楽天シニア プロトタイプ</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <div class="header-menu">≡ メニュー</div>
+        <a href="#" class="header-search-btn">近くの施設を探す</a>
+    </header>
+
+    <div class="top-banner">
+        楽天モバイルは皆さまに支えられて1,000万回線突破！
+    </div>
+
+    <div class="container">
+        <section class="status-section">
+            <div class="card point-dashboard-compact">
+                <div class="point-block-main">
+                    <div class="point-icon-circle" id="pointStatusIcon">
+                        💰
+                    </div>
+                    <div class="point-content">
+                        <span class="point-label">今月の獲得予定</span>
+                        <div class="point-value-row">
+                            <span class="point-num text-red" id="currentPointDisplay">0</span>
+                            <span class="point-unit">P</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="point-divider-diagonal"></div>
+
+                <div class="point-block-sub">
+                    <span class="point-label-sub">通算獲得</span>
+                    <div class="point-value-sub">
+                        <span class="point-num">14</span>
+                        <span class="point-unit">P</span>
+                    </div>
+                </div>
+                
+                <div class="point-arrow-compact">›</div>
+            </div>
+        </section>
+
+        <section class="step-section">
+            <div class="card" style="background: transparent; box-shadow: none; padding: 0; overflow: visible;">
+                
+                <div class="mission-slider-container">
+                    <div class="mission-slider" id="missionSlider">
+                        
+                        <div class="mission-slide">
+                            <div class="mission-card-inner">
+                                <p class="mission-title">歩こうミッション</p>
+                                <h2 class="date-display">12/29 (月)</h2>
+                                
+                                <div class="step-circle">
+                                    <div style="font-size: 40px;">🐼</div>
+                                    <div class="step-count-main">0 <span style="font-size:16px;">歩</span></div>
+                                    <div class="step-goal">/4,000</div>
+                                </div>
+        
+                                <div class="stamp-progress-container">
+                                    <p class="stamp-label">スタンプ獲得状況 (3/7)</p>
+                                    <div class="stamp-row">
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot"></span>
+                                    </div>
+                                </div>
+        
+                                <a href="#" class="mission-cta-btn">歩数詳細を見る</a>
+                            </div>
+                        </div>
+        
+                        <div class="mission-slide">
+                            <div class="mission-card-inner">
+                                <p class="mission-title">健康記録ミッション</p>
+                                <p class="mission-sub">体調を記録してスタンプGET</p>
+                                
+                                <div class="mission-visual-icon">
+                                    📝
+                                </div>
+        
+                                <div class="stamp-progress-container">
+                                    <p class="stamp-label">スタンプ獲得状況 (1/7)</p>
+                                    <div class="stamp-row">
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot today"></span>
+                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot"></span>
+                                        <span class="stamp-dot"></span>
+                                    </div>
+                                </div>
+        
+                                <a href="#" class="mission-cta-btn btn-green">記録を入力する</a>
+                            </div>
+                        </div>
+        
+                        <div class="mission-slide">
+                            <div class="mission-card-inner">
+                                <p class="mission-title">コラムミッション</p>
+                                <p class="mission-sub">記事を読んで健康知識アップ</p>
+                                
+                                <div class="mission-visual-icon">
+                                    📖
+                                </div>
+        
+                                <div class="stamp-progress-container">
+                                    <p class="stamp-label">スタンプ獲得状況 (5/7)</p>
+                                    <div class="stamp-row">
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot active"></span>
+                                        <span class="stamp-dot today"></span>
+                                        <span class="stamp-dot"></span>
+                                    </div>
+                                </div>
+        
+                                <a href="#" class="mission-cta-btn btn-blue">コラムを読む</a>
+                            </div>
+                        </div>
+        
+                    </div>
+        
+                    <div class="slider-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+        
+            </div>
+        </section>
+
+        <div class="section-title" style="border:none; margin-bottom: 10px; font-size: 16px;">
+            健康寿命延伸！毎日使える楽天シニア
+        </div>
+        <section class="quick-nav">
+            <div class="nav-item">
+                <span class="nav-icon">👟</span>
+                <span class="nav-text">歩数</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">⚖️</span>
+                <span class="nav-text">健康記録</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">👨‍👩‍👧</span>
+                <span class="nav-text">家族ページ</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📱</span>
+                <span class="nav-text">スマホ教室</span>
+            </div>
+        </section>
+
+        <section class="promo-banner">
+            <div class="card" style="padding:0; border:none;">
+                <img src="https://placehold.jp/400x150.png?text=Campaign+Banner&css=%7B%22background%22%3A%22%20%23f3e5f5%22%2C%22color%22%3A%22%23880e4f%22%7D" alt="Campaign">
+            </div>
+            <div class="card" style="margin-top: 10px; padding: 10px; background-color: #E0F2F1; border: 1px solid #B2DFDB; display:flex; align-items:center; justify-content:center;">
+                <span style="color:#00695C; font-weight:bold;">はじめてガイド</span>
+            </div>
+        </section>
+
+        <section class="features">
+            <h3 class="section-title">楽天シニアのおすすめ機能</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div>
+                        <div class="feature-sub">毎日継続してポイント貯まる</div>
+                        <div class="feature-title">毎日チャレンジ</div>
+                    </div>
+                    <div style="text-align:center; margin-top:10px;">🐼💪</div>
+                    <div style="background:#FFF3E0; padding:4px; font-size:10px; border-radius:4px; margin-top:5px; text-align:center; color:var(--primary-color); font-weight:bold;">
+                        NEWミッション
+                    </div>
+                    <div class="feature-arrow">›</div>
+                </div>
+                <div class="feature-card">
+                    <div>
+                        <div class="feature-sub">アンケート回答でポイント貯まる</div>
+                        <div class="feature-title">コラムアンケート</div>
+                    </div>
+                    <div style="text-align:center; margin-top:10px; font-size:30px; color:gold;">Ⓟ</div>
+                    <div class="feature-arrow">›</div>
+                </div>
+                <div class="feature-card">
+                    <div style="text-align:center;">
+                        <div style="font-size:30px;">🐼💰</div>
+                        <div class="feature-sub">キャンペーンで<br>ポイント貯まる</div>
+                        <div class="feature-title">キャンペーン</div>
+                    </div>
+                    <div class="feature-arrow">›</div>
+                </div>
+                <div class="feature-card">
+                    <div style="text-align:center;">
+                        <div style="font-size:30px;">🐼🎵</div>
+                        <div class="feature-sub">有料イベント予約で<br>ポイント貯まる</div>
+                        <div class="feature-title">イベント</div>
+                    </div>
+                    <div class="feature-arrow">›</div>
+                </div>
+                 <div class="feature-card">
+                    <div style="text-align:center;">
+                        <div style="font-size:30px;">📱🐼</div>
+                        <div class="feature-sub">チェックインして<br>ポイント貯まる</div>
+                        <div class="feature-title">チェックイン</div>
+                    </div>
+                    <div class="feature-arrow">›</div>
+                </div>
+                 <div class="feature-card">
+                    <div style="text-align:center;">
+                        <div style="font-size:30px;">🐼📍</div>
+                        <div class="feature-sub">スタンプ集めて<br>ポイント貯まる</div>
+                        <div class="feature-title">スタンプラリー</div>
+                    </div>
+                    <div class="feature-arrow">›</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="columns">
+            <h3 class="section-title">「らく健」の新着コラム</h3>
+            <div class="article-list">
+                <div class="article-card">
+                    <div class="article-img"></div>
+                    <div class="article-content">
+                        <span class="article-tag">NEW</span>
+                        <h4 class="article-title">くすみ・シワ・たるみ...大人世代の肌悩みに「エリクシール名品3選」</h4>
+                        <span class="ad-mark">広告</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <div class="article-img" style="filter: hue-rotate(90deg);"></div>
+                    <div class="article-content">
+                        <h4 class="article-title">50代から始める！話題の軟骨成分"プロテオグリカン"で関節ケア習慣</h4>
+                        <span class="ad-mark">広告</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-tab active">
+            <span class="nav-tab-icon">🏠</span>
+            <span class="nav-tab-text">ホーム</span>
+        </a>
+        <a href="#" class="nav-tab">
+            <span class="nav-tab-icon">📝</span>
+            <span class="nav-tab-text">健康管理</span>
+        </a>
+        <a href="#" class="nav-tab">
+            <span class="nav-tab-icon">⭐</span>
+            <span class="nav-tab-text">イベント</span>
+        </a>
+        <a href="#" class="nav-tab">
+            <span class="nav-tab-icon">📄</span>
+            <span class="nav-tab-text">コンテンツ</span>
+        </a>
+        <a href="#" class="nav-tab">
+            <span class="nav-tab-icon">👤</span>
+            <span class="nav-tab-text">マイページ</span>
+        </a>
+    </nav>
+
+</body>
+</html>
