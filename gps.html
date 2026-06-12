@@ -1,0 +1,1382 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPSチェックイン プロトタイプ 二子玉川版</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    .leaflet-container {
+      overflow: hidden;
+      position: relative;
+      background: #ddd;
+      outline-offset: 1px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .leaflet-pane,
+    .leaflet-tile,
+    .leaflet-marker-icon,
+    .leaflet-marker-shadow,
+    .leaflet-tile-container,
+    .leaflet-pane > svg,
+    .leaflet-pane > canvas,
+    .leaflet-zoom-box,
+    .leaflet-image-layer,
+    .leaflet-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .leaflet-tile {
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .leaflet-marker-icon,
+    .leaflet-marker-shadow {
+      display: block;
+    }
+
+    .leaflet-control {
+      position: relative;
+      z-index: 800;
+      pointer-events: auto;
+    }
+
+    .leaflet-top,
+    .leaflet-bottom {
+      position: absolute;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .leaflet-top { top: 0; }
+    .leaflet-right { right: 0; }
+    .leaflet-bottom { bottom: 0; }
+    .leaflet-left { left: 0; }
+
+    .leaflet-control {
+      float: left;
+      clear: both;
+    }
+
+    .leaflet-right .leaflet-control { float: right; }
+    .leaflet-top .leaflet-control { margin-top: 10px; }
+    .leaflet-bottom .leaflet-control { margin-bottom: 10px; }
+    .leaflet-left .leaflet-control { margin-left: 10px; }
+    .leaflet-right .leaflet-control { margin-right: 10px; }
+
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --ok: #16a34a;
+      --near: #f59e0b;
+      --off: #9ca3af;
+      --danger: #dc2626;
+      --blue: #2563eb;
+      --purple: #7c3aed;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      flex: 0 0 auto;
+      height: 86px;
+      padding: 14px 18px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0 0 6px;
+      line-height: 1.25;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .layout {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 400px;
+    }
+
+    .map-wrap {
+      min-width: 0;
+      min-height: 0;
+      position: relative;
+      background: #e5e7eb;
+    }
+
+    #map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    aside {
+      min-height: 0;
+      border-left: 1px solid var(--border);
+      background: var(--panel);
+      overflow-y: auto;
+    }
+
+    .section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section h2 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      line-height: 1.4;
+    }
+
+    .controls {
+      display: grid;
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button.primary {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    button.success {
+      background: var(--ok);
+      color: #fff;
+      border-color: var(--ok);
+    }
+
+    button.purple {
+      background: var(--purple);
+      color: #fff;
+      border-color: var(--purple);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    .status {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .legend {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .dot.ok { background: var(--ok); }
+    .dot.near { background: var(--near); }
+    .dot.off { background: var(--off); }
+    .dot.me { background: var(--blue); }
+
+    .point-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .point-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .point-card.available {
+      border-color: rgba(22, 163, 74, 0.45);
+      background: rgba(22, 163, 74, 0.04);
+    }
+
+    .point-card.checked-in {
+      border-color: rgba(124, 58, 237, 0.5);
+      background: rgba(124, 58, 237, 0.05);
+    }
+
+    .point-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .point-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+      white-space: nowrap;
+      font-weight: 700;
+      height: fit-content;
+    }
+
+    .badge.ok {
+      background: rgba(22, 163, 74, 0.12);
+      color: var(--ok);
+    }
+
+    .badge.near {
+      background: rgba(245, 158, 11, 0.14);
+      color: #b45309;
+    }
+
+    .badge.off {
+      background: rgba(156, 163, 175, 0.18);
+      color: #4b5563;
+    }
+
+    .badge.done {
+      background: rgba(124, 58, 237, 0.12);
+      color: var(--purple);
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 10px 0 0;
+    }
+
+    .leaflet-popup-content {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 18px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      max-height: min(760px, 92vh);
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .modal-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .modal-body {
+      padding: 18px 20px;
+    }
+
+    .coupon-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+
+    .coupon-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      background: #e5e7eb;
+    }
+
+    .coupon {
+      overflow: hidden;
+    }
+
+    .coupon {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: #f9fafb;
+    }
+
+    .coupon-name {
+      font-weight: 800;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .coupon-offer {
+      color: var(--purple);
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .coupon-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .coupon-cta {
+      margin-top: 10px;
+      width: 100%;
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    .route-card {
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      background: rgba(37, 99, 235, 0.04);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .route-card strong {
+      color: var(--blue);
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 0 20px 20px;
+    }
+
+    @media (max-width: 900px) {
+      html,
+      body {
+        overflow: auto;
+        height: auto;
+      }
+
+      body {
+        display: block;
+      }
+
+      header {
+        height: auto;
+      }
+
+      header p {
+        white-space: normal;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .map-wrap {
+        height: 58vh;
+      }
+
+      aside {
+        border-left: 0;
+        border-top: 1px solid var(--border);
+        overflow-y: visible;
+      }
+
+      .modal-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>GPSチェックイン プロトタイプ｜二子玉川版</h1>
+    <p>二子玉川駅周辺にチェックポイントを散らし、現在地から50m以内・最大20件だけチェックイン可能にします。</p>
+  </header>
+
+  <main class="layout">
+    <div class="map-wrap">
+      <div id="map"></div>
+    </div>
+
+    <aside>
+      <div class="section">
+        <h2>操作</h2>
+        <div class="controls">
+          <button class="primary" id="getLocationBtn">現在地を取得</button>
+          <button id="watchBtn">現在地の監視を開始</button>
+          <button id="stopWatchBtn" disabled>監視を停止</button>
+          <button id="demoBtn">二子玉川駅のデモ位置を使う</button>
+          <button id="riseDemoBtn">ライズ ガレリア周辺のデモ位置を使う</button>
+        </div>
+        <p class="small">
+          ※実際の現在地取得には、HTTPS環境またはlocalhost環境が必要です。動作確認だけなら「二子玉川駅のデモ位置を使う」を押してください。
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>現在地・判定状態</h2>
+        <div class="status" id="statusBox">まだ現在地が取得されていません。</div>
+      </div>
+
+      <div class="section">
+        <h2>道順</h2>
+        <div id="routeInfo" class="empty">クーポンの「お店に行く」を押すと、現在地からお店までの簡易ルートを表示します。</div>
+      </div>
+
+      <div class="section">
+        <h2>凡例</h2>
+        <div class="legend">
+          <div class="legend-row"><span class="dot me"></span>現在地</div>
+          <div class="legend-row"><span class="dot ok"></span>チェックイン可能：50m以内かつ上位20件</div>
+          <div class="legend-row"><span class="dot near"></span>50m以内だが上限対象外</div>
+          <div class="legend-row"><span class="dot off"></span>チェックイン不可：10m外</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>チェックイン可能リスト</h2>
+        <div class="point-list" id="availableList">
+          <div class="empty">現在地を取得すると、50m以内のチェックイン可能ポイントが表示されます。</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>表示中のチェックポイント</h2>
+        <div class="point-list" id="allList"></div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="modal-backdrop" id="checkinModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">チェックイン完了</h3>
+        <p id="modalLead">チェックインが完了しました。</p>
+      </div>
+      <div class="modal-body">
+        <div class="status" id="modalStatus"></div>
+        <h3 style="margin:18px 0 0; font-size:16px;">周辺のお店のクーポン</h3>
+        <div class="coupon-list" id="couponList"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="closeModalBtn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CHECKIN_RADIUS_M = 50;
+    const CHECKIN_LIMIT = 20;
+
+    // 二子玉川駅周辺のデモ現在地。実際のGPS取得ではなく、動作確認用。
+    const DEMO_USER_LOCATION = {
+      lat: 35.611520,
+      lng: 139.626540,
+      accuracy: 8
+    };
+
+    // 二子玉川ライズ ガレリア周辺のチェックイン動作確認用
+    const DEMO_RISE_GALLERIA_LOCATION = {
+      lat: 35.611780,
+      lng: 139.628060,
+      accuracy: 8
+    };
+
+    // DB相当のチェックポイントデータ。
+    // 実運用ではAPIから取得する想定。
+    // 例：GET /api/checkpoints?bbox=... or GET /api/checkpoints/nearby?lat=...&lng=...
+    const checkpoints = [
+      // デモ位置から50m以内：チェックイン可能確認用
+      {
+        id: 1,
+        name: "二子玉川駅 改札前スポット",
+        lat: 35.611525,
+        lng: 139.626545,
+        priority: 10,
+        coupons: [
+          { shop: "Futako Coffee Stand", offer: "ドリンク50円OFF", note: "本日限り。税込300円以上の注文で利用可能。" },
+          { shop: "Tama Bakery", offer: "焼き菓子1個プレゼント", note: "先着30名限定。チェックイン画面提示で利用可能。" },
+          { shop: "Riverside Books", offer: "文具10%OFF", note: "一部対象外商品があります。" }
+        ]
+      },
+      {
+        id: 2,
+        name: "二子玉川駅 東口スポット",
+        lat: 35.611575,
+        lng: 139.626595,
+        priority: 9,
+        coupons: [
+          { shop: "East Gate Deli", offer: "ランチセット100円OFF", note: "11:00〜15:00限定。" },
+          { shop: "Green Smoothie Bar", offer: "スムージーSサイズ無料アップグレード", note: "当日1回限り。" }
+        ]
+      },
+      {
+        id: 3,
+        name: "二子玉川駅 西口スポット",
+        lat: 35.611465,
+        lng: 139.626485,
+        priority: 8,
+        coupons: [
+          { shop: "West Side Pizza", offer: "サイドメニュー1品半額", note: "店内飲食限定。" },
+          { shop: "Tama Flower", offer: "ミニブーケ5%OFF", note: "他クーポンとの併用不可。" }
+        ]
+      },
+
+      // 駅・商業施設・周辺エリアに散らしたチェックポイント
+      {
+        id: 101,
+        name: "二子玉川ライズ ガレリア",
+        lat: 35.611780,
+        lng: 139.628060,
+        priority: 10,
+        coupons: [
+          { shop: "Rise Cafe", offer: "カフェラテ30円OFF", note: "16時まで利用可能。" },
+          { shop: "Urban Select", offer: "雑貨5%OFF", note: "税込1,000円以上で利用可能。" }
+        ]
+      },
+      {
+        id: 116,
+        name: "ライズ ガレリア 北側エントランス",
+        lat: 35.611980,
+        lng: 139.628110,
+        priority: 9,
+        coupons: [
+          { shop: "Galleria Espresso", offer: "エスプレッソドリンク50円OFF", note: "チェックイン当日限り。" },
+          { shop: "Rise Daily Goods", offer: "生活雑貨5%OFF", note: "税込1,500円以上で利用可能。" }
+        ]
+      },
+      {
+        id: 117,
+        name: "ライズ ガレリア 南側エントランス",
+        lat: 35.611610,
+        lng: 139.628020,
+        priority: 9,
+        coupons: [
+          { shop: "South Gate Bakery", offer: "クロワッサン1個30円OFF", note: "午前中限定。" },
+          { shop: "Futako Juice Lab", offer: "ジュースMサイズへ無料アップグレード", note: "当日1回限り。" }
+        ]
+      },
+      {
+        id: 118,
+        name: "ライズ ガレリア 中央通路",
+        lat: 35.611790,
+        lng: 139.628360,
+        priority: 8,
+        coupons: [
+          { shop: "Galleria Kitchen", offer: "ランチセット100円OFF", note: "11:00〜15:00限定。" },
+          { shop: "Stationery Rise", offer: "文具10%OFF", note: "一部対象外商品があります。" }
+        ]
+      },
+      {
+        id: 119,
+        name: "ライズ ガレリア テラス側",
+        lat: 35.612120,
+        lng: 139.627900,
+        priority: 8,
+        coupons: [
+          { shop: "Terrace Sweets", offer: "焼き菓子1個プレゼント", note: "税込800円以上の購入で利用可能。" },
+          { shop: "Outdoor Select", offer: "アウトドア小物5%OFF", note: "セール品対象外。" }
+        ]
+      },
+      {
+        id: 120,
+        name: "ライズ ガレリア 駅連絡デッキ",
+        lat: 35.611500,
+        lng: 139.628250,
+        priority: 8,
+        coupons: [
+          { shop: "Deck Coffee", offer: "アイスコーヒー50円OFF", note: "本日限り。" },
+          { shop: "Quick Deli Rise", offer: "テイクアウト惣菜5%OFF", note: "税込1,000円以上で利用可能。" }
+        ]
+      },
+      {
+        id: 102,
+        name: "二子玉川ライズ 中央広場",
+        lat: 35.612420,
+        lng: 139.627760,
+        priority: 10,
+        coupons: [
+          { shop: "Garden Kitchen", offer: "デザートセット100円OFF", note: "チェックイン当日限り。" },
+          { shop: "Kids Market", offer: "お子さまグッズ5%OFF", note: "一部商品対象外。" }
+        ]
+      },
+      {
+        id: 103,
+        name: "玉川高島屋S・C 南館前",
+        lat: 35.611090,
+        lng: 139.625030,
+        priority: 9,
+        coupons: [
+          { shop: "Takashimaya Terrace", offer: "テイクアウトドリンク50円OFF", note: "税込500円以上で利用可能。" },
+          { shop: "Maison Tama", offer: "小物雑貨10%OFF", note: "セール品対象外。" }
+        ]
+      },
+      {
+        id: 104,
+        name: "玉川高島屋S・C 本館前",
+        lat: 35.612030,
+        lng: 139.625180,
+        priority: 9,
+        coupons: [
+          { shop: "Classic Tea Room", offer: "紅茶セット100円OFF", note: "14時以降利用可能。" },
+          { shop: "Daily Gift", offer: "ラッピング無料", note: "ギフト購入時のみ。" }
+        ]
+      },
+      {
+        id: 105,
+        name: "二子玉川公園 入口",
+        lat: 35.607960,
+        lng: 139.630150,
+        priority: 8,
+        coupons: [
+          { shop: "Park Side Stand", offer: "アイスコーヒー50円OFF", note: "晴れの日限定クーポン。" },
+          { shop: "Picnic Deli", offer: "サンドイッチセット100円OFF", note: "テイクアウト限定。" }
+        ]
+      },
+      {
+        id: 106,
+        name: "二子玉川公園 眺望広場",
+        lat: 35.606850,
+        lng: 139.629480,
+        priority: 8,
+        coupons: [
+          { shop: "Riverside Gelato", offer: "ジェラートSサイズ50円OFF", note: "当日中のみ利用可能。" }
+        ]
+      },
+      {
+        id: 107,
+        name: "多摩川河川敷 二子橋付近",
+        lat: 35.609340,
+        lng: 139.623520,
+        priority: 7,
+        coupons: [
+          { shop: "Runner's Cafe", offer: "スポーツドリンク1本プレゼント", note: "税込700円以上の購入で利用可能。" },
+          { shop: "Cycle Tune", offer: "空気入れ無料 + パーツ5%OFF", note: "自転車来店者向け。" }
+        ]
+      },
+      {
+        id: 108,
+        name: "多摩川河川敷 兵庫島公園側",
+        lat: 35.608430,
+        lng: 139.620880,
+        priority: 7,
+        coupons: [
+          { shop: "Island Picnic", offer: "レジャーシートレンタル無料", note: "2時間まで。" },
+          { shop: "Tama Snack", offer: "スナックセット50円OFF", note: "週末限定。" }
+        ]
+      },
+      {
+        id: 109,
+        name: "二子玉川商店街 北側",
+        lat: 35.613360,
+        lng: 139.624260,
+        priority: 6,
+        coupons: [
+          { shop: "Shotengai Donuts", offer: "ドーナツ1個50円OFF", note: "1人2個まで。" },
+          { shop: "Local Kitchen", offer: "定食ごはん大盛り無料", note: "ランチタイム限定。" }
+        ]
+      },
+      {
+        id: 110,
+        name: "二子玉川商店街 南側",
+        lat: 35.610120,
+        lng: 139.623980,
+        priority: 6,
+        coupons: [
+          { shop: "Tama Curry", offer: "トッピング1品無料", note: "チェックイン画面提示で利用可能。" },
+          { shop: "Futako Mart", offer: "お会計3%OFF", note: "税込1,000円以上で利用可能。" }
+        ]
+      },
+      {
+        id: 111,
+        name: "上野毛方面 回遊スポット",
+        lat: 35.611890,
+        lng: 139.633980,
+        priority: 5,
+        coupons: [
+          { shop: "Kaminoge Roastery", offer: "コーヒー豆5%OFF", note: "100g以上購入で利用可能。" }
+        ]
+      },
+      {
+        id: 112,
+        name: "瀬田方面 回遊スポット",
+        lat: 35.618340,
+        lng: 139.626180,
+        priority: 5,
+        coupons: [
+          { shop: "Seta Green", offer: "観葉植物5%OFF", note: "一部対象外商品があります。" }
+        ]
+      },
+      {
+        id: 113,
+        name: "二子新地方面 橋上スポット",
+        lat: 35.607700,
+        lng: 139.618820,
+        priority: 4,
+        coupons: [
+          { shop: "Bridge Cafe", offer: "モーニングセット100円OFF", note: "11時まで利用可能。" },
+          { shop: "Shinchi Deli", offer: "惣菜1品10%OFF", note: "当日限り。" }
+        ]
+      },
+      {
+        id: 114,
+        name: "二子玉川小道スポット",
+        lat: 35.614750,
+        lng: 139.627870,
+        priority: 4,
+        coupons: [
+          { shop: "Hidden Sweets", offer: "焼き菓子5%OFF", note: "チェックイン当日限り。" }
+        ]
+      },
+      {
+        id: 115,
+        name: "玉川台方面スポット",
+        lat: 35.619300,
+        lng: 139.632320,
+        priority: 4,
+        coupons: [
+          { shop: "Hilltop Bakery", offer: "食パン50円OFF", note: "15時以降利用可能。" }
+        ]
+      }
+    ];
+
+    let map;
+    let userLocation = null;
+    let userMarker = null;
+    let accuracyCircle = null;
+    let checkinRadiusCircle = null;
+    let watchId = null;
+    let checkpointLayer;
+    let checkedInIds = new Set();
+    let routeLine = null;
+    let destinationMarker = null;
+
+    const statusBox = document.getElementById("statusBox");
+    const availableList = document.getElementById("availableList");
+    const allList = document.getElementById("allList");
+    const getLocationBtn = document.getElementById("getLocationBtn");
+    const watchBtn = document.getElementById("watchBtn");
+    const stopWatchBtn = document.getElementById("stopWatchBtn");
+    const demoBtn = document.getElementById("demoBtn");
+    const riseDemoBtn = document.getElementById("riseDemoBtn");
+    const checkinModal = document.getElementById("checkinModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalLead = document.getElementById("modalLead");
+    const modalStatus = document.getElementById("modalStatus");
+    const couponList = document.getElementById("couponList");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const routeInfo = document.getElementById("routeInfo");
+
+    function initMap() {
+      if (typeof L === "undefined") {
+        statusBox.innerHTML = "地図ライブラリを読み込めませんでした。インターネット接続を確認してください。";
+        return;
+      }
+
+      map = L.map("map", {
+        zoomControl: true
+      }).setView([DEMO_USER_LOCATION.lat, DEMO_USER_LOCATION.lng], 16);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 20,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      checkpointLayer = L.layerGroup().addTo(map);
+      renderCheckpoints();
+
+      setTimeout(() => map.invalidateSize(), 100);
+      window.addEventListener("resize", () => map.invalidateSize());
+    }
+
+    function markerIcon(color, size = 18) {
+      return L.divIcon({
+        className: "custom-marker",
+        html: `<div style="
+          width: ${size}px;
+          height: ${size}px;
+          border-radius: 50%;
+          background: ${color};
+          border: 3px solid white;
+          box-shadow: 0 2px 8px rgba(0,0,0,.25);
+        "></div>`,
+        iconSize: [size + 6, size + 6],
+        iconAnchor: [(size + 6) / 2, (size + 6) / 2]
+      });
+    }
+
+    function haversineDistanceM(lat1, lng1, lat2, lng2) {
+      const R = 6371000;
+      const toRad = deg => deg * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLng = toRad(lng2 - lng1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function judgeCheckpoints() {
+      if (!userLocation) {
+        return checkpoints.map(cp => ({
+          ...cp,
+          distanceM: null,
+          status: "unavailable",
+          rank: null
+        }));
+      }
+
+      const withDistance = checkpoints
+        .map(cp => ({
+          ...cp,
+          distanceM: haversineDistanceM(userLocation.lat, userLocation.lng, cp.lat, cp.lng)
+        }))
+        .sort((a, b) => {
+          if (a.distanceM !== b.distanceM) return a.distanceM - b.distanceM;
+          return b.priority - a.priority;
+        });
+
+      const withinRadius = withDistance.filter(cp => cp.distanceM <= CHECKIN_RADIUS_M);
+      const availableIds = new Set(withinRadius.slice(0, CHECKIN_LIMIT).map(cp => cp.id));
+
+      return withDistance.map((cp, index) => ({
+        ...cp,
+        rank: index + 1,
+        status: availableIds.has(cp.id)
+          ? "available"
+          : (cp.distanceM <= CHECKIN_RADIUS_M ? "over_limit" : "unavailable")
+      }));
+    }
+
+    function renderUserLocation() {
+      if (!map || !userLocation) return;
+
+      const latlng = [userLocation.lat, userLocation.lng];
+
+      if (!userMarker) {
+        userMarker = L.marker(latlng, {
+          icon: markerIcon("#2563eb", 20)
+        }).addTo(map).bindPopup("現在地");
+      } else {
+        userMarker.setLatLng(latlng);
+      }
+
+      if (!accuracyCircle) {
+        accuracyCircle = L.circle(latlng, {
+          radius: userLocation.accuracy || 0,
+          color: "#2563eb",
+          fillColor: "#2563eb",
+          fillOpacity: 0.08,
+          weight: 1
+        }).addTo(map);
+      } else {
+        accuracyCircle.setLatLng(latlng);
+        accuracyCircle.setRadius(userLocation.accuracy || 0);
+      }
+
+      if (!checkinRadiusCircle) {
+        checkinRadiusCircle = L.circle(latlng, {
+          radius: CHECKIN_RADIUS_M,
+          color: "#16a34a",
+          fillColor: "#16a34a",
+          fillOpacity: 0.1,
+          weight: 2
+        }).addTo(map);
+      } else {
+        checkinRadiusCircle.setLatLng(latlng);
+        checkinRadiusCircle.setRadius(CHECKIN_RADIUS_M);
+      }
+    }
+
+    function renderCheckpoints() {
+      if (!map || !checkpointLayer) return;
+
+      checkpointLayer.clearLayers();
+      const judged = judgeCheckpoints();
+
+      judged.forEach(cp => {
+        const isCheckedIn = checkedInIds.has(cp.id);
+
+        const color =
+          isCheckedIn ? "#7c3aed" :
+          cp.status === "available" ? "#16a34a" :
+          cp.status === "over_limit" ? "#f59e0b" :
+          "#9ca3af";
+
+        const label =
+          isCheckedIn ? "チェックイン済み" :
+          cp.status === "available" ? "チェックイン可能" :
+          cp.status === "over_limit" ? "50m以内だが上限対象外" :
+          "チェックイン不可";
+
+        const distanceText = cp.distanceM == null ? "現在地未取得" : `${cp.distanceM.toFixed(1)}m`;
+        const buttonHtml = cp.status === "available" && !isCheckedIn
+          ? `<br><button onclick="checkin(${cp.id})" style="margin-top:8px;padding:6px 10px;border-radius:8px;border:0;background:#16a34a;color:#fff;font-weight:700;cursor:pointer;">チェックインする</button>`
+          : "";
+
+        L.marker([cp.lat, cp.lng], {
+          icon: markerIcon(color)
+        })
+          .bindPopup(`
+            <strong>${cp.name}</strong><br>
+            状態：${label}<br>
+            距離：${distanceText}<br>
+            優先度：${cp.priority}
+            ${buttonHtml}
+          `)
+          .addTo(checkpointLayer);
+      });
+
+      renderLists(judged);
+      renderStatus(judged);
+    }
+
+    function renderLists(judged) {
+      const available = judged.filter(cp => cp.status === "available");
+      const visible = judged.slice().sort((a, b) => {
+        if (a.distanceM == null && b.distanceM == null) return a.id - b.id;
+        if (a.distanceM == null) return 1;
+        if (b.distanceM == null) return -1;
+        return a.distanceM - b.distanceM;
+      });
+
+      availableList.innerHTML = available.length === 0
+        ? `<div class="empty">チェックイン可能なポイントはありません。</div>`
+        : available.map(cp => pointCard(cp, true)).join("");
+
+      allList.innerHTML = visible.map(cp => pointCard(cp, false)).join("");
+    }
+
+    function pointCard(cp, withButton) {
+      const isCheckedIn = checkedInIds.has(cp.id);
+
+      const statusLabel =
+        isCheckedIn ? "済" :
+        cp.status === "available" ? "可能" :
+        cp.status === "over_limit" ? "上限外" :
+        "不可";
+
+      const badgeClass =
+        isCheckedIn ? "done" :
+        cp.status === "available" ? "ok" :
+        cp.status === "over_limit" ? "near" :
+        "off";
+
+      const distanceText = cp.distanceM == null ? "現在地未取得" : `${cp.distanceM.toFixed(1)}m`;
+
+      let button = "";
+      if (withButton && cp.status === "available") {
+        button = isCheckedIn
+          ? `<div style="margin-top:8px;"><button disabled>チェックイン済み</button></div>`
+          : `<div style="margin-top:8px;"><button class="success" onclick="checkin(${cp.id})">チェックインする</button></div>`;
+      }
+
+      return `
+        <div class="point-card ${cp.status === "available" ? "available" : ""} ${isCheckedIn ? "checked-in" : ""}">
+          <div class="point-title">
+            <span>${cp.name}</span>
+            <span class="badge ${badgeClass}">${statusLabel}</span>
+          </div>
+          <div class="point-meta">
+            ID: ${cp.id} / 距離: ${distanceText} / 優先度: ${cp.priority}
+          </div>
+          ${button}
+        </div>
+      `;
+    }
+
+    function renderStatus(judged) {
+      if (!userLocation) {
+        statusBox.innerHTML = "まだ現在地が取得されていません。";
+        return;
+      }
+
+      const within = judged.filter(cp => cp.distanceM <= CHECKIN_RADIUS_M);
+      const available = judged.filter(cp => cp.status === "available");
+      const overLimit = judged.filter(cp => cp.status === "over_limit");
+
+      const accuracyText = userLocation.accuracy == null ? "不明" : `${userLocation.accuracy.toFixed(1)}m`;
+      const accuracyWarning = userLocation.accuracy && userLocation.accuracy > 30
+        ? `<br><span style="color: var(--danger); font-weight: 700;">位置精度が粗いため、50m判定は不安定です。</span>`
+        : "";
+
+      statusBox.innerHTML = `
+        緯度: ${userLocation.lat.toFixed(6)}<br>
+        経度: ${userLocation.lng.toFixed(6)}<br>
+        位置精度: ${accuracyText}${accuracyWarning}<br>
+        50m以内: ${within.length}件<br>
+        チェックイン可能: ${available.length}件 / 最大${CHECKIN_LIMIT}件<br>
+        上限対象外: ${overLimit.length}件<br>
+        チェックイン済み: ${checkedInIds.size}件
+      `;
+    }
+
+    function setUserLocation(lat, lng, accuracy = null, shouldPan = true) {
+      userLocation = { lat, lng, accuracy };
+      renderUserLocation();
+      renderCheckpoints();
+
+      if (map && shouldPan) {
+        map.setView([lat, lng], 18);
+        setTimeout(() => map.invalidateSize(), 50);
+      }
+    }
+
+    function getCurrentLocation() {
+      if (!navigator.geolocation) {
+        alert("このブラウザはGeolocation APIに対応していません。");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude, accuracy } = position.coords;
+          setUserLocation(latitude, longitude, accuracy, true);
+        },
+        error => {
+          console.error(error);
+          alert(`現在地を取得できませんでした：${error.message}`);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    }
+
+    function startWatching() {
+      if (!navigator.geolocation) {
+        alert("このブラウザはGeolocation APIに対応していません。");
+        return;
+      }
+
+      watchId = navigator.geolocation.watchPosition(
+        position => {
+          const { latitude, longitude, accuracy } = position.coords;
+          setUserLocation(latitude, longitude, accuracy, false);
+        },
+        error => {
+          console.error(error);
+          alert(`現在地の監視に失敗しました：${error.message}`);
+          stopWatching();
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+
+      watchBtn.disabled = true;
+      stopWatchBtn.disabled = false;
+    }
+
+    function stopWatching() {
+      if (watchId != null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+
+      watchBtn.disabled = false;
+      stopWatchBtn.disabled = true;
+    }
+
+
+    function getCouponImageUrl(coupon, index) {
+      const seeds = [
+        "futako-cafe-latte",
+        "futako-bakery-sweets",
+        "futako-books-stationery",
+        "futako-deli-lunch",
+        "futako-smoothie-green",
+        "futako-pizza-food",
+        "futako-flower-shop",
+        "futako-terrace-cafe",
+        "futako-lifestyle-goods",
+        "futako-park-coffee",
+        "futako-picnic-sandwich",
+        "futako-gelato",
+        "futako-runner-cafe",
+        "futako-cycle-shop",
+        "futako-donuts",
+        "futako-local-kitchen"
+      ];
+
+      const seed = seeds[index % seeds.length] + "-" + coupon.shop.replace(/\s+/g, "-");
+      return `https://picsum.photos/seed/${encodeURIComponent(seed)}/640/360`;
+    }
+
+
+    function getShopLocation(checkpoint, couponIndex) {
+      // プロトタイプ用：
+      // 実運用では coupon.shop_lat / coupon.shop_lng などをDBから返す想定。
+      // ここでは各チェックポイント周辺に、それっぽく少しずらした店舗位置を生成する。
+      const offsets = [
+        { lat: 0.00018, lng: 0.00012 },
+        { lat: -0.00014, lng: 0.00018 },
+        { lat: 0.00008, lng: -0.00022 },
+        { lat: -0.00020, lng: -0.00008 },
+        { lat: 0.00024, lng: -0.00002 }
+      ];
+
+      const offset = offsets[couponIndex % offsets.length];
+
+      return {
+        lat: checkpoint.lat + offset.lat,
+        lng: checkpoint.lng + offset.lng
+      };
+    }
+
+    function clearRoute() {
+      if (routeLine) {
+        map.removeLayer(routeLine);
+        routeLine = null;
+      }
+
+      if (destinationMarker) {
+        map.removeLayer(destinationMarker);
+        destinationMarker = null;
+      }
+    }
+
+    window.showRouteToShop = function(checkpointId, couponIndex) {
+      if (!userLocation) {
+        alert("現在地が取得されていません。先に現在地を取得してください。");
+        return;
+      }
+
+      const checkpoint = checkpoints.find(item => item.id === checkpointId);
+      if (!checkpoint) return;
+
+      const coupon = checkpoint.coupons[couponIndex];
+      const shopLocation = getShopLocation(checkpoint, couponIndex);
+      const distance = haversineDistanceM(
+        userLocation.lat,
+        userLocation.lng,
+        shopLocation.lat,
+        shopLocation.lng
+      );
+
+      clearRoute();
+
+      const routePoints = [
+        [userLocation.lat, userLocation.lng],
+        [checkpoint.lat, checkpoint.lng],
+        [shopLocation.lat, shopLocation.lng]
+      ];
+
+      routeLine = L.polyline(routePoints, {
+        color: "#2563eb",
+        weight: 5,
+        opacity: 0.85,
+        dashArray: "8, 8"
+      }).addTo(map);
+
+      destinationMarker = L.marker([shopLocation.lat, shopLocation.lng], {
+        icon: markerIcon("#7c3aed", 22)
+      })
+        .addTo(map)
+        .bindPopup(`
+          <strong>${coupon.shop}</strong><br>
+          ${coupon.offer}<br>
+          ${distance.toFixed(0)}m先<br>
+          ※プロトタイプ用の簡易ルートです。
+        `)
+        .openPopup();
+
+      map.fitBounds(routeLine.getBounds(), {
+        padding: [60, 60]
+      });
+
+      routeInfo.innerHTML = `
+        <div class="route-card">
+          目的地：<strong>${coupon.shop}</strong><br>
+          クーポン：${coupon.offer}<br>
+          現在地からの直線距離：約${distance.toFixed(0)}m<br>
+          経由チェックポイント：${checkpoint.name}<br>
+          <span style="color: var(--muted);">※このプロトタイプでは実道路ルートではなく、現在地→チェックポイント→店舗を結ぶ簡易ルートを表示しています。</span>
+        </div>
+      `;
+
+      closeCheckinModal();
+    };
+
+
+    function openCheckinModal(cp, distance) {
+      modalTitle.textContent = "チェックイン完了";
+      modalLead.textContent = `${cp.name} へのチェックインが完了しました。`;
+
+      modalStatus.innerHTML = `
+        チェックイン地点：<strong>${cp.name}</strong><br>
+        現在地からの距離：${distance.toFixed(1)}m<br>
+        獲得クーポン：${cp.coupons.length}件<br>
+        ※クーポン情報はプロトタイプ用の仮想データです。
+      `;
+
+      couponList.innerHTML = cp.coupons.map((coupon, index) => `
+        <div class="coupon">
+          <img
+            class="coupon-image"
+            src="${getCouponImageUrl(coupon, index)}"
+            alt="${coupon.shop}のクーポン画像"
+            loading="lazy"
+          />
+          <div class="coupon-name">${coupon.shop}</div>
+          <div class="coupon-offer">${coupon.offer}</div>
+          <div class="coupon-note">${coupon.note}</div>
+          <button class="coupon-cta" onclick="showRouteToShop(${cp.id}, ${index})">お店に行く</button>
+        </div>
+      `).join("");
+
+      checkinModal.classList.add("open");
+    }
+
+    function closeCheckinModal() {
+      checkinModal.classList.remove("open");
+    }
+
+    window.checkin = function(checkpointId) {
+      if (!userLocation) {
+        alert("現在地が取得されていません。");
+        return;
+      }
+
+      const judged = judgeCheckpoints();
+      const cp = judged.find(item => item.id === checkpointId);
+      const raw = checkpoints.find(item => item.id === checkpointId);
+      const distance = haversineDistanceM(userLocation.lat, userLocation.lng, raw.lat, raw.lng);
+
+      // 実運用では、この判定はサーバーAPIで行う。
+      if (distance <= CHECKIN_RADIUS_M && cp.status === "available") {
+        checkedInIds.add(checkpointId);
+        renderCheckpoints();
+        openCheckinModal(raw, distance);
+      } else {
+        alert(`チェックイン失敗：現在地が離れています。\n距離：${distance.toFixed(1)}m`);
+      }
+    };
+
+    getLocationBtn.addEventListener("click", getCurrentLocation);
+    watchBtn.addEventListener("click", startWatching);
+    stopWatchBtn.addEventListener("click", stopWatching);
+    demoBtn.addEventListener("click", () => {
+      setUserLocation(DEMO_USER_LOCATION.lat, DEMO_USER_LOCATION.lng, DEMO_USER_LOCATION.accuracy, true);
+    });
+    riseDemoBtn.addEventListener("click", () => {
+      setUserLocation(DEMO_RISE_GALLERIA_LOCATION.lat, DEMO_RISE_GALLERIA_LOCATION.lng, DEMO_RISE_GALLERIA_LOCATION.accuracy, true);
+    });
+    closeModalBtn.addEventListener("click", closeCheckinModal);
+    checkinModal.addEventListener("click", event => {
+      if (event.target === checkinModal) {
+        closeCheckinModal();
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", initMap);
+  </script>
+</body>
+</html>
