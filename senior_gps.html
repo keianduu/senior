@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>楽天シニア GPSスポット別スタンプチェックイン 地図モック</title>
+  <title>楽天シニア GPSチェックイン PRD反映プロトタイプ</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://a.basemaps.cartocdn.com">
   <link rel="preconnect" href="https://b.basemaps.cartocdn.com">
@@ -11,16 +11,16 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     /* =========================================================
-      Rakuten Senior GPS Stamp Map Style System
+      Rakuten Senior GPS PRD Prototype Style System
       01. Design Tokens
       02. Base / Phone Layout
       03. App Header
       04. Fullscreen Map
-      05. Floating Icons / Current Status Card
-      06. Facility Pins / Map Popup
+      05. Floating Icons / Legend / Current Status
+      06. Spot & Shop Pins
       07. Detail Bottom Sheet
-      08. Stamp Card Screen
-      09. Toast
+      08. Nearby Shop / Coupon / Stamp Components
+      09. Ad Modal / Toast
       10. Responsive Adjustments
     ========================================================= */
 
@@ -36,6 +36,7 @@
       --green:#35bd24;
       --green-dark:#169908;
       --red:#bf0000;
+      --pink:#e91e63;
       --blue:#2787d8;
       --purple:#8d62d9;
       --gray:#888;
@@ -49,618 +50,207 @@
 
     /* 02. Base / Phone Layout */
     *{box-sizing:border-box;}
-    html,body{
-      margin:0;
-      min-height:100%;
-      font-family:var(--font-ja);
-      color:var(--text);
-      background:#eee;
-    }
+    html,body{margin:0;min-height:100%;font-family:var(--font-ja);color:var(--text);background:#eee;}
     body{display:flex;justify-content:center;}
-    button{
-      font-family:inherit;
-      border:0;
-      cursor:pointer;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .phone{
-      width:100%;
-      max-width:var(--screen-w);
-      height:100dvh;
-      min-height:640px;
-      background:#fff;
-      position:relative;
-      overflow:hidden;
-      box-shadow:0 0 0 1px rgba(0,0,0,.04),0 16px 48px rgba(0,0,0,.16);
-    }
+    button{font-family:inherit;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+    .phone{width:100%;max-width:var(--screen-w);height:100dvh;min-height:640px;background:#fff;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.04),0 16px 48px rgba(0,0,0,.16);}
 
     /* 03. App Header */
-    .app-header{
-      height:var(--header-h);
-      background:var(--deep-orange);
-      position:absolute;
-      left:0;
-      right:0;
-      top:0;
-      color:white;
-      padding:8px 24px 10px;
-      z-index:50;
-    }
-    .menu{
-      position:absolute;
-      left:25px;
-      top:8px;
-      width:72px;
-      text-align:center;
-    }
-    .hamb{
-      font-size:30px;
-      line-height:29px;
-      font-weight:500;
-      display:block;
-      letter-spacing:2px;
-    }
-    .menu-label{
-      font-size:16px;
-      letter-spacing:2px;
-      margin-top:4px;
-      display:block;
-    }
-    .near-btn{
-      position:absolute;
-      right:20px;
-      top:6px;
-      height:42px;
-      min-width:166px;
-      background:white;
-      border-radius:5px;
-      color:#777;
-      font-weight:800;
-      font-size:16px;
-      display:flex;
-      align-items:center;
-      gap:7px;
-      justify-content:center;
-      box-shadow:0 2px 6px rgba(0,0,0,.36);
-    }
-    .pin-outline{
-      width:23px;
-      height:23px;
-      border:3px solid #7c7c7c;
-      border-radius:50% 50% 50% 0;
-      transform:rotate(-45deg);
-      position:relative;
-      margin-right:2px;
-    }
-    .pin-outline:after{
-      content:"";
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      width:7px;
-      height:7px;
-      border:3px solid #7c7c7c;
-      border-radius:50%;
-    }
+    .app-header{height:var(--header-h);background:var(--deep-orange);position:absolute;left:0;right:0;top:0;color:white;padding:8px 24px 10px;z-index:50;}
+    .menu{position:absolute;left:25px;top:8px;width:72px;text-align:center;}
+    .hamb{font-size:30px;line-height:29px;font-weight:500;display:block;letter-spacing:2px;}
+    .menu-label{font-size:16px;letter-spacing:2px;margin-top:4px;display:block;}
+    .near-btn{position:absolute;right:20px;top:6px;height:42px;min-width:166px;background:white;border-radius:5px;color:#777;font-weight:800;font-size:16px;display:flex;align-items:center;gap:7px;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.36);}
+    .pin-outline{width:23px;height:23px;border:3px solid #7c7c7c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);position:relative;margin-right:2px;}
+    .pin-outline:after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border:3px solid #7c7c7c;border-radius:50%;}
 
     /* 04. Fullscreen Map */
-    .map-shell{
-      position:absolute;
-      top:var(--header-h);
-      left:0;
-      right:0;
-      bottom:0;
-      background:
-        radial-gradient(circle at 25% 20%,rgba(255,255,255,.7) 0 2px,transparent 3px),
-        linear-gradient(135deg,#f8eed1 0%,#f7f1dc 36%,#e8f4dc 36%,#e8f4dc 54%,#f7f1dc 54% 100%);
-      z-index:1;
-    }
-    #map{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      background:#f6efe0;
-      z-index:0;
-    }
-    #map:before{
-      content:"地図を読み込み中";
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      color:#99783a;
-      font-size:13px;
-      font-weight:900;
-      z-index:0;
-      pointer-events:none;
-    }
-    .leaflet-container{
-      font-family:var(--font-ja);
-      background:#f6efe0;
-    }
-    .leaflet-tile{
-      image-rendering:auto;
-      backface-visibility:hidden;
-      transform:translateZ(0);
-    }
+    .map-shell{position:absolute;top:var(--header-h);left:0;right:0;bottom:0;background:linear-gradient(135deg,#f8eed1 0%,#f7f1dc 36%,#e8f4dc 36%,#e8f4dc 54%,#f7f1dc 54% 100%);z-index:1;}
+    #map{position:absolute;inset:0;width:100%;height:100%;background:#f6efe0;z-index:0;}
+    #map:before{content:"地図を読み込み中";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#99783a;font-size:13px;font-weight:900;z-index:0;pointer-events:none;}
+    .leaflet-container{font-family:var(--font-ja);background:#f6efe0;}
+    .leaflet-tile{image-rendering:auto;backface-visibility:hidden;transform:translateZ(0);}
     .leaflet-tile-pane{opacity:.98;}
     .leaflet-control-attribution{font-size:9px;}
-    .leaflet-control-zoom{
-      border:0!important;
-      box-shadow:var(--shadow-float);
-      overflow:hidden;
-      border-radius:12px;
-      margin-bottom:96px!important;
-    }
-    .leaflet-control-zoom a{
-      color:#777!important;
-      border:0!important;
-      font-weight:900;
-    }
-    .leaflet-top,
-    .leaflet-bottom{z-index:700;}
+    .leaflet-control-zoom{border:0!important;box-shadow:var(--shadow-float);overflow:hidden;border-radius:12px;margin-bottom:96px!important;}
+    .leaflet-control-zoom a{color:#777!important;border:0!important;font-weight:900;}
+    .leaflet-top,.leaflet-bottom{z-index:700;}
 
-    /* 05. Floating Icons / Current Status Card */
-    .icon-stack{
-      position:absolute;
-      right:14px;
-      top:14px;
-      z-index:1300;
-      pointer-events:auto;
-      transform:translateZ(0);
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .float-icon{
-      width:52px;
-      height:52px;
-      border-radius:50%;
-      background:#fff;
-      color:#555;
-      font-size:22px;
-      font-weight:1000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:var(--shadow-float);
-      position:relative;
-    }
-    .float-icon:after{
-      content:"";
-      position:absolute;
-      right:3px;
-      bottom:4px;
-      width:13px;
-      height:13px;
-      border:3px solid #fff;
-      border-radius:50%;
-      background:var(--gray);
-    }
+    /* 05. Floating Icons / Legend / Current Status */
+    .icon-stack{position:absolute;right:14px;top:14px;z-index:1300;pointer-events:auto;transform:translateZ(0);display:flex;flex-direction:column;gap:10px;}
+    .float-icon{width:52px;height:52px;border-radius:50%;background:#fff;color:#555;font-size:22px;font-weight:1000;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-float);position:relative;}
+    .float-icon:after{content:"";position:absolute;right:3px;bottom:4px;width:13px;height:13px;border:3px solid #fff;border-radius:50%;background:var(--gray);}
     .float-icon[data-state="tracking"]:after{background:var(--green);}
     .float-icon[data-state="pending"]:after{background:var(--orange);}
     .float-icon[data-state="error"]:after{background:var(--red);}
     .float-icon[data-state="demo"]:after{background:var(--blue);}
     .float-icon[data-state="stamp"]:after{background:var(--purple);}
     .float-icon.small-text{font-size:14px;}
-    .gps-pulse{
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      animation:pulse 1.8s infinite;
-      border:2px solid rgba(245,138,0,.35);
-      pointer-events:none;
-    }
+    .gps-pulse{position:absolute;inset:0;border-radius:50%;animation:pulse 1.8s infinite;border:2px solid rgba(245,138,0,.35);pointer-events:none;}
     .float-icon[data-state="tracking"] .gps-pulse{border-color:rgba(53,189,36,.38);}
-    @keyframes pulse{
-      0%{transform:scale(.88);opacity:.8;}
-      80%{transform:scale(1.45);opacity:0;}
-      100%{transform:scale(1.45);opacity:0;}
-    }
-    .current-location-card{
-      position:absolute;
-      left:14px;
-      right:14px;
-      bottom:16px;
-      z-index:1200;
-      min-height:64px;
-      padding:12px 13px;
-      background:rgba(255,255,255,.96);
-      border-radius:14px;
-      box-shadow:var(--shadow-float);
-      display:flex;
-      align-items:center;
-      gap:11px;
-    }
-    .current-location-icon{
-      width:40px;
-      height:40px;
-      border-radius:50%;
-      background:#fff2cf;
-      color:var(--orange);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:1000;
-      font-size:19px;
-      flex:0 0 auto;
-    }
-    .current-location-body{min-width:0;flex:1;text-align:left;}
-    .current-location-body strong{
-      display:block;
-      font-size:14px;
-      font-weight:1000;
-      color:#111;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .current-location-body span{
-      display:block;
-      margin-top:3px;
-      color:#666;
-      font-size:12px;
-      font-weight:800;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .current-location-chevron{
-      width:12px;
-      height:12px;
-      border-top:3px solid var(--orange);
-      border-right:3px solid var(--orange);
-      transform:rotate(45deg);
-      margin-right:4px;
-      flex:0 0 auto;
-    }
+    @keyframes pulse{0%{transform:scale(.88);opacity:.8;}80%{transform:scale(1.45);opacity:0;}100%{transform:scale(1.45);opacity:0;}}
 
-    /* 06. Facility Pins / Map Popup */
-    .user-dot,
-    .facility-pin{background:transparent;border:0;}
-    .user-dot span{
-      display:block;
-      width:22px;
-      height:22px;
-      background:#fff;
-      border:5px solid var(--blue);
-      border-radius:50%;
-      box-shadow:0 0 0 8px rgba(39,135,216,.18),0 3px 8px rgba(0,0,0,.2);
-    }
-    .facility-pin span{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:39px;
-      height:39px;
-      border-radius:50% 50% 50% 0;
-      background:var(--orange);
-      color:#fff;
-      font-size:18px;
-      font-weight:1000;
-      transform:rotate(-45deg);
-      box-shadow:0 5px 12px rgba(0,0,0,.3);
-      border:4px solid #fff;
-    }
-    .facility-pin span i{
-      transform:rotate(45deg);
-      font-style:normal;
-      filter:drop-shadow(0 1px 0 rgba(0,0,0,.14));
-    }
-    .facility-pin.available span{background:var(--green);}
-    .facility-pin.selected span{
-      background:var(--red);
-      box-shadow:0 0 0 7px rgba(191,0,0,.16),0 5px 14px rgba(0,0,0,.28);
-    }
-    .leaflet-popup-content-wrapper{
-      border-radius:13px;
-      box-shadow:0 8px 20px rgba(0,0,0,.22);
-    }
+    .map-legend{position:absolute;left:14px;top:14px;z-index:1250;background:rgba(255,255,255,.95);border-radius:15px;box-shadow:var(--shadow-float);padding:9px 10px;display:grid;gap:6px;font-weight:1000;font-size:12px;color:#555;}
+    .legend-item{display:flex;align-items:center;gap:6px;white-space:nowrap;}
+    .legend-dot{width:21px;height:21px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:inline-flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.18);}
+    .legend-dot span{transform:rotate(45deg);font-size:11px;line-height:1;}
+    .legend-dot.spot{background:var(--orange);}
+    .legend-dot.shop{background:var(--pink);}
+
+    .current-location-card{position:absolute;left:14px;right:14px;bottom:16px;z-index:1200;min-height:64px;padding:12px 13px;background:rgba(255,255,255,.96);border-radius:14px;box-shadow:var(--shadow-float);display:flex;align-items:center;gap:11px;}
+    .current-location-icon{width:40px;height:40px;border-radius:50%;background:#fff2cf;color:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:1000;font-size:19px;flex:0 0 auto;}
+    .current-location-body{min-width:0;flex:1;text-align:left;}
+    .current-location-body strong{display:block;font-size:14px;font-weight:1000;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .current-location-body span{display:block;margin-top:3px;color:#666;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .current-location-chevron{width:12px;height:12px;border-top:3px solid var(--orange);border-right:3px solid var(--orange);transform:rotate(45deg);margin-right:4px;flex:0 0 auto;}
+
+    /* 06. Spot & Shop Pins */
+    .user-dot,.target-pin{background:transparent;border:0;}
+    .user-dot span{display:block;width:22px;height:22px;background:#fff;border:5px solid var(--blue);border-radius:50%;box-shadow:0 0 0 8px rgba(39,135,216,.18),0 3px 8px rgba(0,0,0,.2);}
+    .target-pin span{display:flex;align-items:center;justify-content:center;width:39px;height:39px;border-radius:50% 50% 50% 0;color:#fff;font-size:18px;font-weight:1000;transform:rotate(-45deg);box-shadow:0 5px 12px rgba(0,0,0,.3);border:4px solid #fff;}
+    .target-pin span i{transform:rotate(45deg);font-style:normal;filter:drop-shadow(0 1px 0 rgba(0,0,0,.14));}
+    .target-pin.spot span{background:var(--orange);}
+    .target-pin.shop span{background:var(--pink);}
+    .target-pin.available span{background:var(--green);}
+    .target-pin.selected span{background:var(--red);box-shadow:0 0 0 7px rgba(191,0,0,.16),0 5px 14px rgba(0,0,0,.28);}
+    .leaflet-popup-content-wrapper{border-radius:13px;box-shadow:0 8px 20px rgba(0,0,0,.22);}
     .leaflet-popup-content{margin:10px 12px;}
     .pin-popup{min-width:150px;font-weight:900;line-height:1.4;}
     .pin-popup strong{display:block;font-size:14px;color:#111;}
     .pin-popup span{display:block;color:#777;font-size:12px;}
 
     /* 07. Detail Bottom Sheet */
-    .sheet-backdrop{
-      position:absolute;
-      inset:0;
-      background:rgba(0,0,0,.18);
-      z-index:60;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .2s ease;
-    }
+    .sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.18);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s ease;}
     .sheet-backdrop.show{opacity:1;pointer-events:auto;}
-    .detail-sheet{
-      position:absolute;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:70;
-      background:#fff;
-      border-radius:22px 22px 0 0;
-      box-shadow:0 -12px 28px rgba(0,0,0,.22);
-      transform:translateY(105%);
-      transition:transform .24s ease;
-      overflow:hidden;
-      max-height:86dvh;
-    }
+    .detail-sheet{position:absolute;left:0;right:0;bottom:0;z-index:70;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -12px 28px rgba(0,0,0,.22);transform:translateY(105%);transition:transform .24s ease;overflow:hidden;max-height:88dvh;}
     .detail-sheet.show{transform:translateY(0);}
-    .sheet-handle{
-      width:48px;
-      height:5px;
-      border-radius:999px;
-      background:#ddd;
-      margin:10px auto 7px;
-    }
-    .sheet-content{
-      padding:4px 18px calc(18px + env(safe-area-inset-bottom));
-      max-height:calc(86dvh - 22px);
-      overflow:auto;
-    }
+    .sheet-handle{width:48px;height:5px;border-radius:999px;background:#ddd;margin:10px auto 7px;}
+    .sheet-content{padding:4px 18px calc(18px + env(safe-area-inset-bottom));max-height:calc(88dvh - 22px);overflow:auto;}
     .sheet-head{display:flex;gap:13px;align-items:flex-start;}
-    .sheet-icon{
-      width:54px;
-      height:54px;
-      border-radius:17px;
-      background:#fff2cf;
-      color:var(--orange);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:28px;
-      font-weight:1000;
-      flex:0 0 auto;
-      box-shadow:inset 0 -3px 0 rgba(0,0,0,.06);
-    }
+    .sheet-icon{width:54px;height:54px;border-radius:17px;background:#fff2cf;color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:1000;flex:0 0 auto;box-shadow:inset 0 -3px 0 rgba(0,0,0,.06);}
+    .sheet-icon.shop{background:#ffeaf3;color:var(--pink);}
     .sheet-title-wrap{min-width:0;flex:1;}
-    .sheet-eyebrow{
-      display:inline-flex;
-      min-height:22px;
-      align-items:center;
-      padding:3px 8px;
-      border-radius:999px;
-      background:#fff1c8;
-      color:#9d6800;
-      font-size:11px;
-      font-weight:1000;
-      margin-bottom:7px;
-    }
-    .sheet-title{
-      font-size:20px;
-      line-height:1.25;
-      color:#111;
-      font-weight:1000;
-      margin:0;
-    }
-    .sheet-close{
-      width:34px;
-      height:34px;
-      border-radius:50%;
-      background:#f4f4f4;
-      color:#777;
-      font-size:21px;
-      line-height:1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex:0 0 auto;
-    }
-    .sheet-description{
-      color:#555;
-      font-size:13px;
-      line-height:1.55;
-      font-weight:800;
-      margin:13px 0 12px;
-    }
-    .sheet-metrics{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:9px;
-      margin-bottom:13px;
-    }
-    .metric{
-      min-height:55px;
-      border:1px solid #f1dfad;
-      background:#fffaf0;
-      border-radius:12px;
-      padding:9px 10px;
-    }
-    .metric span{
-      display:block;
-      color:#777;
-      font-size:11px;
-      font-weight:900;
-      margin-bottom:4px;
-    }
-    .metric strong{
-      color:#111;
-      font-size:16px;
-      line-height:1.2;
-      font-weight:1000;
-    }
-    .sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .sheet-eyebrow{display:inline-flex;min-height:22px;align-items:center;padding:3px 8px;border-radius:999px;background:#fff1c8;color:#9d6800;font-size:11px;font-weight:1000;margin-bottom:7px;}
+    .sheet-eyebrow.shop{background:#ffeaf3;color:#b10f4c;}
+    .sheet-title{font-size:20px;line-height:1.25;color:#111;font-weight:1000;margin:0;}
+    .sheet-close{width:34px;height:34px;border-radius:50%;background:#f4f4f4;color:#777;font-size:21px;line-height:1;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+    .sheet-description{color:#555;font-size:13px;line-height:1.55;font-weight:800;margin:13px 0 12px;}
+    .sheet-metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+    .metric{min-height:55px;border:1px solid #f1dfad;background:#fffaf0;border-radius:12px;padding:9px 10px;}
+    .metric span{display:block;color:#777;font-size:11px;font-weight:900;margin-bottom:4px;}
+    .metric strong{color:#111;font-size:15px;line-height:1.22;font-weight:1000;}
+    .notice-box{border:1px solid #f2d58c;background:#fff9e8;border-radius:12px;padding:10px 11px;margin:0 0 12px;color:#6f540e;font-size:12px;line-height:1.5;font-weight:900;display:flex;gap:8px;align-items:flex-start;}
+    .notice-box:before{content:"i";width:18px;height:18px;border-radius:50%;background:#f5d071;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:1000;flex:0 0 auto;}
+    .notice-box.error{border-color:#f3c1c1;background:#fff2f2;color:#8c2424;}
+    .notice-box.error:before{content:"!";background:#e85b5b;}
+    .sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+    .sheet-actions.single{grid-template-columns:1fr;}
     .sheet-actions.three{grid-template-columns:1fr 1fr 1fr;}
-    .primary-btn,
-    .secondary-btn{
-      min-height:46px;
-      border-radius:9px;
-      font-size:15px;
-      font-weight:1000;
-      padding:0 8px;
-    }
-    .sheet-actions.three .primary-btn,
-    .sheet-actions.three .secondary-btn{font-size:13px;}
+    .primary-btn,.secondary-btn,.coupon-btn{min-height:46px;border-radius:9px;font-size:15px;font-weight:1000;padding:0 8px;}
+    .sheet-actions.three .primary-btn,.sheet-actions.three .secondary-btn{font-size:13px;}
     .primary-btn{color:#fff;background:var(--orange);box-shadow:0 4px 0 #cf7300;}
+    .primary-btn.shop{background:var(--pink);box-shadow:0 4px 0 #b50d47;}
     .primary-btn:disabled{background:#cfcfcf;box-shadow:0 4px 0 #aaa;cursor:not-allowed;}
-    .secondary-btn{
-      color:#9d6800;
-      background:#fff2cf;
-      text-decoration:none;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .gps-help-list{margin:8px 0 0;padding:0;list-style:none;}
-    .gps-help-list li{
-      display:flex;
-      gap:8px;
-      color:#555;
-      font-size:12px;
-      line-height:1.45;
-      font-weight:800;
-      margin-top:8px;
-    }
-    .gps-help-list li:before{
-      content:"✓";
-      width:18px;
-      height:18px;
-      border-radius:50%;
-      background:#e8f8e6;
-      color:var(--green-dark);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:11px;
-      font-weight:1000;
-      flex:0 0 auto;
-    }
+    .secondary-btn{color:#9d6800;background:#fff2cf;text-decoration:none;display:flex;align-items:center;justify-content:center;}
+    .secondary-btn.shop{color:#b10f4c;background:#ffeaf3;}
+    .section-title{font-size:15px;font-weight:1000;color:#111;margin:16px 0 9px;display:flex;align-items:center;gap:7px;}
+    .section-title:before{content:"";width:5px;height:22px;border-radius:999px;background:var(--orange);display:block;}
+    .section-title.shop:before{background:var(--pink);}
+    .compact-action-row{display:flex;gap:7px;margin-top:8px;}
+    .icon-action{width:34px;height:34px;border-radius:50%;background:#fff7e7;color:#9d6800;border:1px solid #f2d58c;font-size:16px;font-weight:1000;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(116,84,0,.08);}
+    .icon-action.shop{background:#ffeaf3;color:#b10f4c;border-color:#ffd4e3;}
+    .checkin-panel{border:2px solid #ffe2a0;background:linear-gradient(180deg,#fffaf0 0%,#fff7df 100%);border-radius:16px;padding:12px;margin:14px 0 16px;box-shadow:var(--shadow-card);}
+    .nearby-panel{border:2px solid #ffd4e3;background:#fff7fa;border-radius:16px;padding:12px;margin:12px 0 2px;}
+    .panel-heading{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:1000;color:#111;margin:0 0 10px;}
+    .panel-heading .mark{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--orange);color:#fff;font-size:14px;flex:0 0 auto;}
+    .panel-heading.shop .mark{background:var(--pink);}
+    .checkin-status{display:flex;align-items:center;gap:8px;border-radius:12px;padding:10px 11px;margin-bottom:11px;background:#fff;color:#6f540e;font-size:12px;line-height:1.45;font-weight:900;}
+    .checkin-status:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--orange);flex:0 0 auto;}
+    .checkin-status.ok{background:#f0ffe8;color:#1b7e10;}
+    .checkin-status.ok:before{background:var(--green);}
+    .checkin-status.disabled{background:#f4f4f4;color:#777;}
+    .checkin-status.disabled:before{background:#aaa;}
+    .checkin-status.wait{background:#fff4df;color:#8a5b00;}
+    .distance-chip{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:#fff;color:#555;border:1px solid #eee;padding:4px 8px;font-size:11px;font-weight:1000;margin-top:6px;}
 
-    /* 08. Stamp Card Screen */
-    .stamp-summary{
-      border:3px solid #ffe2a0;
-      border-radius:18px;
-      background:linear-gradient(180deg,#fffaf0 0%,#fff3cd 100%);
-      padding:14px;
-      margin:13px 0;
-      box-shadow:var(--shadow-card);
-    }
-    .stamp-summary-top{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:12px;
-    }
-    .stamp-badge{
-      width:46px;
-      height:46px;
-      border-radius:50%;
-      background:var(--orange);
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:24px;
-      font-weight:1000;
-      flex:0 0 auto;
-      box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);
-    }
+    /* 08. Nearby Shop / Coupon / Stamp Components */
+    .nearby-list{display:grid;gap:10px;margin-bottom:4px;}
+    .shop-card{border:1px solid #f1d5df;background:#fff7fa;border-radius:14px;padding:11px;display:grid;gap:9px;}
+    .shop-card-head{display:flex;gap:10px;align-items:flex-start;}
+    .shop-thumb{width:48px;height:48px;border-radius:13px;background:#ffe4ef;color:var(--pink);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:1000;flex:0 0 auto;}
+    .shop-card-title{min-width:0;flex:1;}
+    .shop-card-title strong{display:block;color:#111;font-size:14px;font-weight:1000;line-height:1.3;}
+    .shop-card-title span{display:block;margin-top:3px;color:#777;font-size:11px;font-weight:900;}
+    .contract-badge{display:inline-flex;align-items:center;justify-content:center;min-height:21px;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:1000;white-space:nowrap;background:#ffeaf3;color:#b10f4c;}
+    .contract-badge.free{background:#f1f1f1;color:#777;}
+    .shop-card-text{font-size:12px;line-height:1.45;color:#555;font-weight:800;margin:0;}
+    .shop-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .shop-info-card{border:1px solid #ffd4e3;background:#fff7fa;border-radius:14px;padding:12px;margin:12px 0;display:grid;gap:7px;}
+    .shop-info-card strong{display:block;color:#111;font-size:15px;font-weight:1000;}
+    .shop-info-card span{display:block;color:#666;font-size:12px;font-weight:900;line-height:1.45;}
+    .mini-btn{min-height:38px;border-radius:9px;background:#fff;color:#b10f4c;border:2px solid #ffd4e3;font-weight:1000;font-size:12px;display:flex;align-items:center;justify-content:center;text-decoration:none;}
+    .mini-btn.primary{background:var(--pink);color:#fff;border-color:var(--pink);}
+    .coupon-card{border:2px solid #ffd4e3;background:linear-gradient(135deg,#fff7fb 0%,#ffeaf3 100%);border-radius:14px;padding:12px;margin:10px 0 13px;display:flex;gap:10px;align-items:center;}
+    .coupon-icon{width:42px;height:42px;border-radius:50%;background:#fff;color:var(--pink);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:1000;flex:0 0 auto;box-shadow:inset 0 -2px 0 rgba(0,0,0,.06);}
+    .coupon-body{min-width:0;flex:1;}
+    .coupon-body strong{display:block;color:#111;font-size:14px;font-weight:1000;line-height:1.3;}
+    .coupon-body span{display:block;color:#777;font-size:11px;font-weight:900;margin-top:3px;}
+    .stamp-summary{border:3px solid #ffe2a0;border-radius:18px;background:linear-gradient(180deg,#fffaf0 0%,#fff3cd 100%);padding:14px;margin:13px 0;box-shadow:var(--shadow-card);}
+    .stamp-summary-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+    .stamp-badge{width:46px;height:46px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:1000;flex:0 0 auto;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);}
     .stamp-summary-title{min-width:0;flex:1;}
     .stamp-summary-title strong{display:block;font-size:17px;font-weight:1000;color:#111;}
     .stamp-summary-title span{display:block;margin-top:2px;font-size:12px;font-weight:900;color:#7a5a1a;}
-    .stamp-grid{
-      display:grid;
-      grid-template-columns:repeat(7,1fr);
-      gap:8px;
-    }
-    .stamp-cell{
-      aspect-ratio:1;
-      border-radius:50%;
-      border:3px dashed #e7c879;
-      background:#fff;
-      color:#d8b45e;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:1000;
-      font-size:18px;
-      position:relative;
-    }
-    .stamp-cell.filled{
-      border-style:solid;
-      border-color:var(--orange);
-      background:#fff;
-      color:var(--orange);
-      box-shadow:0 3px 0 #f1c35e;
-    }
+    .stamp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+    .stamp-cell{aspect-ratio:1;border-radius:50%;border:3px dashed #e7c879;background:#fff;color:#d8b45e;display:flex;align-items:center;justify-content:center;font-weight:1000;font-size:18px;position:relative;}
+    .stamp-cell.filled{border-style:solid;border-color:var(--orange);background:#fff;color:var(--orange);box-shadow:0 3px 0 #f1c35e;}
     .stamp-cell.filled:before{content:"★";}
     .stamp-cell.empty:before{content:"";width:7px;height:7px;border-radius:50%;background:#f0d995;}
-    .stamp-note{
-      display:flex;
-      gap:8px;
-      margin-top:12px;
-      padding:10px 11px;
-      border-radius:12px;
-      background:rgba(255,255,255,.72);
-      color:#6c5320;
-      font-size:12px;
-      line-height:1.45;
-      font-weight:900;
-    }
+    .stamp-note{display:flex;gap:8px;margin-top:12px;padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.72);color:#6c5320;font-size:12px;line-height:1.45;font-weight:900;}
     .stamp-note:before{content:"i";width:18px;height:18px;border-radius:50%;background:#f5d071;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:1000;flex:0 0 auto;}
     .stamp-status-list{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
     .stamp-status-item{border:1px solid #ead59a;border-radius:12px;background:#fffaf0;padding:10px;}
     .stamp-status-item span{display:block;color:#777;font-size:11px;font-weight:900;margin-bottom:5px;}
     .stamp-status-item strong{display:block;color:#111;font-size:15px;font-weight:1000;line-height:1.25;}
 
-    /* 09. Toast */
-    .complete-toast{
-      position:absolute;
-      left:18px;
-      right:18px;
-      bottom:18px;
-      z-index:90;
-      display:none;
-      align-items:center;
-      gap:10px;
-      min-height:62px;
-      padding:12px 14px calc(12px + env(safe-area-inset-bottom));
-      border-radius:14px;
-      background:#fff;
-      box-shadow:0 9px 25px rgba(0,0,0,.22);
-      border:3px solid #ffe2a0;
-    }
+    /* 09. Ad Modal / Toast */
+    .ad-modal{position:absolute;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.5);}
+    .ad-modal.show{display:flex;animation:fadeIn .18s ease-out;}
+    .ad-card{width:100%;max-width:360px;border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35);}
+    .ad-creative{min-height:210px;background:linear-gradient(135deg,#ffecf3 0%,#fff4cf 52%,#eaffdf 100%);padding:20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+    .ad-label{display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 10px;border-radius:999px;background:#fff;color:#999;font-size:11px;font-weight:1000;margin-bottom:10px;}
+    .ad-title{font-size:25px;font-weight:1000;color:#111;line-height:1.25;margin:0;}
+    .ad-title span{color:var(--pink);}
+    .ad-sub{font-size:13px;color:#555;font-weight:900;line-height:1.5;margin:9px 0 0;}
+    .ad-body{padding:14px 16px 17px;}
+    .ad-body p{font-size:12px;color:#777;font-weight:800;line-height:1.45;margin:0 0 12px;}
+    .ad-close-btn{width:100%;height:48px;border-radius:10px;background:var(--orange);box-shadow:0 4px 0 #cf7300;color:#fff;font-size:15px;font-weight:1000;}
+    .complete-toast{position:absolute;left:18px;right:18px;bottom:18px;z-index:2100;display:none;align-items:center;gap:10px;min-height:62px;padding:12px 14px calc(12px + env(safe-area-inset-bottom));border-radius:14px;background:#fff;box-shadow:0 9px 25px rgba(0,0,0,.22);border:3px solid #ffe2a0;}
     .complete-toast.show{display:flex;animation:pop .28s ease-out;}
-    .toast-icon{
-      width:38px;
-      height:38px;
-      border-radius:50%;
-      background:var(--orange);
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:1000;
-      font-size:21px;
-      flex:0 0 auto;
-    }
+    .toast-icon{width:38px;height:38px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:1000;font-size:21px;flex:0 0 auto;}
     .toast-body strong{display:block;color:#111;font-size:15px;font-weight:1000;margin-bottom:2px;}
     .toast-body span{color:#666;font-size:12px;font-weight:800;line-height:1.35;}
     @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
     /* 10. Responsive Adjustments */
-    @media (max-width:370px){
-      .near-btn{min-width:154px;font-size:15px;}
-      .float-icon{width:48px;height:48px;}
-      .sheet-title{font-size:18px;}
-      .sheet-content{padding-left:15px;padding-right:15px;}
-      .sheet-actions.three{grid-template-columns:1fr;}
-      .stamp-grid{gap:5px;}
-    }
+    @media (max-width:370px){.near-btn{min-width:154px;font-size:15px;}.float-icon{width:48px;height:48px;}.sheet-title{font-size:18px;}.sheet-content{padding-left:15px;padding-right:15px;}.sheet-actions.three{grid-template-columns:1fr;}.stamp-grid{gap:5px;}.map-legend{font-size:11px;}.shop-card-actions{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
-  <div class="phone" aria-label="楽天シニアアプリのGPSスタンプチェックイン地図モック">
+  <div class="phone" aria-label="楽天シニアアプリのGPSチェックインPRD反映プロトタイプ">
     <header class="app-header">
       <div class="menu"><span class="hamb">☰</span><span class="menu-label">メニュー</span></div>
       <button class="near-btn" id="headerNearBtn" aria-label="現在地付近に戻る"><span class="pin-outline"></span><span>近くの施設を探す</span></button>
     </header>
 
-    <section class="map-shell" aria-label="近くのスタンプ取得スポットを表示する地図">
+    <section class="map-shell" aria-label="近くのチェックインスポットとショップを表示する地図">
       <div id="map"></div>
+
+      <div class="map-legend" aria-label="ピンの種類">
+        <div class="legend-item"><span class="legend-dot spot"><span>★</span></span>スポット</div>
+        <div class="legend-item"><span class="legend-dot shop"><span>店</span></span>ショップ</div>
+      </div>
 
       <div class="icon-stack" aria-label="地図操作">
         <button class="float-icon" id="gpsStatusBtn" data-state="pending" aria-label="GPS状態の詳細を見る"><span class="gps-pulse"></span><span id="gpsStatusIcon">📡</span></button>
@@ -685,6 +275,20 @@
       <div class="sheet-content" id="sheetContent"></div>
     </section>
 
+    <section class="ad-modal" id="adModal" aria-label="チェックイン広告">
+      <div class="ad-card">
+        <div class="ad-creative">
+          <span class="ad-label">インステ広告デモ</span>
+          <h2 class="ad-title">歩いて、<span>毎日おトク</span></h2>
+          <p class="ad-sub">チェックイン完了後にスタンプを付与します</p>
+        </div>
+        <div class="ad-body">
+          <p id="adTargetText">広告を閉じるとスタンプカードに反映されます。</p>
+          <button class="ad-close-btn" id="adCloseBtn">広告を閉じて受け取る</button>
+        </div>
+      </div>
+    </section>
+
     <div class="complete-toast" id="completeToast" role="status" aria-live="polite">
       <div class="toast-icon">✓</div>
       <div class="toast-body"><strong id="toastTitle">スタンプ取得完了！</strong><span id="toastText">スタンプカードに1つ押しました。</span></div>
@@ -694,108 +298,119 @@
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     /* =========================================================
-      GPS Stamp Map Controller
-      01. Facility Master Data
-      02. Stamp State
+      GPS PRD Prototype Controller
+      01. Master Data
+      02. Reward / Check-in State
       03. State / DOM References
       04. Map Initialization
       05. GPS Permission / Watch Position
       06. Distance / Availability Logic
       07. Detail Sheet Rendering
-      08. Stamp Card Rendering
+      08. Shop / Route / Ad / Stamp Actions
       09. Map / Button Events
     ========================================================= */
 
-    /* 01. Facility Master Data */
+    /* 01. Master Data */
     const CHECKIN_RADIUS_M = 50;
+    const SHOP_RADIUS_M = 500;
+    const RECHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
     const DEFAULT_CENTER = { lat: 35.61103, lng: 139.62662 };
-    const facilities = [
-      { id:"rise-galleria", name:"二子玉川ライズ ガレリア前", lat:35.61129, lng:139.62705, category:"商業施設", icon:"🏬", description:"駅直結の広場前スポット。買い物や通院帰りにも立ち寄りやすい場所です。" },
-      { id:"rise-sc", name:"ライズ ショッピングセンター入口", lat:35.61162, lng:139.62762, category:"商業施設", icon:"🛍️", description:"ショッピングセンター入口付近のデモスポットです。" },
-      { id:"rise-market", name:"テラスマーケット前", lat:35.61210, lng:139.62836, category:"商業施設", icon:"🏪", description:"テラスマーケット方面の散歩導線にあるスポットです。" },
-      { id:"tsutaya-kaden", name:"蔦屋家電 周辺", lat:35.61236, lng:139.62813, category:"店舗", icon:"📚", description:"家電・書籍エリア付近に設置したデモ店舗スポットです。" },
-      { id:"cinema", name:"映画館前スポット", lat:35.61256, lng:139.62864, category:"店舗", icon:"🎬", description:"映画館前の休憩地点を想定したチェックポイントです。" },
-      { id:"station-east", name:"二子玉川駅 東口", lat:35.61128, lng:139.62737, category:"駅", icon:"🚉", description:"駅東口からすぐのスタンプスポットです。" },
-      { id:"station-west", name:"二子玉川駅 西口", lat:35.61140, lng:139.62622, category:"駅", icon:"🚉", description:"西口側の買い物導線にあるデモスポットです。" },
-      { id:"bus-rotary", name:"駅前バスロータリー", lat:35.61105, lng:139.62655, category:"交通", icon:"🚌", description:"バス利用者の来訪を想定した駅前スポットです。" },
-      { id:"dogwood", name:"ドッグウッドプラザ前", lat:35.61183, lng:139.62673, category:"商業施設", icon:"🏬", description:"駅前商業施設の入口を想定したスポットです。" },
-      { id:"yanagikoji", name:"柳小路ベーカリー前", lat:35.61206, lng:139.62582, category:"店舗", icon:"🥐", description:"柳小路エリアのデモ店舗です。" },
-      { id:"cafe-west", name:"二子玉川カフェ西口店", lat:35.61242, lng:139.62546, category:"カフェ", icon:"☕", description:"西口側のカフェを想定したチェックポイントです。" },
-      { id:"pharmacy-west", name:"ヘルス薬局 二子玉川店", lat:35.61274, lng:139.62599, category:"店舗", icon:"💊", description:"健康行動と相性の良い薬局デモスポットです。" },
-      { id:"takashimaya-main", name:"玉川高島屋 本館前", lat:35.61311, lng:139.62566, category:"商業施設", icon:"🛍️", description:"本館入口付近の買い物スポットです。" },
-      { id:"takashimaya-south", name:"玉川高島屋 南館前", lat:35.61357, lng:139.62614, category:"商業施設", icon:"🏬", description:"南館側のデモチェックポイントです。" },
-      { id:"takashimaya-garden", name:"ガーデンアイランド連絡口", lat:35.61440, lng:139.62505, category:"商業施設", icon:"🌿", description:"少し歩いた先の回遊スポットを想定しています。" },
-      { id:"book-store", name:"まちの書店 二子玉川", lat:35.61302, lng:139.62688, category:"店舗", icon:"📕", description:"商業施設内の書店を想定したデモ店舗です。" },
-      { id:"restaurant-street", name:"レストランストリート入口", lat:35.61268, lng:139.62738, category:"飲食", icon:"🍽️", description:"食事前後に取得しやすいスポットです。" },
-      { id:"clinic", name:"二子玉川ヘルスクリニック前", lat:35.61288, lng:139.62802, category:"医療", icon:"🏥", description:"通院ついでの来訪を想定したデモスポットです。" },
-      { id:"gym", name:"フィットネススタジオ前", lat:35.61183, lng:139.62882, category:"運動", icon:"🏃", description:"運動施設前のスタンプ取得スポットです。" },
-      { id:"community", name:"地域交流スペース", lat:35.61096, lng:139.62844, category:"公共", icon:"🤝", description:"イベント参加や地域交流の導線を想定しています。" },
-      { id:"futako-park-gate", name:"二子玉川公園 入口", lat:35.60823, lng:139.63039, category:"公園", icon:"🌳", description:"公園ウォーキングの入口スポットです。" },
-      { id:"park-view", name:"二子玉川公園 眺望広場", lat:35.60743, lng:139.63171, category:"公園", icon:"🌳", description:"散歩の目的地にしやすい公園内スポットです。" },
-      { id:"park-cafe", name:"公園前カフェ", lat:35.60872, lng:139.63087, category:"カフェ", icon:"☕", description:"公園近くの休憩カフェを想定したデモ店舗です。" },
-      { id:"river-walk", name:"多摩川ウォーク入口", lat:35.60944, lng:139.62404, category:"散歩", icon:"🚶", description:"多摩川沿いの散歩開始地点です。" },
-      { id:"hyogo-island", name:"兵庫島公園", lat:35.60902, lng:139.62293, category:"公園", icon:"🌊", description:"川沿いの休憩地点を想定したスポットです。" },
-      { id:"river-terrace", name:"多摩川テラス休憩所", lat:35.60842, lng:139.62364, category:"散歩", icon:"🪑", description:"ウォーキング中の休憩スポットです。" },
-      { id:"futakobashi", name:"二子橋たもと", lat:35.60788, lng:139.62326, category:"散歩", icon:"🌉", description:"橋のたもとに置いたデモチェックポイントです。" },
-      { id:"shinchi-station", name:"二子新地駅前", lat:35.60687, lng:139.62287, category:"駅", icon:"🚉", description:"対岸エリアへのおでかけを想定したスポットです。" },
-      { id:"shinchi-cafe", name:"二子新地カフェ通り", lat:35.60641, lng:139.62378, category:"カフェ", icon:"☕", description:"二子新地側のカフェ通りを想定しています。" },
-      { id:"tamatsutsumi", name:"玉堤通りミニマーケット", lat:35.61024, lng:139.62506, category:"店舗", icon:"🏪", description:"日常の買い物導線上にあるデモ店舗です。" }
+
+    const spots = [
+      { id:"rise-galleria", name:"二子玉川ライズ ガレリア前", lat:35.61129, lng:139.62705, category:"商業施設", icon:"★", description:"駅直結の広場前スポット。買い物や通院帰りにも立ち寄りやすい場所です。" },
+      { id:"station-east", name:"二子玉川駅 東口", lat:35.61128, lng:139.62737, category:"駅", icon:"★", description:"駅東口からすぐのチェックインスポットです。" },
+      { id:"station-west", name:"二子玉川駅 西口", lat:35.61140, lng:139.62622, category:"駅", icon:"★", description:"西口側の買い物導線にあるチェックインスポットです。" },
+      { id:"bus-rotary", name:"駅前バスロータリー", lat:35.61105, lng:139.62655, category:"交通", icon:"★", description:"バス利用者の来訪を想定した駅前スポットです。" },
+      { id:"dogwood", name:"ドッグウッドプラザ前", lat:35.61183, lng:139.62673, category:"商業施設", icon:"★", description:"駅前商業施設の入口を想定したスポットです。" },
+      { id:"takashimaya-main", name:"玉川高島屋 本館前", lat:35.61311, lng:139.62566, category:"商業施設", icon:"★", description:"本館入口付近の買い物スポットです。" },
+      { id:"takashimaya-south", name:"玉川高島屋 南館前", lat:35.61357, lng:139.62614, category:"商業施設", icon:"★", description:"南館側のチェックインスポットです。" },
+      { id:"rise-market", name:"テラスマーケット前", lat:35.61210, lng:139.62836, category:"商業施設", icon:"★", description:"テラスマーケット方面の散歩導線にあるスポットです。" },
+      { id:"restaurant-street", name:"レストランストリート入口", lat:35.61268, lng:139.62738, category:"飲食エリア", icon:"★", description:"食事前後に取得しやすいスポットです。" },
+      { id:"community", name:"地域交流スペース", lat:35.61096, lng:139.62844, category:"公共", icon:"★", description:"イベント参加や地域交流の導線を想定しています。" },
+      { id:"futako-park-gate", name:"二子玉川公園 入口", lat:35.60823, lng:139.63039, category:"公園", icon:"★", description:"公園ウォーキングの入口スポットです。" },
+      { id:"park-view", name:"二子玉川公園 眺望広場", lat:35.60743, lng:139.63171, category:"公園", icon:"★", description:"散歩の目的地にしやすい公園内スポットです。" },
+      { id:"river-walk", name:"多摩川ウォーク入口", lat:35.60944, lng:139.62404, category:"散歩", icon:"★", description:"多摩川沿いの散歩開始地点です。" },
+      { id:"hyogo-island", name:"兵庫島公園", lat:35.60902, lng:139.62293, category:"公園", icon:"★", description:"川沿いの休憩地点を想定したスポットです。" },
+      { id:"river-terrace", name:"多摩川テラス休憩所", lat:35.60842, lng:139.62364, category:"散歩", icon:"★", description:"ウォーキング中の休憩スポットです。" },
+      { id:"futakobashi", name:"二子橋たもと", lat:35.60788, lng:139.62326, category:"散歩", icon:"★", description:"橋のたもとに置いたチェックインポイントです。" },
+      { id:"shinchi-station", name:"二子新地駅前", lat:35.60687, lng:139.62287, category:"駅", icon:"★", description:"対岸エリアへのおでかけを想定したスポットです。" },
+      { id:"takashimaya-garden", name:"ガーデンアイランド連絡口", lat:35.61440, lng:139.62505, category:"商業施設", icon:"★", description:"少し歩いた先の回遊スポットを想定しています。" }
     ];
 
-    /* 02. Stamp State */
-    const STAMP_STORAGE_KEY = "rakutenSeniorStampDemoV4";
-    const STAMPS_PER_POINT = 7;
-    let stampState = loadStampState();
+    const shops = [
+      { id:"shop-cafe-raku", name:"ライズ前カフェ 楽歩", lat:35.61158, lng:139.62744, category:"カフェ", icon:"☕", contract:true, address:"二子玉川駅 徒歩1分", description:"チェックイン後の休憩に使いやすい駅前カフェ。", coupon:"ドリンク50円引きクーポン", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-bakery", name:"柳小路ベーカリー", lat:35.61206, lng:139.62582, category:"ベーカリー", icon:"🥐", contract:true, address:"柳小路エリア", description:"散歩帰りに立ち寄りやすいベーカリー。", coupon:"パン1点10%OFF", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-pharmacy", name:"ヘルス薬局 二子玉川店", lat:35.61274, lng:139.62599, category:"薬局", icon:"💊", contract:true, address:"高島屋南館近く", description:"健康相談や日用品の購入に使いやすい薬局。", coupon:"対象商品5%OFF", reward:{ type:"point", amount:1, label:"1ポイント直接付与" } },
+      { id:"shop-book", name:"まちの書店 二子玉川", lat:35.61302, lng:139.62688, category:"書店", icon:"📕", contract:false, address:"駅西口エリア", description:"散歩のついでに立ち寄れる書店。", coupon:"", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-restaurant", name:"二子玉川キッチン", lat:35.61268, lng:139.62738, category:"飲食", icon:"🍽️", contract:true, address:"レストランストリート", description:"ランチや夕食に使いやすいカジュアルレストラン。", coupon:"ランチセット100円引き", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-clinic", name:"二子玉川ヘルスクリニック", lat:35.61288, lng:139.62802, category:"医療", icon:"🏥", contract:false, address:"テラスマーケット方面", description:"通院ついでの周辺回遊を想定したサンプル施設。", coupon:"", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-gym", name:"フィットネススタジオ歩", lat:35.61183, lng:139.62882, category:"運動", icon:"🏃", contract:true, address:"ライズ東側", description:"健康習慣と相性の良いフィットネス店舗。", coupon:"体験レッスン500円OFF", reward:{ type:"point", amount:1, label:"1ポイント直接付与" } },
+      { id:"shop-park-cafe", name:"公園前カフェ", lat:35.60872, lng:139.63087, category:"カフェ", icon:"☕", contract:true, address:"二子玉川公園近く", description:"公園散歩のあとに休憩できるカフェ。", coupon:"コーヒーサイズアップ無料", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-river-deli", name:"多摩川デリ", lat:35.60918, lng:139.62458, category:"惣菜", icon:"🥗", contract:false, address:"多摩川ウォーク入口近く", description:"ウォーキング帰りに使える惣菜店。", coupon:"", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-flower", name:"二子フラワーガーデン", lat:35.61024, lng:139.62506, category:"花屋", icon:"🌷", contract:true, address:"玉堤通り", description:"季節の花やギフトを扱う地域店。", coupon:"季節の花束5%OFF", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-shinchi-cafe", name:"二子新地カフェ通り", lat:35.60641, lng:139.62378, category:"カフェ", icon:"☕", contract:false, address:"二子新地駅近く", description:"対岸散歩の休憩に使えるカフェ通り。", coupon:"", reward:{ type:"stamp", label:"来店スタンプ" } },
+      { id:"shop-market", name:"玉堤ミニマーケット", lat:35.61002, lng:139.62518, category:"スーパー", icon:"🏪", contract:true, address:"玉堤通り", description:"日常の買い物導線上にあるミニマーケット。", coupon:"お会計から50円引き", reward:{ type:"stamp", label:"来店スタンプ" } }
+    ];
 
-    function todayKey(){
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2,"0");
-      const day = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${day}`;
-    }
-    function tomorrowMidnightText(){ return "明日 00:00以降"; }
-    function normalizeStampState(data){
+    const allTargets = [
+      ...spots.map(item => ({ ...item, type:"spot" })),
+      ...shops.map(item => ({ ...item, type:"shop" }))
+    ];
+
+    /* 02. Reward / Check-in State */
+    const STORAGE_KEY = "rakutenSeniorGpsPrdPrototypeV1";
+    const STAMPS_PER_POINT = 7;
+    let rewardState = loadRewardState();
+    let pendingAdTarget = null;
+
+    function normalizeRewardState(data){
       return {
-        stampCount:0,
+        stampCount:3,
         pendingPoints:0,
-        lastStampedBySpot:{},
+        lastCheckinAt:{},
+        favorites:{},
         ...data,
-        lastStampedBySpot:{ ...(data && data.lastStampedBySpot ? data.lastStampedBySpot : {}) }
+        lastCheckinAt:{ ...(data && data.lastCheckinAt ? data.lastCheckinAt : {}) },
+        favorites:{ ...(data && data.favorites ? data.favorites : {}) }
       };
     }
-    function canStampSpotToday(facilityId){ return stampState.lastStampedBySpot[facilityId] !== todayKey(); }
-    function loadStampState(){
+    function loadRewardState(){
       try{
-        const raw = localStorage.getItem(STAMP_STORAGE_KEY);
-        if(raw) return normalizeStampState(JSON.parse(raw));
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(raw) return normalizeRewardState(JSON.parse(raw));
       }catch(e){ console.warn(e); }
-      return normalizeStampState({ stampCount:3, pendingPoints:0 });
+      return normalizeRewardState({ stampCount:3, pendingPoints:0 });
     }
-    function saveStampState(){
-      try{ localStorage.setItem(STAMP_STORAGE_KEY, JSON.stringify(stampState)); }catch(e){ console.warn(e); }
+    function saveRewardState(){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(rewardState)); }catch(e){ console.warn(e); }
     }
-    function nextAvailableText(facilityId){ return canStampSpotToday(facilityId) ? "今すぐ取得可能" : tomorrowMidnightText(); }
-    function stampStatusText(facilityId){ return canStampSpotToday(facilityId) ? "本日未取得" : "本日取得済み"; }
-    function stampedTodayCount(){
-      const key = todayKey();
-      return facilities.filter(facility => stampState.lastStampedBySpot[facility.id] === key).length;
+    function checkinKey(target){ return `${target.type}:${target.id}`; }
+    function lastCheckinAt(target){ return rewardState.lastCheckinAt[checkinKey(target)] || 0; }
+    function msUntilRecheckin(target){ return Math.max(0, RECHECK_INTERVAL_MS - (Date.now() - lastCheckinAt(target))); }
+    function canRecheckin(target){ return msUntilRecheckin(target) <= 0; }
+    function remainingTimeText(ms){
+      if(ms <= 0) return "今すぐ再チェックイン可能";
+      const totalMinutes = Math.ceil(ms / 60000);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      if(hours <= 0) return `あと${minutes}分`;
+      return `あと${hours}時間${minutes}分`;
     }
+    function checkinStatusText(target){ return canRecheckin(target) ? "未取得" : "取得済み"; }
 
     /* 03. State / DOM References */
     const state = {
       map:null,
       userMarker:null,
       accuracyCircle:null,
-      facilityMarkers:new Map(),
+      targetMarkers:new Map(),
       routeLine:null,
       mapReady:false,
       userPosition:null,
       autoFollow:true,
       gpsState:"pending",
-      selectedFacility:null
+      selectedTarget:null
     };
-
     const els = {
       gpsStatusBtn:document.getElementById("gpsStatusBtn"),
       gpsStatusIcon:document.getElementById("gpsStatusIcon"),
@@ -810,6 +425,9 @@
       sheetBackdrop:document.getElementById("sheetBackdrop"),
       detailSheet:document.getElementById("detailSheet"),
       sheetContent:document.getElementById("sheetContent"),
+      adModal:document.getElementById("adModal"),
+      adCloseBtn:document.getElementById("adCloseBtn"),
+      adTargetText:document.getElementById("adTargetText"),
       completeToast:document.getElementById("completeToast"),
       toastTitle:document.getElementById("toastTitle"),
       toastText:document.getElementById("toastText")
@@ -822,35 +440,15 @@
         if(mapEl) mapEl.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:#99783a;font-weight:900;line-height:1.6;background:#fff5d9;">地図ライブラリを読み込めませんでした。通信環境を確認してください。</div>';
         return;
       }
-
-      state.map = L.map("map", {
-        zoomControl:false,
-        attributionControl:true,
-        preferCanvas:true,
-        zoomSnap:.25,
-        zoomDelta:.5
-      }).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 16.25);
+      state.map = L.map("map", { zoomControl:false, attributionControl:true, preferCanvas:true, zoomSnap:.25, zoomDelta:.5 }).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 16.25);
       L.control.zoom({ position:"bottomright" }).addTo(state.map);
 
       const cartoVoyager = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        subdomains:"abcd",
-        maxZoom:20,
-        maxNativeZoom:19,
-        detectRetina:true,
-        updateWhenIdle:false,
-        updateWhenZooming:true,
-        keepBuffer:4,
-        attribution:'&copy; OpenStreetMap &copy; CARTO'
+        subdomains:"abcd", maxZoom:20, maxNativeZoom:19, detectRetina:true, updateWhenIdle:false, updateWhenZooming:true, keepBuffer:4, attribution:'&copy; OpenStreetMap &copy; CARTO'
       });
       const osmFallback = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom:19,
-        detectRetina:true,
-        updateWhenIdle:false,
-        updateWhenZooming:true,
-        keepBuffer:4,
-        attribution:'&copy; OpenStreetMap'
+        maxZoom:19, detectRetina:true, updateWhenIdle:false, updateWhenZooming:true, keepBuffer:4, attribution:'&copy; OpenStreetMap'
       });
-
       let tileErrorCount = 0;
       cartoVoyager.on("tileerror", () => {
         tileErrorCount += 1;
@@ -861,49 +459,35 @@
       });
       cartoVoyager.addTo(state.map);
 
-      facilities.forEach((facility) => {
-        const marker = L.marker([facility.lat, facility.lng], { icon:makeFacilityIcon(facility, false, false), zIndexOffset:500 })
+      allTargets.forEach((target) => {
+        const marker = L.marker([target.lat, target.lng], { icon:makeTargetIcon(target, false, false), zIndexOffset:target.type === "shop" ? 620 : 520 })
           .addTo(state.map)
-          .bindPopup(makePinPopup(facility))
-          .on("click", () => selectFacility(facility.id, true));
-        state.facilityMarkers.set(facility.id, marker);
+          .bindPopup(makePinPopup(target))
+          .on("click", () => selectTarget(target.type, target.id, true));
+        state.targetMarkers.set(checkinKey(target), marker);
       });
 
       state.map.on("dragstart", () => { state.autoFollow = false; });
       state.mapReady = true;
-      state.map.whenReady(() => {
-        [0, 80, 250, 700, 1200].forEach(delay => {
-          window.setTimeout(() => state.map.invalidateSize({ pan:false }), delay);
-        });
-      });
+      state.map.whenReady(() => [0,80,250,700,1200].forEach(delay => window.setTimeout(() => state.map.invalidateSize({ pan:false }), delay)));
     }
-
-    function makeFacilityIcon(facility, isAvailable, isSelected){
+    function makeTargetIcon(target, isAvailable, isSelected){
       return L.divIcon({
-        className:`facility-pin ${isAvailable ? "available" : ""} ${isSelected ? "selected" : ""}`,
-        html:`<span><i>${facility.icon}</i></span>`,
-        iconSize:[39,39],
-        iconAnchor:[19,37],
-        popupAnchor:[0,-35]
+        className:`target-pin ${target.type} ${isAvailable ? "available" : ""} ${isSelected ? "selected" : ""}`,
+        html:`<span><i>${target.type === "spot" ? "★" : target.icon}</i></span>`, iconSize:[39,39], iconAnchor:[19,37], popupAnchor:[0,-35]
       });
     }
-    function makeUserIcon(){
-      return L.divIcon({ className:"user-dot", html:"<span></span>", iconSize:[28,28], iconAnchor:[14,14] });
-    }
-    function makePinPopup(facility){
-      return `<div class="pin-popup"><strong>${facility.name}</strong><span>${facility.category}</span></div>`;
-    }
+    function makeUserIcon(){ return L.divIcon({ className:"user-dot", html:"<span></span>", iconSize:[28,28], iconAnchor:[14,14] }); }
+    function makePinPopup(target){ return `<div class="pin-popup"><strong>${target.name}</strong><span>${target.type === "spot" ? "チェックインスポット" : "ショップ"} / ${target.category}</span></div>`; }
 
     /* 05. GPS Permission / Watch Position */
     function startGeolocation(){
       setGpsState("pending", "GPS許可待ち", "許可すると現在地に自動追従します");
-
       if(!navigator.geolocation){
         setGpsState("error", "GPS未対応", "このブラウザでは位置情報を利用できません。デモ位置で確認できます");
         setUserPosition(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng, 0, false);
         return;
       }
-
       navigator.geolocation.watchPosition(
         (pos) => {
           const { latitude, longitude, accuracy } = pos.coords;
@@ -918,7 +502,6 @@
         { enableHighAccuracy:true, maximumAge:3000, timeout:10000 }
       );
     }
-
     function setGpsState(status, title, text){
       state.gpsState = status;
       const iconMap = { pending:"📡", tracking:"📍", error:"⚠️", demo:"📘" };
@@ -928,42 +511,29 @@
       els.currentInfoText.textContent = text;
       els.currentInfoIcon.textContent = iconMap[status] || "📍";
     }
-
     function setUserPosition(lat, lng, accuracy = 0, isDemo = false){
       state.userPosition = { lat, lng, accuracy, isDemo };
       if(isDemo) setGpsState("demo", "デモ位置で確認中", "二子玉川ライズ周辺のサンプル位置です");
       updateUserMarker();
-      updateFacilityMarkers();
+      updateTargetMarkers();
       updateCurrentSummary();
-      if(state.selectedFacility) drawRoute(state.selectedFacility.id, false);
+      if(state.selectedTarget) drawRouteTo(state.selectedTarget, false);
     }
-
     function updateUserMarker(){
       if(!state.mapReady || !state.userPosition) return;
       const { lat, lng, accuracy } = state.userPosition;
       const latLng = [lat, lng];
-
-      if(!state.userMarker){
-        state.userMarker = L.marker(latLng, { icon:makeUserIcon(), zIndexOffset:1000 }).addTo(state.map);
-      }else{
-        state.userMarker.setLatLng(latLng);
-      }
-
+      if(!state.userMarker) state.userMarker = L.marker(latLng, { icon:makeUserIcon(), zIndexOffset:1000 }).addTo(state.map);
+      else state.userMarker.setLatLng(latLng);
       if(accuracy > 0){
-        if(!state.accuracyCircle){
-          state.accuracyCircle = L.circle(latLng, { radius:accuracy, color:"#2787d8", weight:1, fillColor:"#2787d8", fillOpacity:.08 }).addTo(state.map);
-        }else{
-          state.accuracyCircle.setLatLng(latLng).setRadius(accuracy);
-        }
+        if(!state.accuracyCircle) state.accuracyCircle = L.circle(latLng, { radius:accuracy, color:"#2787d8", weight:1, fillColor:"#2787d8", fillOpacity:.08 }).addTo(state.map);
+        else state.accuracyCircle.setLatLng(latLng).setRadius(accuracy);
       }
-
-      if(state.autoFollow){
-        state.map.setView(latLng, Math.max(state.map.getZoom(), 16), { animate:true });
-      }
+      if(state.autoFollow) state.map.setView(latLng, Math.max(state.map.getZoom(), 16), { animate:true });
     }
 
     /* 06. Distance / Availability Logic */
-    function distanceMeters(a, b){
+    function distanceMeters(a,b){
       const R = 6371000;
       const toRad = deg => deg * Math.PI / 180;
       const dLat = toRad(b.lat - a.lat);
@@ -973,31 +543,41 @@
       const h = Math.sin(dLat/2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng/2) ** 2;
       return 2 * R * Math.asin(Math.sqrt(h));
     }
-    function facilitiesWithDistance(){
-      const origin = state.userPosition || DEFAULT_CENTER;
-      return facilities.map(facility => ({ ...facility, distance:distanceMeters(origin, facility) })).sort((a,b) => a.distance - b.distance);
-    }
     function formatDistance(m){
-      if(!Number.isFinite(m)) return "-- m";
-      if(m >= 1000) return `${(m/1000).toFixed(1)} km`;
-      return `${Math.round(m)} m`;
+      if(!Number.isFinite(m)) return "距離不明";
+      if(m <= 100) return "100m以内";
+      if(m <= 500) return "500m以内";
+      if(m <= 1000) return "1km以内";
+      return "1km以上";
     }
-    function updateFacilityMarkers(){
+    function targetsWithDistance(){
+      const origin = state.userPosition || DEFAULT_CENTER;
+      return allTargets.map(target => ({ ...target, distance:distanceMeters(origin, target) })).sort((a,b) => a.distance - b.distance);
+    }
+    function findTarget(type,id){ return allTargets.find(target => target.type === type && target.id === id); }
+    function withDistance(target){ const origin = state.userPosition || DEFAULT_CENTER; return { ...target, distance:distanceMeters(origin, target) }; }
+    function shopsNear(target, limit = 5){
+      return shops.map(shop => ({ ...shop, type:"shop", distanceFromTarget:distanceMeters(target, shop), distance:distanceMeters(state.userPosition || DEFAULT_CENTER, shop) }))
+        .filter(shop => shop.distanceFromTarget <= SHOP_RADIUS_M)
+        .sort((a,b) => a.distanceFromTarget - b.distanceFromTarget)
+        .slice(0, limit);
+    }
+    function updateTargetMarkers(){
       if(!state.mapReady) return;
-      facilitiesWithDistance().forEach((facility) => {
-        const marker = state.facilityMarkers.get(facility.id);
+      targetsWithDistance().forEach((target) => {
+        const marker = state.targetMarkers.get(checkinKey(target));
         if(!marker) return;
-        const source = facilities.find(item => item.id === facility.id);
-        marker.setIcon(makeFacilityIcon(source, facility.distance <= CHECKIN_RADIUS_M && canStampSpotToday(facility.id), state.selectedFacility && state.selectedFacility.id === facility.id));
+        const source = findTarget(target.type, target.id);
+        marker.setIcon(makeTargetIcon(source, target.distance <= CHECKIN_RADIUS_M && canRecheckin(source), state.selectedTarget && checkinKey(state.selectedTarget) === checkinKey(source)));
       });
     }
     function updateCurrentSummary(){
-      const nearest = facilitiesWithDistance()[0];
-      if(!nearest) return;
+      const nearestSpot = targetsWithDistance().find(target => target.type === "spot");
+      if(!nearestSpot) return;
       if(state.gpsState === "tracking" || state.gpsState === "demo"){
-        const possible = nearest.distance <= CHECKIN_RADIUS_M && canStampSpotToday(nearest.id);
-        els.currentInfoTitle.textContent = possible ? "このスポットでスタンプを取得できます" : stampStatusText(nearest.id);
-        els.currentInfoText.textContent = `${nearest.name}まで ${formatDistance(nearest.distance)} / 次回：${nextAvailableText(nearest.id)}`;
+        const possible = nearestSpot.distance <= CHECKIN_RADIUS_M && canRecheckin(nearestSpot);
+        els.currentInfoTitle.textContent = possible ? "近くのスポットでチェックインできます" : nearestSpot.name;
+        els.currentInfoText.textContent = `${formatDistance(nearestSpot.distance)} / ${canRecheckin(nearestSpot) ? "未取得" : remainingTimeText(msUntilRecheckin(nearestSpot))}`;
       }
     }
 
@@ -1010,201 +590,284 @@
         demo:{ icon:"📘", eyebrow:"デモ状態", title:"デモ位置で確認中", desc:"二子玉川ライズ周辺のサンプル位置です。実機では位置情報を許可すると現在地に切り替わります。" }
       };
       const data = detailByState[state.gpsState] || detailByState.pending;
-      const nearest = facilitiesWithDistance()[0];
+      const nearest = targetsWithDistance()[0];
       els.sheetContent.innerHTML = `
         <div class="sheet-head">
           <div class="sheet-icon">${data.icon}</div>
-          <div class="sheet-title-wrap">
-            <span class="sheet-eyebrow">${data.eyebrow}</span>
-            <h2 class="sheet-title">${data.title}</h2>
-          </div>
+          <div class="sheet-title-wrap"><span class="sheet-eyebrow">${data.eyebrow}</span><h2 class="sheet-title">${data.title}</h2></div>
           <button class="sheet-close" data-close="true" aria-label="閉じる">×</button>
         </div>
         <p class="sheet-description">${data.desc}</p>
         <div class="sheet-metrics">
           <div class="metric"><span>自動追従</span><strong>${state.autoFollow ? "ON" : "手動移動中"}</strong></div>
-          <div class="metric"><span>最寄りスポット</span><strong>${nearest ? formatDistance(nearest.distance) : "--"}</strong></div>
+          <div class="metric"><span>最寄り施設</span><strong>${nearest ? formatDistance(nearest.distance) : "--"}</strong></div>
         </div>
-        <ul class="gps-help-list">
-          <li>ページ表示時にGPS取得を開始します。</li>
-          <li>右上の◎を押すと現在地への追従に戻ります。</li>
-          <li>スタンプ取得は1スポットにつき1日1回までです。</li>
-        </ul>
+        <div class="notice-box">スポットはオレンジ、ショップはピンクのピンで表示しています。ピンをタップするとチェックイン情報や周辺店舗を確認できます。</div>
       `;
       showSheet();
     }
 
-    function openFacilityDetail(facilityId){
-      const facility = facilitiesWithDistance().find(item => item.id === facilityId);
-      if(!facility) return;
-      state.selectedFacility = facilities.find(item => item.id === facilityId);
-      updateFacilityMarkers();
-      const canStamp = facility.distance <= CHECKIN_RADIUS_M && canStampSpotToday(facility.id);
-      const remaining = Math.max(0, Math.ceil(facility.distance - CHECKIN_RADIUS_M));
-      const buttonLabel = !canStampSpotToday(facility.id) ? "本日取得済み" : canStamp ? "スタンプを押す" : `あと${remaining}m近づく`;
+    function openTargetDetail(type,id){
+      const target = findTarget(type,id);
+      if(!target) return;
+      state.selectedTarget = target;
+      updateTargetMarkers();
+      if(type === "spot") openSpotDetail(id);
+      else openShopDetail(id);
+    }
+
+    function openSpotDetail(id){
+      const target = withDistance(findTarget("spot", id));
+      const inRange = target.distance <= CHECKIN_RADIUS_M;
+      const canCheckin = inRange && canRecheckin(target);
+      const waitText = remainingTimeText(msUntilRecheckin(target));
+      const nearby = shopsNear(target, 6);
+      const favoriteLabel = rewardState.favorites[checkinKey(target)] ? "お気に入り済み" : "お気に入り";
+      const statusHtml = !canRecheckin(target)
+        ? `<div class="checkin-status wait">再チェックイン可能まで ${waitText} です。</div>`
+        : inRange
+          ? `<div class="checkin-status ok">このスポットでチェックインできます。</div>`
+          : `<div class="checkin-status disabled">現在地から ${formatDistance(target.distance)} のスポットです。</div>`;
 
       els.sheetContent.innerHTML = `
         <div class="sheet-head">
-          <div class="sheet-icon">${facility.icon}</div>
+          <div class="sheet-icon">★</div>
           <div class="sheet-title-wrap">
-            <span class="sheet-eyebrow">${facility.category}</span>
-            <h2 class="sheet-title">${facility.name}</h2>
+            <span class="sheet-eyebrow">チェックインスポット / ${target.category}</span>
+            <h2 class="sheet-title">${target.name}</h2>
+            <div class="compact-action-row">
+              <button class="icon-action" id="favBtn" aria-label="${favoriteLabel}" title="${favoriteLabel}">${rewardState.favorites[checkinKey(target)] ? "♥" : "♡"}</button>
+              <button class="icon-action" id="shareBtn" aria-label="コミュニティにシェア" title="コミュニティにシェア">↗</button>
+            </div>
           </div>
           <button class="sheet-close" data-close="true" aria-label="閉じる">×</button>
         </div>
-        <p class="sheet-description">${facility.description}</p>
-        <div class="sheet-metrics">
-          <div class="metric"><span>現在地から</span><strong>${formatDistance(facility.distance)}</strong></div>
-          <div class="metric"><span>このスポットの取得状態</span><strong>${stampStatusText(facility.id)}</strong></div>
-          <div class="metric"><span>次の取得可能時間</span><strong>${nextAvailableText(facility.id)}</strong></div>
-          <div class="metric"><span>スタンプカード</span><strong>${stampState.stampCount}/${STAMPS_PER_POINT}個</strong></div>
-        </div>
-        <div class="stamp-summary" aria-label="スタンプカード簡易表示">
-          <div class="stamp-summary-top">
-            <div class="stamp-badge">⭐</div>
-            <div class="stamp-summary-title"><strong>7個で1ポイント配布</strong><span>同じスポットでは1日1回まで。別スポットなら当日も取得できます。</span></div>
+
+        <section class="checkin-panel" aria-label="チェックイン情報">
+          <h3 class="panel-heading"><span class="mark">✓</span>チェックイン</h3>
+          ${statusHtml}
+          <div class="sheet-actions single">
+            <button class="primary-btn" id="checkinBtn" ${canCheckin ? "" : "disabled"}>チェックイン</button>
           </div>
-          ${stampGridHtml()}
-        </div>
-        <div class="sheet-actions three">
-          <button class="primary-btn" id="sheetStampBtn" ${canStamp ? "" : "disabled"}>${buttonLabel}</button>
-          <button class="secondary-btn" id="sheetCardBtn">カードを見る</button>
-          <button class="secondary-btn" id="sheetRouteBtn">道順</button>
-        </div>
+        </section>
+
+        <section class="nearby-panel" aria-label="周辺の店舗">
+          <h3 class="panel-heading shop"><span class="mark">店</span>周辺の店舗</h3>
+          ${nearbyShopsHtml(nearby)}
+        </section>
       `;
       showSheet();
-      const stampBtn = document.getElementById("sheetStampBtn");
-      const cardBtn = document.getElementById("sheetCardBtn");
-      const routeBtn = document.getElementById("sheetRouteBtn");
-      if(stampBtn) stampBtn.addEventListener("click", () => addStamp(facility.id));
-      if(cardBtn) cardBtn.addEventListener("click", openStampCard);
-      if(routeBtn) routeBtn.addEventListener("click", () => drawRoute(facility.id, true));
+      const btn = document.getElementById("checkinBtn");
+      const fav = document.getElementById("favBtn");
+      const share = document.getElementById("shareBtn");
+      if(btn) btn.addEventListener("click", () => openAdThenReward(target));
+      if(fav) fav.addEventListener("click", () => toggleFavorite(target));
+      if(share) share.addEventListener("click", () => shareSpot(target));
+      bindShopCardButtons();
+    }
+
+    function openShopDetail(id){
+      const target = withDistance(findTarget("shop", id));
+      const inRange = target.distance <= CHECKIN_RADIUS_M;
+      const canCheckin = inRange && canRecheckin(target);
+      const waitText = remainingTimeText(msUntilRecheckin(target));
+      const statusHtml = !canRecheckin(target)
+        ? `<div class="checkin-status wait">再チェックイン可能まで ${waitText} です。</div>`
+        : inRange
+          ? `<div class="checkin-status ok">このショップでチェックインできます。</div>`
+          : `<div class="checkin-status disabled">現在地から ${formatDistance(target.distance)} のショップです。</div>`;
+      const couponHtml = target.coupon ? `
+        <div class="coupon-card">
+          <div class="coupon-icon">🎟️</div>
+          <div class="coupon-body"><strong>${target.coupon}</strong><span>この店舗で利用できるクーポン</span></div>
+        </div>` : "";
+
+      els.sheetContent.innerHTML = `
+        <div class="sheet-head">
+          <div class="sheet-icon shop">${target.icon}</div>
+          <div class="sheet-title-wrap"><span class="sheet-eyebrow shop">ショップ / ${target.category}</span><h2 class="sheet-title">${target.name}</h2></div>
+          <button class="sheet-close" data-close="true" aria-label="閉じる">×</button>
+        </div>
+        <div class="shop-info-card">
+          <strong>お店の情報</strong>
+          <span>${target.description}</span>
+          <span>${target.address} / 現在地から ${formatDistance(target.distance)}</span>
+        </div>
+        ${couponHtml}
+        <section class="checkin-panel" aria-label="ショップチェックイン">
+          <h3 class="panel-heading shop"><span class="mark">✓</span>チェックイン</h3>
+          ${statusHtml}
+          <div class="sheet-actions">
+            <button class="primary-btn shop" id="shopCheckinBtn" ${canCheckin ? "" : "disabled"}>チェックイン</button>
+            <button class="secondary-btn shop" id="shopRouteBtn">店舗へ行く</button>
+          </div>
+        </section>
+      `;
+      showSheet();
+      const btn = document.getElementById("shopCheckinBtn");
+      const route = document.getElementById("shopRouteBtn");
+      if(btn) btn.addEventListener("click", () => openAdThenReward(target));
+      if(route) route.addEventListener("click", () => drawRouteTo(target, true));
+    }
+
+    function nearbyShopsHtml(items){
+      if(!items.length) return `<div class="notice-box">このスポットの周辺に表示対象のショップはありません。</div>`;
+      return `<div class="nearby-list">${items.map(shop => `
+        <article class="shop-card">
+          <div class="shop-card-head">
+            <div class="shop-thumb">${shop.icon}</div>
+            <div class="shop-card-title">
+              <strong>${shop.name}</strong>
+              <span>${shop.category} / スポットから${formatDistance(shop.distanceFromTarget)} / 現在地から${formatDistance(shop.distance)}</span>
+            </div>
+          </div>
+          <p class="shop-card-text">${shop.description}${shop.coupon ? `<br>クーポン：${shop.coupon}` : ""}</p>
+          <div class="shop-card-actions">
+            <button class="mini-btn" data-open-shop="${shop.id}">詳細を見る</button>
+            <button class="mini-btn primary" data-route-shop="${shop.id}">店舗へ行く</button>
+          </div>
+        </article>`).join("")}</div>`;
     }
 
     function showSheet(){ els.sheetBackdrop.classList.add("show"); els.detailSheet.classList.add("show"); }
     function closeSheet(){ els.sheetBackdrop.classList.remove("show"); els.detailSheet.classList.remove("show"); }
 
-    /* 08. Stamp Card Rendering */
-    function stampGridHtml(){
-      return `<div class="stamp-grid">${Array.from({ length:STAMPS_PER_POINT }).map((_,idx) => `<div class="stamp-cell ${idx < stampState.stampCount ? "filled" : "empty"}" aria-label="${idx + 1}個目"></div>`).join("")}</div>`;
-    }
+    /* 08. Shop / Route / Ad / Stamp Actions */
+    function stampGridHtml(){ return `<div class="stamp-grid">${Array.from({ length:STAMPS_PER_POINT }).map((_,idx) => `<div class="stamp-cell ${idx < rewardState.stampCount ? "filled" : "empty"}" aria-label="${idx + 1}個目"></div>`).join("")}</div>`; }
     function openStampCard(){
-      const remaining = STAMPS_PER_POINT - stampState.stampCount;
+      const remaining = STAMPS_PER_POINT - rewardState.stampCount;
+      const checkedTodayCount = Object.values(rewardState.lastCheckinAt).filter(ts => Date.now() - ts < RECHECK_INTERVAL_MS).length;
       els.sheetContent.innerHTML = `
         <div class="sheet-head">
           <div class="sheet-icon">⭐</div>
-          <div class="sheet-title-wrap">
-            <span class="sheet-eyebrow">スタンプカード</span>
-            <h2 class="sheet-title">歩いて集めるスタンプ</h2>
-          </div>
+          <div class="sheet-title-wrap"><span class="sheet-eyebrow">スタンプカード</span><h2 class="sheet-title">歩いて集めるスタンプ</h2></div>
           <button class="sheet-close" data-close="true" aria-label="閉じる">×</button>
         </div>
         <div class="stamp-summary">
-          <div class="stamp-summary-top">
-            <div class="stamp-badge">⭐</div>
-            <div class="stamp-summary-title">
-              <strong>${stampState.stampCount}/${STAMPS_PER_POINT}個たまっています</strong>
-              <span>${remaining === STAMPS_PER_POINT ? "新しいカードが始まりました" : `あと${remaining}個で1ポイント配布対象`}</span>
-            </div>
-          </div>
+          <div class="stamp-summary-top"><div class="stamp-badge">⭐</div><div class="stamp-summary-title"><strong>${rewardState.stampCount}/${STAMPS_PER_POINT}個たまっています</strong><span>${remaining === STAMPS_PER_POINT ? "新しいカードが始まりました" : `あと${remaining}個で1ポイント配布対象`}</span></div></div>
           ${stampGridHtml()}
-          <div class="stamp-note">各チェックポイントで取得できるのは1日1回です。別スポットなら同日でも取得できます。7個たまると1ポイントの配布対象になります。</div>
+          <div class="stamp-note">スポットはチェックインごとにスタンプ1個。ショップは設定により、スタンプ・ポイント直接付与・クーポン利用などを表示できます。</div>
         </div>
         <div class="stamp-status-list">
-          <div class="stamp-status-item"><span>本日取得済みスポット</span><strong>${stampedTodayCount()}/${facilities.length}件</strong></div>
-          <div class="stamp-status-item"><span>次に取得できる条件</span><strong>未取得スポットで50m以内</strong></div>
-          <div class="stamp-status-item"><span>配布対象ポイント</span><strong>${stampState.pendingPoints}ポイント分</strong></div>
-          <div class="stamp-status-item"><span>対象スポット</span><strong>二子玉川周辺 ${facilities.length}件</strong></div>
+          <div class="stamp-status-item"><span>24時間以内の取得施設</span><strong>${checkedTodayCount}件</strong></div>
+          <div class="stamp-status-item"><span>対象スポット</span><strong>${spots.length}件</strong></div>
+          <div class="stamp-status-item"><span>対象ショップ</span><strong>${shops.length}件</strong></div>
+          <div class="stamp-status-item"><span>配布対象ポイント</span><strong>${rewardState.pendingPoints}ポイント分</strong></div>
         </div>
-        <div class="sheet-actions">
-          <button class="primary-btn" id="stampNearestBtn">近くのスポットを見る</button>
-          <button class="secondary-btn" id="stampResetBtn">デモ初期化</button>
-        </div>
+        <div class="sheet-actions"><button class="primary-btn" id="stampNearestBtn">近くのスポットを見る</button><button class="secondary-btn" id="stampResetBtn">デモ初期化</button></div>
       `;
       showSheet();
       const nearestBtn = document.getElementById("stampNearestBtn");
       const resetBtn = document.getElementById("stampResetBtn");
-      if(nearestBtn) nearestBtn.addEventListener("click", () => {
-        const nearest = facilitiesWithDistance()[0];
-        if(nearest) openFacilityDetail(nearest.id);
-      });
-      if(resetBtn) resetBtn.addEventListener("click", resetStampDemo);
+      if(nearestBtn) nearestBtn.addEventListener("click", () => { const nearest = targetsWithDistance().find(t => t.type === "spot"); if(nearest) openTargetDetail("spot", nearest.id); });
+      if(resetBtn) resetBtn.addEventListener("click", resetDemo);
     }
-    function addStamp(facilityId){
-      const facility = facilitiesWithDistance().find(item => item.id === facilityId);
-      if(!facility || facility.distance > CHECKIN_RADIUS_M || !canStampSpotToday(facility.id)) return;
-
-      stampState.lastStampedBySpot[facility.id] = todayKey();
-      stampState.stampCount += 1;
-      let completed = false;
-      if(stampState.stampCount >= STAMPS_PER_POINT){
-        stampState.pendingPoints += 1;
-        stampState.stampCount = 0;
-        completed = true;
-      }
-      saveStampState();
-      updateFacilityMarkers();
-      updateCurrentSummary();
-
-      if(completed){
-        showToast("7個達成！", "1ポイントの配布対象になりました。新しいカードを開始します。");
+    function bindShopCardButtons(){
+      document.querySelectorAll("[data-open-shop]").forEach(btn => btn.addEventListener("click", () => openTargetDetail("shop", btn.dataset.openShop)));
+      document.querySelectorAll("[data-route-shop]").forEach(btn => btn.addEventListener("click", () => { const shop = findTarget("shop", btn.dataset.routeShop); if(shop) drawRouteTo(shop, true); }));
+    }
+    function toggleFavorite(target){
+      const key = checkinKey(target);
+      rewardState.favorites[key] = !rewardState.favorites[key];
+      saveRewardState();
+      showToast(rewardState.favorites[key] ? "お気に入りに保存しました" : "お気に入りを解除しました", target.name);
+      openTargetDetail(target.type, target.id);
+    }
+    function shareSpot(target){
+      const text = `${target.name}をコミュニティにシェアしました`;
+      showToast("コミュニティにシェア", text);
+    }
+    function openAdThenReward(target){
+      const targetWithD = withDistance(target);
+      if(targetWithD.distance > CHECKIN_RADIUS_M || !canRecheckin(target)) return;
+      pendingAdTarget = target;
+      els.adTargetText.textContent = `${target.name} のチェックイン広告です。広告を閉じると報酬が反映されます。`;
+      els.adModal.classList.add("show");
+    }
+    function closeAdAndGrant(){
+      els.adModal.classList.remove("show");
+      if(!pendingAdTarget) return;
+      grantReward(pendingAdTarget);
+      pendingAdTarget = null;
+    }
+    function grantReward(target){
+      const current = withDistance(target);
+      if(current.distance > CHECKIN_RADIUS_M || !canRecheckin(target)) return;
+      rewardState.lastCheckinAt[checkinKey(target)] = Date.now();
+      let title = "チェックイン完了！";
+      let text = "";
+      if(target.type === "shop" && target.reward && target.reward.type === "point"){
+        rewardState.pendingPoints += target.reward.amount || 1;
+        text = `${target.name}で${target.reward.amount || 1}ポイントの配布対象になりました。`;
       }else{
-        showToast("スタンプ取得完了！", `${facility.name}でスタンプを1つ押しました。あと${STAMPS_PER_POINT - stampState.stampCount}個で1ポイントです。`);
+        rewardState.stampCount += 1;
+        if(rewardState.stampCount >= STAMPS_PER_POINT){
+          rewardState.pendingPoints += 1;
+          rewardState.stampCount = 0;
+          title = "7スタンプ達成！";
+          text = "1ポイントの配布対象になりました。新しいカードを開始します。";
+        }else{
+          text = `${target.name}でスタンプを1つ押しました。あと${STAMPS_PER_POINT - rewardState.stampCount}個で1ポイントです。`;
+        }
       }
-      openFacilityDetail(facility.id);
+      saveRewardState();
+      updateTargetMarkers();
+      updateCurrentSummary();
+      showToast(title, text);
+      openTargetDetail(target.type, target.id);
     }
-    function resetStampDemo(){
-      stampState = normalizeStampState({ stampCount:3, pendingPoints:0 });
-      saveStampState();
-      updateFacilityMarkers();
+    function resetDemo(){
+      rewardState = normalizeRewardState({ stampCount:3, pendingPoints:0, lastCheckinAt:{}, favorites:{} });
+      saveRewardState();
+      updateTargetMarkers();
       updateCurrentSummary();
       showToast("デモを初期化しました", "スタンプ3個の状態に戻しました。");
       openStampCard();
     }
-    function showToast(title, text){
+    function showToast(title,text){
       els.toastTitle.textContent = title;
       els.toastText.textContent = text;
       els.completeToast.classList.add("show");
       window.setTimeout(() => els.completeToast.classList.remove("show"), 3600);
     }
-
-    function drawRoute(facilityId, fit = true){
-      const facility = facilities.find(item => item.id === facilityId);
-      if(!facility || !state.userPosition || !state.mapReady) return;
-      const latLngs = [[state.userPosition.lat, state.userPosition.lng], [facility.lat, facility.lng]];
+    function drawRouteTo(target, fit = true){
+      if(!target || !state.userPosition || !state.mapReady) return;
+      const latLngs = [[state.userPosition.lat, state.userPosition.lng], [target.lat, target.lng]];
       if(state.routeLine) state.routeLine.remove();
-      state.routeLine = L.polyline(latLngs, { color:"#f58a00", weight:6, opacity:.9, dashArray:"10 8" }).addTo(state.map);
+      state.routeLine = L.polyline(latLngs, { color:target.type === "shop" ? "#e91e63" : "#f58a00", weight:6, opacity:.9, dashArray:"10 8" }).addTo(state.map);
       if(fit) state.map.fitBounds(latLngs, { padding:[70,70], animate:true });
+      showToast("道順を表示しました", `${target.name}までの簡易ルートを地図に表示しています。`);
     }
-    function selectFacility(facilityId, openDetail = true){
-      state.selectedFacility = facilities.find(item => item.id === facilityId) || null;
-      updateFacilityMarkers();
-      if(openDetail) openFacilityDetail(facilityId);
+    function selectTarget(type,id,openDetail = true){
+      const target = findTarget(type,id);
+      state.selectedTarget = target || null;
+      updateTargetMarkers();
+      if(openDetail && target) openTargetDetail(type,id);
     }
 
     /* 09. Map / Button Events */
     function recenter(){
       state.autoFollow = true;
-      if(state.userPosition && state.mapReady){ state.map.setView([state.userPosition.lat, state.userPosition.lng], 17, { animate:true }); }
+      if(state.userPosition && state.mapReady) state.map.setView([state.userPosition.lat, state.userPosition.lng], 17, { animate:true });
       updateCurrentSummary();
     }
-
     els.gpsStatusBtn.addEventListener("click", openGpsDetail);
     els.stampBtn.addEventListener("click", openStampCard);
     els.currentInfoCard.addEventListener("click", () => {
-      const nearest = facilitiesWithDistance()[0];
-      if((state.gpsState === "tracking" || state.gpsState === "demo") && nearest){ openFacilityDetail(nearest.id); }
-      else{ openGpsDetail(); }
+      const nearest = targetsWithDistance().find(target => target.type === "spot");
+      if((state.gpsState === "tracking" || state.gpsState === "demo") && nearest) openTargetDetail("spot", nearest.id);
+      else openGpsDetail();
     });
     els.recenterBtn.addEventListener("click", recenter);
     els.headerNearBtn.addEventListener("click", recenter);
-    els.demoBtn.addEventListener("click", () => {
-      state.autoFollow = true;
-      setUserPosition(35.61127, 139.62702, 8, true);
-      recenter();
-    });
+    els.demoBtn.addEventListener("click", () => { state.autoFollow = true; setUserPosition(35.61127, 139.62702, 8, true); recenter(); });
     els.sheetBackdrop.addEventListener("click", closeSheet);
     els.sheetContent.addEventListener("click", (event) => { if(event.target.dataset.close) closeSheet(); });
+    els.adCloseBtn.addEventListener("click", closeAdAndGrant);
+    window.setInterval(() => {
+      if(state.selectedTarget && els.detailSheet.classList.contains("show")) openTargetDetail(state.selectedTarget.type, state.selectedTarget.id);
+      updateCurrentSummary();
+    }, 60000);
 
     initMap();
     startGeolocation();
